@@ -289,6 +289,11 @@ function buildPreparation() {
     var divPrep = MH.makeDiv(null, "divPreparation");
     switch (currentPage) {
         case pages.ACCUEIL:
+            const tournamentNameInput = buildPropertyEditor("Nom du tournoi", "text", { "id": "tournamentName", value: storage.tournoi.name ?? "" });
+            tournamentNameInput.addEventListener('change', (event) => {
+                storage.updateTournamentName(event.target.value);
+            });
+            divPrep.appendChild(tournamentNameInput);
             divPrep.appendChild(buildPropertyViewer("Type de tournoi", storage.tournoi.typeTournoi));
             divPrep.appendChild(buildPropertyViewer("Mode", storage.tournoi.modeTournoi));
             divPrep.appendChild(buildPropertyViewer("Nombre de tour", storage.tournoi.nbTour));
@@ -572,9 +577,11 @@ function buildMatch(match, j) {
     divMatch.appendChild(headerMatch);
 
     divMatch.appendChild(matchDom);
-    currentIndexMatch++;
 
     refreshMatch(matchDom, currentIndexMatch);
+
+    currentIndexMatch++;
+
     return divMatch;
 }
 
@@ -1020,7 +1027,7 @@ function showModalDeleteJoueur() {
 }
 
 function lancerTournoi() {
-    if(storage.tournoi.currentTour == -1){
+    if (storage.tournoi.currentTour == -1) {
         genereTournoi();
         storage.updateTournoi({ "date": new Date() });
         storage.updateTournoi({ "currentTour": 0 });
@@ -1339,10 +1346,10 @@ function refreshMatch(domMatch, matchIndex) {
         secondTeamThirdSet.classList.remove("set-loser");
     }
 
-    if(isAtThirdSet(match)){
+    if (isAtThirdSet(match)) {
         firstTeamThirdSet.classList.remove("gone")
         secondTeamThirdSet.classList.remove("gone")
-    }else{
+    } else {
         firstTeamThirdSet.classList.add("gone")
         secondTeamThirdSet.classList.add("gone")
     }
@@ -1696,15 +1703,17 @@ function getMatchWinner(match) {
 }
 
 function isSetFinished(firstTeamScore, secondTeamScore) {
-    return (firstTeamScore >= 21 && firstTeamScore - secondTeamScore >= 2) ||
-        (secondTeamScore >= 21 && secondTeamScore - firstTeamScore >= 2) ||
+    return (firstTeamScore == 21 && firstTeamScore - secondTeamScore >= 2) ||
+        (secondTeamScore == 21 && secondTeamScore - firstTeamScore >= 2) ||
+        (firstTeamScore > 21 && firstTeamScore - secondTeamScore == 2) ||
+        (secondTeamScore > 21 && secondTeamScore - firstTeamScore == 2) ||
         (firstTeamScore == 30 && secondTeamScore == 29) ||
         (secondTeamScore == 30 && firstTeamScore == 29)
 }
 
-function isAtThirdSet(match){
-    const firstSetWinner  = getSetWinner(match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
-    const secondSetWinner  = getSetWinner(match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
+function isAtThirdSet(match) {
+    const firstSetWinner = getSetWinner(match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
+    const secondSetWinner = getSetWinner(match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
     return firstSetWinner != null && secondSetWinner != null && firstSetWinner != secondSetWinner
 }
 

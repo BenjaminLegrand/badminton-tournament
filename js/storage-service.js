@@ -39,7 +39,7 @@ export class LocalStorage {
     }
 
     export() {
-        var name = "Tournoi - " + new Intl.DateTimeFormat("en-US").format(this.tournoi.date);
+        var name = `tournament_${this.tournoi.name}_${new Intl.DateTimeFormat("en-US").format(this.tournoi.date)}`;
         var type = "application/json";
         var anchor = document.createElement("a");
         anchor.href = window.URL.createObjectURL(new Blob([JSON.stringify(this.getDatas())], { type }));
@@ -84,6 +84,11 @@ export class LocalStorage {
 
     deleteJoueur(index) {
         this.joueurs.splice(index, 1);
+        this.save();
+    }
+
+    updateTournamentName(name){
+        this.tournoi.name = name;
         this.save();
     }
 
