@@ -1,4 +1,3 @@
-import { Joueur } from './player.js'
 import { Tournoi } from './tournament.js'
 import {
     typeTournoiListe,
@@ -6,35 +5,35 @@ import {
 
 
 const LOCAL_STORAGE_KEY = "tournoiBad";
-export class LocalStorage{
-    constructor(){
+export class LocalStorage {
+    constructor() {
         this.load(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
     }
     joueurs = [];
     tournoi = new Tournoi();
 
-    getNbJoueurSelected(){
+    getNbJoueurSelected() {
         var count = 0;
         this.joueurs.forEach(player => {
-            if(player.selected){
+            if (player.selected) {
                 count++;
             }
         });
         return count;
     }
-    getNbContrainteActif(){
-         var count = 0;
+    getNbContrainteActif() {
+        var count = 0;
         this.tournoi.contraintes.forEach(constraint => {
-            if(constraint.actif){
+            if (constraint.actif) {
                 count++;
             }
         });
         return count;
     }
 
-    getDatas(){
+    getDatas() {
         return {
-            "joueurs": this.joueurs, 
+            "joueurs": this.joueurs,
             "tournoi": this.tournoi
         }
     }
@@ -43,85 +42,74 @@ export class LocalStorage{
         var name = "Tournoi - " + new Intl.DateTimeFormat("en-US").format(this.tournoi.date);
         var type = "application/json";
         var anchor = document.createElement("a");
-        anchor.href = window.URL.createObjectURL(new Blob([JSON.stringify(this.getDatas())], {type}));
+        anchor.href = window.URL.createObjectURL(new Blob([JSON.stringify(this.getDatas())], { type }));
         anchor.download = name;
         anchor.click();
     }
-
-    import(evt) {   
-        var fichier = new FileReader(); 
-        fichier.onload = function() { 
-            var datas = JSON.parse(fichier.result);
-            this.load(datas);
-            this.save();
-        }   
-        fichier.readAsText(evt.target.files[0]); 
-    }
-
-    save(){ 
+    
+    save() {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.getDatas()));
     }
 
-    load(datas){
+    load(datas) {
         if (datas == null) return;
         this.joueurs = datas.joueurs;
         this.tournoi = datas.tournoi;
         this.tournoi.date = new Date(datas.tournoi.date);
     }
 
-    addJoueur(joueur){
+    addJoueur(joueur) {
         if (this.joueurs.filter(j => j.name == joueur.name).length > 0) return false;
         this.joueurs.push(joueur);
         this.save();
         return true;
     }
 
-    updateJoueur(index, attributes){
-        if (this.joueurs[index] != undefined){
-           for (var att in attributes){
-               if (this.joueurs[index][att] != undefined){
-                if (att == "name"){
-                    if (this.joueurs[index][att] != attributes[att] && 
-                    this.joueurs.filter(j => j.name == attributes[att]).length > 0) 
-                    return false;
-                }
+    updateJoueur(index, attributes) {
+        if (this.joueurs[index] != undefined) {
+            for (var att in attributes) {
+                if (this.joueurs[index][att] != undefined) {
+                    if (att == "name") {
+                        if (this.joueurs[index][att] != attributes[att] &&
+                            this.joueurs.filter(j => j.name == attributes[att]).length > 0)
+                            return false;
+                    }
                     this.joueurs[index][att] = attributes[att];
-               }
-           } 
+                }
+            }
         }
         this.save();
         return true;
     }
 
-    deleteJoueur(index){
+    deleteJoueur(index) {
         this.joueurs.splice(index, 1);
         this.save();
     }
 
-    updateTournoi(attributes){
-        for (var att in attributes){
-            if (this.tournoi[att] != undefined){
+    updateTournoi(attributes) {
+        for (var att in attributes) {
+            if (this.tournoi[att] != undefined) {
                 this.tournoi[att] = attributes[att];
             }
-        } 
-        console.log(attributes)
+        }
         //mise à jour des contraintes disponibles en fonction du type de tournoi
         this.tournoi.contraintes.filter(c => c.name == "COEQUIPIER")[0].disabled = this.tournoi["typeTournoi"] == typeTournoiListe.SIMPLE;
         this.save();
     }
 
-    updateMatch(indexMatch, setIndex, setTeam, score){
+    updateMatch(indexMatch, setIndex, setTeam, score) {
         this.tournoi.tours.flatMap(turn => {
             return turn.matchs
         }).forEach((match, index) => {
-            if(index == indexMatch){
+            if (index == indexMatch) {
                 match.scores[setIndex][setTeam] = score;
                 this.save();
             }
         })
     }
 
-    updateContraintes(contraintes){
+    updateContraintes(contraintes) {
         if (contraintes != undefined) this.tournoi.contraintes = contraintes;
         this.save();
     }

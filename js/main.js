@@ -978,11 +978,11 @@ function buildInterfaceHeaderAccueil() {
     var buttonImport = MH.makeElt("label", null, "btn-file", "margin:0px;");
     var newId = MH.getNewId();
     var input = MH.makeInput("file", { "id": newId, "accept": ".json", "style": "display:none;" });
-    MH.addNewEvent(newId, "change", storage.import.bind(input));
+    MH.addNewEvent(newId, "change", handleImport.bind(input));
     buttonImport.setAttribute("title", "Importer un tournoi");
     buttonImport.classList.add("btn");
     buttonImport.classList.add("btn-light");
-    buttonImport.appendChild(MH.makeSpan("Importer")/*MH.makeIcon("import")*/);
+    buttonImport.appendChild(MH.makeSpan("Importer"));
     buttonImport.appendChild(input);
     interfaces.push(buttonImport);
 
@@ -1318,8 +1318,8 @@ function editHandicaps() {
 
 
 function refreshMatch(domMatch, matchIndex) {
-    const match = storage.tournoi.tours.flatMap(turn => { return turn.matchs; }).find((_, index) => { return matchIndex == index;});
-    if(match == null) return;
+    const match = storage.tournoi.tours.flatMap(turn => { return turn.matchs; }).find((_, index) => { return matchIndex == index; });
+    if (match == null) return;
 
     const firstTeamFirstSet = domMatch.querySelector(".firstTeamFirstSet");
     const firstTeamSecondSet = domMatch.querySelector(".firstTeamSecondSet");
@@ -1339,33 +1339,33 @@ function refreshMatch(domMatch, matchIndex) {
     } else if (firstSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
         secondTeamFirstSet.classList.add("set-winner");
         firstTeamFirstSet.classList.add("set-loser");
-    }else{
+    } else {
         firstTeamFirstSet.classList.remove("set-winner");
         firstTeamFirstSet.classList.remove("set-loser");
         secondTeamFirstSet.classList.remove("set-winner");
         secondTeamFirstSet.classList.remove("set-loser");
     }
-    
+
     if (secondSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
         firstTeamSecondSet.classList.add("set-winner");
         secondTeamSecondSet.classList.add("set-loser");
     } else if (secondSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
         secondTeamSecondSet.classList.add("set-winner");
         firstTeamSecondSet.classList.add("set-loser");
-    }else{
+    } else {
         firstTeamSecondSet.classList.remove("set-winner");
         firstTeamSecondSet.classList.remove("set-loser");
         secondTeamSecondSet.classList.remove("set-winner");
         secondTeamSecondSet.classList.remove("set-loser");
     }
-    
+
     if (thirdSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
         firstTeamThirdSet.classList.add("set-winner");
         secondTeamThirdSet.classList.add("set-loser");
     } else if (thirdSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
         secondTeamThirdSet.classList.add("set-winner");
         firstTeamThirdSet.classList.add("set-loser");
-    }else{
+    } else {
         firstTeamThirdSet.classList.remove("set-winner");
         firstTeamThirdSet.classList.remove("set-loser");
         secondTeamThirdSet.classList.remove("set-winner");
@@ -1604,18 +1604,18 @@ function genereTournoi() {
             matchs.push(currentMatch);
             //attribution adversaires
             currentMatch.firstTeam.forEach(player => {
-                player.adversaires.push(...currentMatch.secondTeam.map(p => {return p.name}));
+                player.adversaires.push(...currentMatch.secondTeam.map(p => { return p.name }));
             })
             currentMatch.secondTeam.forEach(player => {
-                player.adversaires.push(...currentMatch.firstTeam.map(p => {return p.name}));
+                player.adversaires.push(...currentMatch.firstTeam.map(p => { return p.name }));
             })
 
             //et coequipiers equipe A
             currentMatch.firstTeam.forEach(player => {
-                player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }).map(p => {return p.name}));
+                player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
             })
             currentMatch.secondTeam.forEach(player => {
-                player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }).map(p => {return p.name}));
+                player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
             })
 
 
@@ -1743,8 +1743,20 @@ function getSetWinner(firstTeamScore, secondTeamScore) {
 }
 
 
-function getPlayerHandicap(player){
+function getPlayerHandicap(player) {
     return player.genre.handicap + player.niveau.handicap;
+}
+
+function handleImport(evt) {
+    var file = new FileReader();
+    file.addEventListener("load", () => {
+        var datas = JSON.parse(file.result);
+        storage.load(datas);
+        storage.save();
+        selectPage();
+    })
+
+    file.readAsText(evt.target.files[0]);
 }
 
 
