@@ -17,6 +17,7 @@ window.addEventListener("dblclick", function(evt){evt.preventDefault();});
 class GlobalDataBase{
     constructor(dbName){
         this.dbName = dbName;
+        console.log("Loading storage");
         this.load(JSON.parse(localStorage.getItem(this.dbName)));
     }
     dbName = "";
@@ -471,7 +472,7 @@ var pages = {
 }
 var currentPage = bd.tournoi.currentTour == -1 ? pages.ACCUEIL : pages.EXECUTION_TOURNOI;
 
-function selectPage(page, force){
+function selectPage(page){
     if (page != undefined) currentPage = page;
     buildPage();
     MH.loadEvents();
@@ -823,6 +824,7 @@ function buildPreparation(){
 }
 
 function buildClassement(){
+    computeLeaderboard();
     var listJoueursClassement = MH.makeDiv("listJoueursClassement");
     listJoueursClassement.appendChild(buildHeaderJoueurClassement());
     var divJoueursClassement = MH.makeDiv(null, "divJoueursClassement");
@@ -1491,8 +1493,6 @@ function preLancerTournoi(){
 function afficheInfo(evt){
     $('#modalInfoCredit').modal('toggle');
         document.getElementById("buttonApropos").click();
-        /*setTimeout(function(evt){
-    }, 1000, evt);*/
 }
 
 function lancerTournoi(){
@@ -1508,27 +1508,6 @@ function showModalFinTournoi(){
     $('#modalFinTournoi').modal('show');
 }
 function finTournoi(){
-    var scoreEquipeA, scoreEquipeB, equipeAGagne, equipeAGagneMoins, equipeBGagneMoins;
-    for (var i = 0; i < bd.tournoi.tours.length; i++){
-        for (var j = 0; j < bd.tournoi.tours[i].matchs.length; j++){
-            scoreEquipeA = bd.tournoi.tours[i].matchs[j].ptsEquipeA;
-            scoreEquipeB = bd.tournoi.tours[i].matchs[j].ptsEquipeB;
-            egalite = scoreEquipeA == scoreEquipeB;
-            equipeAGagne = scoreEquipeA > scoreEquipeB && (scoreEquipeA - scoreEquipeB > 2);
-            equipeAGagneMoins = scoreEquipeA > scoreEquipeB && (scoreEquipeA - scoreEquipeB <= 2);
-            equipeBGagneMoins = scoreEquipeB > scoreEquipeA && (scoreEquipeB - scoreEquipeA <= 2);
-            for (var k = 0; k < bd.tournoi.tours[i].matchs[j].equipeA.length; k++){
-                bd.tournoi.tours[i].matchs[j].equipeA[k].points += 
-                egalite ? 4 : (equipeAGagne ? 5 : (equipeAGagneMoins ? 3 : (equipeBGagneMoins ? 2 : 1)));
-            }
-            for (var m = 0; m < bd.tournoi.tours[i].matchs[j].equipeB.length; m++){
-                bd.tournoi.tours[i].matchs[j].equipeB[m].points += 
-                egalite ? 4 : (equipeAGagne ? 1 : (equipeAGagneMoins ? 2 : (equipeBGagneMoins ? 3 : 5)));
-            }
-        }
-    }
-
-    bd.updateTournoi({"currentTour": -1});
     $('#modalFinTournoi').modal('hide');
     selectPage(pages.ACCUEIL);
 }
@@ -1553,7 +1532,6 @@ function validTour(){
         document.body.querySelector("#headerTour" + bd.tournoi.currentTour).scrollIntoView({
             behavior: 'smooth'
         });
-        //window.location.href = "#headerTour" + bd.tournoi.currentTour;
     }else{
         finTournoi();
     }
@@ -2354,3 +2332,69 @@ function genereTournoi(){
 }
 
 
+function computeLeaderboard(){
+     bd.joueurs.forEach(player => {
+        player.points = 0;
+     })
+     bd.tournoi.tours.forEach(turn => {
+        turn.matchs.forEach(match => {
+            let firstTeamScore = match.ptsEquipeA;
+            let secondTeamScore = match.ptsEquipeB;
+
+            match.equipeA.forEach(player => {
+                getTournamentPlayerByName(player.name).points += 1;
+            })
+            
+            match.equipeB.forEach(player => {
+                getTournamentPlayerByName(player.name).points += 1;
+            })
+        })
+    });
+    // for (var i = 0; i < bd.tournoi.tours.length; i++){
+    //     // Check all matches in a turn
+    //     for (var j = 0; j < bd.tournoi.tours[i].matchs.length; j++){
+    //         // First team score for the match
+    //         scoreEquipeA = bd.tournoi.tours[i].matchs[j].ptsEquipeA;
+    //         // Second team score for the match
+    //         scoreEquipeB = bd.tournoi.tours[i].matchs[j].ptsEquipeB;
+
+    //         // Draw between the two teams
+    //         egalite = scoreEquipeA == scoreEquipeB;
+
+    //         // First team wins by more than 2 points
+    //         equipeAGagne = scoreEquipeA > scoreEquipeB && (scoreEquipeA - scoreEquipeB > 2);
+
+    //         // First team wins by less than or equal 2 points
+    //         equipeAGagneMoins = scoreEquipeA > scoreEquipeB && (scoreEquipeA - scoreEquipeB <= 2);
+
+    //         // Second team wins by less than or equal 2 points
+    //         equipeBGagneMoins = scoreEquipeB > scoreEquipeA && (scoreEquipeB - scoreEquipeA <= 2);
+
+    //         // For each player of the first team, add points to its total
+    //         for (var k = 0; k < bd.tournoi.tours[i].matchs[j].equipeA.length; k++){
+    //             // Draw : +4
+    //             // Team wins by more than 2 points : +5
+    //             // Team wins by less than or equal 2 points : +3
+    //             // Team loses by less or equal 2 points : +2
+    //             // Team loses by more than 2 points : +1
+    //             bd.tournoi.tours[i].matchs[j].equipeA[k].points += 
+    //             egalite ? 4 : (equipeAGagne ? 5 : (equipeAGagneMoins ? 3 : (equipeBGagneMoins ? 2 : 1)));
+    //         }
+            
+    //         // For each player of the second team, add points to its total
+    //         for (var m = 0; m < bd.tournoi.tours[i].matchs[j].equipeB.length; m++){
+    //             // Draw : +4
+    //             // Team loses by more than 2 points : +1
+    //             // Team loses by less or equal 2 points : +2
+    //             // Team wins by less than or equal 2 points : +3
+    //             // Team wins by more than 2 points : +5
+    //             bd.tournoi.tours[i].matchs[j].equipeB[m].points += 
+    //             egalite ? 4 : (equipeAGagne ? 1 : (equipeAGagneMoins ? 2 : (equipeBGagneMoins ? 3 : 5)));
+    //         }
+    //     }
+    // }
+}
+
+function getTournamentPlayerByName(name){
+    return bd.joueurs.find(player => { return player.name == name; });
+}
