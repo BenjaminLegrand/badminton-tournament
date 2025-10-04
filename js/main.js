@@ -796,8 +796,12 @@ function buildJoueur(joueur, i) {
             joueurDom.appendChild(buildBadgeNiveau(joueur));
             break;
         case pages.ACCUEIL:
-        case pages.EXECUTION_TOURNOI:
             joueurDom.classList.add("accueil");
+            joueurDom.appendChild(MH.makeSpan(joueur.name, "nomJoueur"));
+            joueurDom.appendChild(buildBadgeNiveau(joueur));
+            break;
+        case pages.EXECUTION_TOURNOI:
+            joueurDom.classList.add("player-match");
             joueurDom.appendChild(MH.makeSpan(joueur.name, "nomJoueur"));
             joueurDom.appendChild(buildBadgeNiveau(joueur));
             break;
