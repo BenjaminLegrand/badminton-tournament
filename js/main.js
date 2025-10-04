@@ -132,10 +132,10 @@ function buildHeader() {
             header.appendChild(MH.makeSpan("Tournoi en cours", "headerTitle"));
             var buttonFinTournoi = MH.makeButton({
                 type: "click",
-                func: showModalFinTournoi.bind(this)
+                func: finTournoi.bind(this)
             });
-            buttonFinTournoi.innerHTML = "Fin du tournoi";
-            buttonFinTournoi.classList.add("btn-danger");
+            buttonFinTournoi.innerHTML = "Retour";
+            buttonFinTournoi.classList.add("btn-primary");
             header.appendChild(buttonFinTournoi);
             break;
     }
@@ -184,7 +184,7 @@ function buildFooter() {
         case pages.ACCUEIL:
             var buttonLancerTournoi = MH.makeButton({
                 type: "click",
-                func: preLancerTournoi.bind(this)
+                func: lancerTournoi.bind(this)
             });
             var nbJoueurSelected = storage.getNbJoueurSelected();
             var typeTournoi = storage.tournoi.typeTournoi;
@@ -1037,28 +1037,18 @@ function reset() {
     $('#modalReset').modal('toggle');
     selectPage(pages.ACCUEIL);
 }
-function preLancerTournoi() {
-    if (storage.tournoi.tours.length > 0) {
-        $('#modalPreLancer').modal('toggle');
-    } else {
-        lancerTournoi();
-    }
-}
+
 
 function lancerTournoi() {
-    $('#modalPreLancer').modal('hide');
-
-    genereTournoi();
-    storage.updateTournoi({ "date": new Date() });
-    storage.updateTournoi({ "currentTour": 0 });
+    if(storage.tournoi.currentTour == -1){
+        genereTournoi();
+        storage.updateTournoi({ "date": new Date() });
+        storage.updateTournoi({ "currentTour": 0 });
+    }
     selectPage(pages.EXECUTION_TOURNOI);
 }
 
-function showModalFinTournoi() {
-    $('#modalFinTournoi').modal('show');
-}
 function finTournoi() {
-    $('#modalFinTournoi').modal('hide');
     selectPage(pages.ACCUEIL);
 }
 
@@ -1659,7 +1649,6 @@ function genereTournoi() {
 
 
 function computeLeaderboard() {
-    console.log(storage.tournoi);
     storage.joueurs.forEach(player => {
         player.totalPointAverage = 0;
         player.totalWonMatches = 0;
@@ -1763,4 +1752,3 @@ function handleImport(evt) {
 window.finTournoi = finTournoi;
 window.reset = reset;
 window.deleteJoueur = deleteJoueur;
-window.lancerTournoi = lancerTournoi;
