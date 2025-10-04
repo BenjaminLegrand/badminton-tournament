@@ -124,7 +124,6 @@ function buildHeader() {
             buttonCredit.classList.add("logoLigue");
             buttonCredit.setAttribute("width", "");
             buttonCredit.setAttribute("height", "50");
-            MH.addNewEvent(newId, "click", afficheInfo.bind(this));
             header.appendChild(buttonCredit);
             header.appendChild(MH.makeSpan("Générateur de tournoi", "headerTitle"));
             header.appendChild(buildInterfaceHeaderAccueil());
@@ -237,15 +236,6 @@ function buildFooter() {
     var footer = MH.makeDiv("footer", "container");
     switch (currentPage) {
         case pages.ACCUEIL:
-            var newId = MH.getNewId();
-            var div = MH.makeDiv(newId, "aide");
-            var imgAide = MH.makeIcon("question", true, "svg+xml");
-            imgAide.setAttribute("width", 30);
-            imgAide.setAttribute("height", 30);
-            var aide = MH.makeSpan("Infos - Aides", "signature");
-            div.appendChild(imgAide);
-            div.appendChild(aide);
-            MH.addNewEvent(newId, "click", afficheInfo.bind(this));
             footer.appendChild(div);
             var buttonLancerTournoi = MH.makeButton({
                 type: "click",
@@ -1054,11 +1044,6 @@ function preLancerTournoi() {
     } else {
         lancerTournoi();
     }
-}
-
-function afficheInfo(evt) {
-    $('#modalInfoCredit').modal('toggle');
-    document.getElementById("buttonApropos").click();
 }
 
 function lancerTournoi() {
