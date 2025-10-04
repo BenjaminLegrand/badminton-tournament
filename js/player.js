@@ -20,17 +20,4 @@ export class Joueur{
     totalWonMatches = 0;
     totalWonSet = 0;
     totalLostSet = 0;
-
-    getPointsHandicap(){
-        return this.genre.handicap + this.niveau.handicap;
-    }
-
-    toJson(){
-        return {
-            "name": this.name,
-            "genre": this.genre,
-            "niveau": this.niveau,
-            "selected": this.selected
-        }
-    }
 }

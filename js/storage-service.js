@@ -5,62 +5,42 @@ import {
 } from './values.js'
 
 
+const LOCAL_STORAGE_KEY = "tournoiBad";
 export class LocalStorage{
-    constructor(dbName){
-        this.dbName = dbName;
-        this.load(JSON.parse(localStorage.getItem(this.dbName)));
+    constructor(){
+        this.load(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)));
     }
-    dbName = "";
     joueurs = [];
     tournoi = new Tournoi();
 
     getNbJoueurSelected(){
-        var compt = 0;
-        for (var i = 0; i < this.joueurs.length; i++){
-            if (this.joueurs[i].selected) compt++;
-        }
-        return compt;
+        var count = 0;
+        this.joueurs.forEach(player => {
+            if(player.selected){
+                count++;
+            }
+        });
+        return count;
     }
     getNbContrainteActif(){
-        var compt = 0;
-        for (var i = 0; i < this.tournoi.contraintes.length; i++){
-            if (this.tournoi.contraintes[i].actif) compt++;
-        }
-        return compt;
-    }
-
-    getCurrentTour(){
-        return bd.tournoi.tours[bd.tournoi.currentTour];
-    }
-
-    allMatchDoneCurrentTour(){
-        var currentTour = getCurrenTour();
-        for (var i = 0; i < currentTour.matchs.length; i++){
-            if (!currentTour.matchs[i].done) return false;
-        }
-        return true;
+         var count = 0;
+        this.tournoi.contraintes.forEach(constraint => {
+            if(constraint.actif){
+                count++;
+            }
+        });
+        return count;
     }
 
     getDatas(){
         return {
-            "joueurs": this.getJoueurs(), 
-            "tournoi": this.getTournoi()
+            "joueurs": this.joueurs, 
+            "tournoi": this.tournoi
         }
-    }
-
-    getJoueurs(){
-        var retour = [];
-        for (var i = 0; i < this.joueurs.length; i++){
-            retour.push(this.joueurs[i].toJson());
-        }
-        return retour;
-    }
-    getTournoi(){
-        return this.tournoi.toJson();
     }
 
     export() {
-        var name = "Tournoi - " + bd.tournoi.date.getDate();
+        var name = "Tournoi - " + new Intl.DateTimeFormat("en-US").format(this.tournoi.date);
         var type = "application/json";
         var anchor = document.createElement("a");
         anchor.href = window.URL.createObjectURL(new Blob([JSON.stringify(this.getDatas())], {type}));
@@ -72,42 +52,21 @@ export class LocalStorage{
         var fichier = new FileReader(); 
         fichier.onload = function() { 
             var datas = JSON.parse(fichier.result);
-            bd.load(datas);
-            bd.save();
+            this.load(datas);
+            this.save();
         }   
         fichier.readAsText(evt.target.files[0]); 
     }
 
-    save(){
-        localStorage.setItem(this.dbName, JSON.stringify(this.getDatas()));
+    save(){ 
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.getDatas()));
     }
 
     load(datas){
         if (datas == null) return;
-        this.joueurs = [];
-        for (var i = 0; i < datas["joueurs"].length; i++){
-            this.joueurs.push(new Joueur(
-                datas["joueurs"][i].name,
-                datas["joueurs"][i].genre,
-                datas["joueurs"][i].niveau,
-                datas["joueurs"][i].selected
-                ));
-        }
-        this.tournoi = new Tournoi(
-            datas["tournoi"].typeTournoi,
-            datas["tournoi"].modeTournoi,
-            datas["tournoi"].nbTour, 
-            datas["tournoi"].nbTerrain,
-            datas["tournoi"].departMatchNegatif,
-            datas["tournoi"].niveauListe,
-            datas["tournoi"].genreListe,
-            datas["tournoi"].contraintes,
-            datas["tournoi"].tours,
-            datas["tournoi"].currentTour,
-            datas["tournoi"].limitPoint,
-            new Date(datas["tournoi"].date),
-            datas["tournoi"].nbPoints
-        );
+        this.joueurs = datas.joueurs;
+        this.tournoi = datas.tournoi;
+        this.tournoi.date = new Date(datas.tournoi.date);
     }
 
     addJoueur(joueur){
@@ -145,6 +104,7 @@ export class LocalStorage{
                 this.tournoi[att] = attributes[att];
             }
         } 
+        console.log(attributes)
         //mise à jour des contraintes disponibles en fonction du type de tournoi
         this.tournoi.contraintes.filter(c => c.name == "COEQUIPIER")[0].disabled = this.tournoi["typeTournoi"] == typeTournoiListe.SIMPLE;
         this.save();

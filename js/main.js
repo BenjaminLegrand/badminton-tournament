@@ -25,8 +25,7 @@ function preventZoom(e) {
     e.target.click();
 }
 
-var DB_NAME = "tournoiBad";
-var storage = new LocalStorage(DB_NAME);
+var storage = new LocalStorage();
 var currentEditionId = -1;
 
 window.addEventListener("dblclick", function (evt) { evt.preventDefault(); });
@@ -1435,12 +1434,12 @@ function populateAllMatchs() {
 function newMatch(firstTeam, secondTeam) {
     var firstTeamHandicap = 0;
     firstTeam.forEach(player => {
-        firstTeamHandicap += player.getPointsHandicap();
+        firstTeamHandicap += getPlayerHandicap(player);
     })
 
     var secondTeamHandicap = 0;
     secondTeam.forEach(player => {
-        secondTeamHandicap += player.getPointsHandicap();
+        secondTeamHandicap += getPlayerHandicap(player);
     })
 
     //équilibrage des points
@@ -1523,10 +1522,10 @@ function testContraintes(match) {
             } else if (storage.tournoi.contraintes[j].name == "ADVERSAIRE") {
                 match.firstTeam.forEach(firstPlayer => {
                     match.secondTeam.forEach(secondPlayer => {
-                        if (firstPlayer.adversaires.includes(secondPlayer)) {
+                        if (firstPlayer.adversaires.includes(secondPlayer.name)) {
                             match.pointContrainte += facteur;
                         }
-                        if (secondPlayer.adversaires.includes(firstPlayer)) {
+                        if (secondPlayer.adversaires.includes(firstPlayer.name)) {
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1534,14 +1533,14 @@ function testContraintes(match) {
             } else if (storage.tournoi.contraintes[j].name == "COEQUIPIER") {
                 match.firstTeam.forEach(firstPlayer1 => {
                     match.firstTeam.forEach(firstPlayer2 => {
-                        if (firstPlayer1.coequipiers.includes(firstPlayer2) || firstPlayer2.coequipiers.includes(firstPlayer1)) {
+                        if (firstPlayer1.coequipiers.includes(firstPlayer2.name) || firstPlayer2.coequipiers.includes(firstPlayer1.name)) {
                             match.pointContrainte += facteur;
                         }
                     });
                 });
                 match.secondTeam.forEach(secondPlayer1 => {
                     match.secondTeam.forEach(secondPlayer2 => {
-                        if (secondPlayer1.coequipiers.includes(secondPlayer2) || secondPlayer2.coequipiers.includes(secondPlayer1)) {
+                        if (secondPlayer1.coequipiers.includes(secondPlayer2.name) || secondPlayer2.coequipiers.includes(secondPlayer1.name)) {
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1605,18 +1604,18 @@ function genereTournoi() {
             matchs.push(currentMatch);
             //attribution adversaires
             currentMatch.firstTeam.forEach(player => {
-                player.adversaires.push(...currentMatch.secondTeam);
+                player.adversaires.push(...currentMatch.secondTeam.map(p => {return p.name}));
             })
             currentMatch.secondTeam.forEach(player => {
-                player.adversaires.push(...currentMatch.firstTeam);
+                player.adversaires.push(...currentMatch.firstTeam.map(p => {return p.name}));
             })
 
             //et coequipiers equipe A
             currentMatch.firstTeam.forEach(player => {
-                player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }));
+                player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }).map(p => {return p.name}));
             })
             currentMatch.secondTeam.forEach(player => {
-                player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }));
+                player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }).map(p => {return p.name}));
             })
 
 
@@ -1660,6 +1659,7 @@ function genereTournoi() {
 
 
 function computeLeaderboard() {
+    console.log(storage.tournoi);
     storage.joueurs.forEach(player => {
         player.totalPointAverage = 0;
         player.totalWonMatches = 0;
@@ -1740,6 +1740,11 @@ function getSetWinner(firstTeamScore, secondTeamScore) {
     } else {
         return null
     }
+}
+
+
+function getPlayerHandicap(player){
+    return player.genre.handicap + player.niveau.handicap;
 }
 
 
