@@ -150,18 +150,15 @@ export class LocalStorage{
         this.save();
     }
 
-    updateMatch(indexMatch, indexEquipe, score){
-        var index = 0;
-        for (var i = 0; i < this.tournoi.tours.length; i++){
-            for (var j = 0; j < this.tournoi.tours[i].matchs.length; j++){
-                if (indexMatch == index){
-                    this.tournoi.tours[i].matchs[j][indexEquipe] = score;
-                    this.save();
-                    return;
-                }
-                index++;
+    updateMatch(indexMatch, setIndex, setTeam, score){
+        this.tournoi.tours.flatMap(turn => {
+            return turn.matchs
+        }).forEach((match, index) => {
+            if(index == indexMatch){
+                match.scores[setIndex][setTeam] = score;
+                this.save();
             }
-        }
+        })
     }
 
     updateContraintes(contraintes){

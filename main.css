@@ -479,7 +479,7 @@ span.numContrainte {
     justify-content: center;
 }
 
-.sets{
+.firstTeamSets, .secondTeamSets{
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -641,12 +641,12 @@ div.forPlayingTour button, div.closedTour button{
     opacity: 1;
 }
 
-.gagne{
+.set-winner{
     background-color: lightgreen;
     font-weight: bold;
 }
 
-.perd{
+.set-loser{
     background-color: coral;
 }
 

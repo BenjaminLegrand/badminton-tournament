@@ -10,6 +10,8 @@ export class Match {
     secondTeam = [];
     firstTeamStartScore = 0;
     secondTeamStartScore = 0;
+    // TODO check this
+    pointContrainte = 0;
 
     scores = [];
 }

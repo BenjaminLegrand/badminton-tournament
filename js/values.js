@@ -1,5 +1,5 @@
-export const SET_SCORE_FIRST_TEAM_KEY = "FIRST"
-export const SET_SCORE_SECOND_TEAM_KEY = "SECOND"
+export const SET_SCORE_FIRST_TEAM_KEY = "SET_SCORE_FIRST_TEAM_KEY"
+export const SET_SCORE_SECOND_TEAM_KEY = "SET_SCORE_SECOND_TEAM_KEY"
 
 export var typeTournoiListe = {
     "SIMPLE": "Simple",
