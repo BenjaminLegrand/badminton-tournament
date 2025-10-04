@@ -1067,7 +1067,7 @@ function validTour() {
     const matchs = storage.tournoi.tours[storage.tournoi.currentTour].matchs;
 
     var unfinishedMatches = matchs.some(match => {
-        return getMatchWinner(match) != null;
+        return getMatchWinner(match) == null;
     });
 
     if (unfinishedMatches) {
@@ -1320,7 +1320,6 @@ function editHandicaps() {
 
 function refreshMatch(domMatch, matchIndex) {
     const match = storage.tournoi.tours.flatMap(turn => { return turn.matchs; }).find((_, index) => { return matchIndex == index;});
-    console.log(match)
     if(match == null) return;
 
     const firstTeamFirstSet = domMatch.querySelector(".firstTeamFirstSet");
@@ -1696,7 +1695,7 @@ function computeLeaderboard() {
                     const setWinner = getSetWinner(firstTeamScore, secondTeamScore);
                     tournamentPlayer.totalPointAverage += (secondTeamScore - firstTeamScore);
                     tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
-                    tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
+                    tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
                 });
             })
         })
