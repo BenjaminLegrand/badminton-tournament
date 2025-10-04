@@ -452,18 +452,29 @@ span.numContrainte {
 .match{
     display: flex;
     flex-direction: row;
+    justify-content: center;
     margin: 0px;
+    gap: 10px;
     border-radius: 10px;
     background-color: #bfbfbf;
-    padding: 0px;
+    padding: 10px;
     align-items: center;
-    width: 299px;
+    width: 550px;
 }
 
 .matchs{
+    flex-direction: column;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: center;
+}
+
+.sets{
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    gap: 15px;
     justify-content: center;
 }
 

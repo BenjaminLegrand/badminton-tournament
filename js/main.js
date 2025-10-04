@@ -471,17 +471,42 @@ function buildMatch(match, j) {
     for (var k = 0; k < match.equipeA.length; k++) {
         listEquipeA.appendChild(buildJoueur(match.equipeA[k], match.equipeA[k].index));
     }
-    var ptEquipeA = buildPropertyEditor(null, "numberSpinner", {
+    
+    var firstTeamSets = MH.makeDiv(null, "sets");
+    var firstTeamFirstSet = buildPropertyEditor(null, "numberSpinner", {
         "min": match["ptsEquipeADepart"],
         "max": 50,
         "value": match["ptsEquipeA"],
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
         "indexequipe": "ptsEquipeA",
-        "vertical": true
+        "vertical": false
     });
-    ptEquipeA.classList.add("pointMatch");
-    matchDom.appendChild(ptEquipeA);
+    firstTeamFirstSet.classList.add("pointMatch");
+    var firstTeamSecondSet = buildPropertyEditor(null, "numberSpinner", {
+        "min": match["ptsEquipeADepart"],
+        "max": 50,
+        "value": match["ptsEquipeA"],
+        "id": "match" + j,
+        "indexmatch": currentIndexMatch,
+        "indexequipe": "ptsEquipeA",
+        "vertical": false
+    });
+    firstTeamSecondSet.classList.add("pointMatch");
+    var firstTeamThirdSet = buildPropertyEditor(null, "numberSpinner", {
+        "min": match["ptsEquipeADepart"],
+        "max": 50,
+        "value": match["ptsEquipeA"],
+        "id": "match" + j,
+        "indexmatch": currentIndexMatch,
+        "indexequipe": "ptsEquipeA",
+        "vertical": false
+    });
+    firstTeamThirdSet.classList.add("pointMatch");
+    firstTeamSets.appendChild(firstTeamFirstSet);
+    firstTeamSets.appendChild(firstTeamSecondSet);
+    firstTeamSets.appendChild(firstTeamThirdSet);
+    matchDom.appendChild(firstTeamSets);
     matchDom.appendChild(listEquipeA);
 
     var divImgVolant = MH.makeElt("div", null, "divImgVolant");
@@ -496,32 +521,45 @@ function buildMatch(match, j) {
     for (var k = 0; k < match.equipeB.length; k++) {
         listEquipeB.appendChild(buildJoueur(match.equipeB[k], match.equipeB[k].index));
     }
-    var ptEquipeB = buildPropertyEditor(null, "numberSpinner", {
+    
+    var secondTeamSets = MH.makeDiv(null, "sets");
+    var secondTeamFirstSet = buildPropertyEditor(null, "numberSpinner", {
         "min": match["ptsEquipeBDepart"],
         "max": 50,
         "value": match["ptsEquipeB"],
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
         "indexequipe": "ptsEquipeB",
-        "vertical": true
+        "vertical": false
     });
-    ptEquipeB.classList.add("pointMatch");
+    secondTeamFirstSet.classList.add("pointMatch");
+    var secondTeamSecondSet = buildPropertyEditor(null, "numberSpinner", {
+        "min": match["ptsEquipeBDepart"],
+        "max": 50,
+        "value": match["ptsEquipeB"],
+        "id": "match" + j,
+        "indexmatch": currentIndexMatch,
+        "indexequipe": "ptsEquipeB",
+        "vertical": false
+    });
+    secondTeamSecondSet.classList.add("pointMatch");
+    var secondTeamThirdSet = buildPropertyEditor(null, "numberSpinner", {
+        "min": match["ptsEquipeBDepart"],
+        "max": 50,
+        "value": match["ptsEquipeB"],
+        "id": "match" + j,
+        "indexmatch": currentIndexMatch,
+        "indexequipe": "ptsEquipeB",
+        "vertical": false
+    });
+    secondTeamThirdSet.classList.add("pointMatch");
     matchDom.appendChild(listEquipeB);
-    matchDom.appendChild(ptEquipeB);
+    secondTeamSets.appendChild(secondTeamFirstSet);
+    secondTeamSets.appendChild(secondTeamSecondSet);
+    secondTeamSets.appendChild(secondTeamThirdSet);
+    matchDom.appendChild(secondTeamSets);
 
-    var victoireEquipeA = MH.makeButton({
-        type: "click",
-        func: victoire.bind(this, ptEquipeA.querySelector("span"))
-    }, "victoire");
-    victoireEquipeA.classList.add("victoire");
-    var victoireEquipeB = MH.makeButton({
-        type: "click",
-        func: victoire.bind(this, ptEquipeB.querySelector("span"))
-    }, "victoire");
-    victoireEquipeB.classList.add("victoire");
-    headerMatch.appendChild(victoireEquipeA);
     headerMatch.appendChild(num);
-    headerMatch.appendChild(victoireEquipeB);
 
     divMatch.appendChild(headerMatch);
 
