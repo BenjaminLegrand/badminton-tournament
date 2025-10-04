@@ -48,61 +48,73 @@ export var contrainteListe = [
 ]
 export var niveauListe = {
     "P12": {
-        "value": "P12", 
-        "handicap": 0
+        level : 0,
+        value: "P12", 
+        handicap: 0
     },
     "P11": {
-        "value": "P11",
-        "handicap": -2
+        level : 1,
+        value: "P11",
+        handicap: -2
     },
     "P10": {
-        "value": "P10",
-        "handicap": -4
+        level : 2,
+        value: "P10",
+        handicap: -4
     },
     "D9": {
-        "value": "D9", 
-        "handicap": -8
+        level : 3,
+        value: "D9", 
+        handicap: -8
     },
     "D8": {
-        "value": "D8",
-        "handicap": -10
+        level : 4,
+        value: "D8",
+        handicap: -10
     },
     "D7": {
-        "value": "D7",
-        "handicap": -12
+        level : 5,
+        value: "D7",
+        handicap: -12
     },
     "R6": {
-        "value": "R6", 
-        "handicap": -13
+        level : 6,
+        value: "R6", 
+        handicap: -13
     },
     "R5": {
-        "value": "R5",
-        "handicap": -14
+        level : 7,
+        value: "R5",
+        handicap: -14
     },
     "R4": {
-        "value": "R4",
-        "handicap": -15
+        level : 8,
+        value: "R4",
+        handicap: -15
     },
     "N3": {
-        "value": "N3", 
-        "handicap": -16
+        level : 9,
+        value: "N3", 
+        handicap: -16
     },
     "N2": {
-        "value": "N2",
-        "handicap": -17
+        level : 10,
+        value: "N2",
+        handicap: -17
     },
     "N1": {
-        "value": "N1",
-        "handicap": -18
+        level : 11,
+        value: "N1",
+        handicap: -18
     }
 }
 export var genreListe = {
     "HOMME": {
-        "value": "Homme",
-        "handicap": 0
+        value: "Homme",
+        handicap: 0
     },
     "FEMME": {
-        "value": "Femme",
-        "handicap": 2
+        value: "Femme",
+        handicap: 2
     }
 }

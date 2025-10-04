@@ -1,6 +1,5 @@
 import { LocalStorage } from './storage-service.js';
 import { Joueur } from './player.js'
-import { Tournoi } from './tournament.js'
 import { Match } from './match.js'
 import { MH } from './html-maker.js'
 import {
@@ -40,7 +39,7 @@ var pages = {
     "MODIFICATION_CONTRAINTES": "Contraintes",
     "EXECUTION_TOURNOI": "Execution",
 }
-var currentPage = storage.tournoi.currentTour == -1 ? pages.ACCUEIL : pages.EXECUTION_TOURNOI;
+var currentPage = pages.ACCUEIL;
 
 function selectPage(page) {
     if (page != undefined) currentPage = page;
@@ -193,9 +192,12 @@ function buildFooter() {
                 buttonLancerTournoi.innerHTML = "Nombre de joueurs insuffisant";
                 buttonLancerTournoi.classList.add("btn-secondary");
                 buttonLancerTournoi.setAttribute("disabled", true);
-            } else {
+            } else if (storage.tournoi.currentTour == -1){
                 buttonLancerTournoi.innerHTML = "Lancer le tournoi";
                 buttonLancerTournoi.classList.add("btn-success");
+            }else{
+                  buttonLancerTournoi.innerHTML = "Continuer le tournoi";
+                buttonLancerTournoi.classList.add("btn-primary");
             }
 
             footer.appendChild(buttonLancerTournoi);
@@ -354,7 +356,7 @@ function buildPreparation() {
 }
 
 function buildClassement() {
-    computeLeaderboard();
+     
     var listJoueursClassement = MH.makeDiv("listJoueursClassement");
     listJoueursClassement.appendChild(buildHeaderJoueurClassement());
     var divJoueursClassement = MH.makeDiv(null, "divJoueursClassement");
@@ -368,20 +370,20 @@ function buildClassement() {
     thead.appendChild(MH.makeTh("Sets perdus"));
     thead.appendChild(MH.makeTh("Niveau"));
     tableClassement.appendChild(thead);
-    var listJoueursSelected = storage.joueurs.filter(j => j.selected);
-    var listJoueurSort = listJoueursSelected.sort((a, b) => b.totalPointAverage - a.totalPointAverage);
-    var trJoueur;
-    for (var i = 0; i < listJoueurSort.length; i++) {
-        trJoueur = MH.makeElt("tr", null, "trJoueurClassement");
-        trJoueur.appendChild(MH.makeTd(i + 1, "classementJoueur"));
-        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].name, "nomJoueur"));
-        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalPointAverage, "playerData"));
-        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalWonMatches, "playerData"));
-        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalWonSet, "playerData"));
-        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalLostSet, "playerData"));
-        trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(listJoueurSort[i]).outerHTML));
+
+    const leaderboard = computeLeaderboard();
+    leaderboard.forEach((player, index) => {
+        const trJoueur = MH.makeElt("tr", null, "trJoueurClassement");
+        trJoueur.appendChild(MH.makeTd(index + 1, "classementJoueur"));
+        trJoueur.appendChild(MH.makeTd(player.name, "nomJoueur"));
+        trJoueur.appendChild(MH.makeTd(player.totalPointAverage, "playerData"));
+        trJoueur.appendChild(MH.makeTd(player.totalWonMatches, "playerData"));
+        trJoueur.appendChild(MH.makeTd(player.totalWonSet, "playerData"));
+        trJoueur.appendChild(MH.makeTd(player.totalLostSet, "playerData"));
+        trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(player).outerHTML));
         tableClassement.appendChild(trJoueur);
-    }
+    })
+    
     divJoueursClassement.appendChild(tableClassement);
     listJoueursClassement.appendChild(divJoueursClassement);
     return listJoueursClassement;
@@ -1680,6 +1682,17 @@ function computeLeaderboard() {
                 });
             })
         })
+    });
+
+
+    var selectedPlayers = storage.joueurs.filter(player => { return player.selected });
+    return selectedPlayers.sort((p1, p2) => {
+        if(p1.totalPointAverage != p2.totalPointAverage) return p2.totalPointAverage - p1.totalPointAverage;
+        if(p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
+        if(p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
+        if(p1.totalLostSet != p2.totalLostSet) return p1.totalLostSet - p2.totalLostSet;
+        if(p1.niveau != p2.niveau) return p1.niveau.level - p2.niveau.level;
+        return -1;
     });
 }
 

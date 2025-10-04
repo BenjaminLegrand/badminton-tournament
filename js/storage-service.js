@@ -39,7 +39,10 @@ export class LocalStorage {
     }
 
     export() {
-        var name = `tournament_${this.tournoi.name}_${new Intl.DateTimeFormat("en-US").format(this.tournoi.date)}`;
+        const year = this.tournoi.date.getFullYear();
+        const month = String(this.tournoi.date.getMonth() + 1).padStart(2, '0')
+        const day =  String(this.tournoi.date.getDate()).padStart(2, '0')
+        var name = `tournament_${this.tournoi.name}_${year}_${month}_${day}`;
         var type = "application/json";
         var anchor = document.createElement("a");
         anchor.href = window.URL.createObjectURL(new Blob([JSON.stringify(this.getDatas())], { type }));
