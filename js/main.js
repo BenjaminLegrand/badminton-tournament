@@ -996,15 +996,6 @@ function buildInterfaceHeaderAccueil() {
     exp.style = "margin:0px;";
     interfaces.push(exp);
 
-    var reset = MH.makeButton({
-        type: "click",
-        func: showModalReset.bind(this)
-    }/*, "reset"*/);
-    reset.innerHTML = "Reset";
-    reset.classList.add("btn-danger");
-    reset.style = "margin:0px;";
-    interfaces.push(reset);
-
     return MH.makeDropDown(listIcon.outerHTML, interfaces);
 }
 
@@ -1027,17 +1018,6 @@ function onKeyDown(evt) {
 function showModalDeleteJoueur() {
     $('#modalDeleteJoueur').modal('show');
 }
-function showModalReset() {
-    $('#modalReset').modal('show');
-}
-function reset() {
-    storage.joueurs = [];
-    storage.tournoi = new Tournoi();
-    storage.save();
-    $('#modalReset').modal('toggle');
-    selectPage(pages.ACCUEIL);
-}
-
 
 function lancerTournoi() {
     if(storage.tournoi.currentTour == -1){
@@ -1241,10 +1221,7 @@ function selectJoueur(div) {
     var input = div.querySelector("input[type=checkbox]");
     input.checked = !input.checked;
 }
-function selectGroupe(div) {
-    var input = div.querySelector("input[type=checkbox]");
-    input.checked = !input.checked;
-}
+
 function selectAll(input) {
     var list = input.parentElement.parentElement.querySelectorAll("input[type=checkbox]");
     var inputChecked = input.checked;
@@ -1360,6 +1337,14 @@ function refreshMatch(domMatch, matchIndex) {
         firstTeamThirdSet.classList.remove("set-loser");
         secondTeamThirdSet.classList.remove("set-winner");
         secondTeamThirdSet.classList.remove("set-loser");
+    }
+
+    if(isAtThirdSet(match)){
+        firstTeamThirdSet.classList.remove("gone")
+        secondTeamThirdSet.classList.remove("gone")
+    }else{
+        firstTeamThirdSet.classList.add("gone")
+        secondTeamThirdSet.classList.add("gone")
     }
 }
 
@@ -1717,6 +1702,12 @@ function isSetFinished(firstTeamScore, secondTeamScore) {
         (secondTeamScore == 30 && firstTeamScore == 29)
 }
 
+function isAtThirdSet(match){
+    const firstSetWinner  = getSetWinner(match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
+    const secondSetWinner  = getSetWinner(match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
+    return firstSetWinner != null && secondSetWinner != null && firstSetWinner != secondSetWinner
+}
+
 function getSetWinner(firstTeamScore, secondTeamScore) {
     const setFinished = isSetFinished(firstTeamScore, secondTeamScore)
 
@@ -1750,5 +1741,4 @@ function handleImport(evt) {
 
 
 window.finTournoi = finTournoi;
-window.reset = reset;
 window.deleteJoueur = deleteJoueur;

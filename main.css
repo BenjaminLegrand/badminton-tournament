@@ -487,6 +487,10 @@ span.numContrainte {
     justify-content: center;
 }
 
+.gone {
+    display:none;
+}
+
 .divMatch{
     display: flex;
     flex-direction: column;
