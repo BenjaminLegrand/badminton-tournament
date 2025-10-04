@@ -1038,6 +1038,7 @@ function validTour() {
         showModalMatchsNonTermine();
         return;
     }
+    storage.tournoi.tours[storage.tournoi.currentTour].done = true;
     if (storage.tournoi.currentTour < storage.tournoi.nbTour - 1) {
         storage.tournoi.currentTour++;
         storage.save();
@@ -1622,7 +1623,7 @@ function genereTournoi() {
             if (!flag) joueurAttente.push({ "name": sac[k].name, "nb": 1 });
         }
 
-        storage.tournoi.tours.push({ "matchs": matchs, "joueurAttente": sac });
+        storage.tournoi.tours.push({ done:false, matchs: matchs, joueurAttente: sac });
     }
 
 }
@@ -1635,7 +1636,7 @@ function computeLeaderboard() {
         player.totalWonSet = 0;
         player.totalLostSet = 0;
     })
-    storage.tournoi.tours.forEach(turn => {
+    storage.tournoi.tours.filter(turn => { return turn.done; }).forEach(turn => {
         turn.matchs.forEach(match => {
             const matchWinner = getMatchWinner(match)
             match.firstTeam.forEach(player => {
