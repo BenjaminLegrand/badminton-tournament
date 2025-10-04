@@ -192,11 +192,11 @@ function buildFooter() {
                 buttonLancerTournoi.innerHTML = "Nombre de joueurs insuffisant";
                 buttonLancerTournoi.classList.add("btn-secondary");
                 buttonLancerTournoi.setAttribute("disabled", true);
-            } else if (storage.tournoi.currentTour == -1){
+            } else if (storage.tournoi.currentTour == -1) {
                 buttonLancerTournoi.innerHTML = "Lancer le tournoi";
                 buttonLancerTournoi.classList.add("btn-success");
-            }else{
-                  buttonLancerTournoi.innerHTML = "Continuer le tournoi";
+            } else {
+                buttonLancerTournoi.innerHTML = "Continuer le tournoi";
                 buttonLancerTournoi.classList.add("btn-primary");
             }
 
@@ -356,7 +356,7 @@ function buildPreparation() {
 }
 
 function buildClassement() {
-     
+
     var listJoueursClassement = MH.makeDiv("listJoueursClassement");
     listJoueursClassement.appendChild(buildHeaderJoueurClassement());
     var divJoueursClassement = MH.makeDiv(null, "divJoueursClassement");
@@ -383,7 +383,7 @@ function buildClassement() {
         trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(player).outerHTML));
         tableClassement.appendChild(trJoueur);
     })
-    
+
     divJoueursClassement.appendChild(tableClassement);
     listJoueursClassement.appendChild(divJoueursClassement);
     return listJoueursClassement;
@@ -841,17 +841,10 @@ function buildJoueur(joueur, i) {
             joueurDom.appendChild(buildPropertyEditor("Niveau", "radio",
                 { name: "niveau", elements: elementsNiv }, ["playerLevel"]));
             for (var niv in niveauListe) {
-                var nive = joueurDom.querySelector("#" + niv).nextSibling;
-                nive.classList.add("badge");
-                if (niv[0] == "P") {
-                    nive.classList.add("badge-secondary");
-                } else if (niv[0] == "D") {
-                    nive.classList.add("badge-warning");
-                } else if (niv[0] == "R") {
-                    nive.classList.add("badge-danger");
-                } else if (niv[0] == "N") {
-                    nive.classList.add("badge-dark");
-                }
+                var levelBadge = joueurDom.querySelector("#" + niv).nextSibling;
+                levelBadge.classList.add("badge");
+                levelBadge.style.backgroundColor = niveauListe[niv].color;
+                levelBadge.style.color = niveauListe[niv].textColor;
             }
             break;
     }
@@ -859,18 +852,11 @@ function buildJoueur(joueur, i) {
 }
 
 function buildBadgeNiveau(joueur) {
-    var niveau = MH.makeSpan(joueur.niveau.value);
-    niveau.classList.add("badge");
-    if (joueur.niveau.value[0] == "P") {
-        niveau.classList.add("badge-secondary");
-    } else if (joueur.niveau.value[0] == "D") {
-        niveau.classList.add("badge-warning");
-    } else if (joueur.niveau.value[0] == "R") {
-        niveau.classList.add("badge-danger");
-    } else if (joueur.niveau.value[0] == "N") {
-        niveau.classList.add("badge-dark");
-    }
-    return niveau;
+    var levelBadge = MH.makeSpan(joueur.niveau.value);
+    levelBadge.classList.add("badge");
+    levelBadge.style.backgroundColor = joueur.niveau.color;
+    levelBadge.style.color = joueur.niveau.textColor;
+    return levelBadge;
 }
 
 function buildPropertyViewer(pKey, pValue) {
@@ -1687,11 +1673,11 @@ function computeLeaderboard() {
 
     var selectedPlayers = storage.joueurs.filter(player => { return player.selected });
     return selectedPlayers.sort((p1, p2) => {
-        if(p1.totalPointAverage != p2.totalPointAverage) return p2.totalPointAverage - p1.totalPointAverage;
-        if(p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
-        if(p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
-        if(p1.totalLostSet != p2.totalLostSet) return p1.totalLostSet - p2.totalLostSet;
-        if(p1.niveau != p2.niveau) return p1.niveau.level - p2.niveau.level;
+        if (p1.totalPointAverage != p2.totalPointAverage) return p2.totalPointAverage - p1.totalPointAverage;
+        if (p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
+        if (p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
+        if (p1.totalLostSet != p2.totalLostSet) return p1.totalLostSet - p2.totalLostSet;
+        if (p1.niveau != p2.niveau) return p1.niveau.level - p2.niveau.level;
         return -1;
     });
 }

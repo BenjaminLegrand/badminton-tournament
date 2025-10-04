@@ -49,66 +49,92 @@ export var contrainteListe = [
 export var niveauListe = {
     "NC": {
         level : 0,
+        color : "#525353",
+        textColor : "white",
         value: "NC", 
         handicap: 0
     },
     "P12": {
         level : 1,
+        color : "#f8e71c",
+        textColor : "black",
         value: "P12", 
         handicap: 0
     },
     "P11": {
         level : 2,
+        color : "#f8e71c",
+        textColor : "black",
         value: "P11",
         handicap: 0
     },
     "P10": {
         level : 3,
+        color : "#f8e71c",
+        textColor : "black",
         value: "P10",
         handicap: -3
     },
     "D9": {
         level : 4,
+        color : "#7ed321",
+        textColor : "black",
         value: "D9", 
         handicap: -5
     },
     "D8": {
         level : 5,
+        color : "#7ed321",
+        textColor : "black",
         value: "D8",
         handicap: -10
     },
     "D7": {
         level : 6,
+        color : "#7ed321",
+        textColor : "black",
         value: "D7",
         handicap: -14
     },
     "R6": {
         level : 7,
+        color : "#4a90e2",
+        textColor : "white",
         value: "R6", 
         handicap: -14
     },
     "R5": {
         level : 8,
+        color : "#4a90e2",
+        textColor : "white",
         value: "R5",
         handicap: -18
     },
     "R4": {
         level : 9,
+        color : "#4a90e2",
+        textColor : "white",
         value: "R4",
         handicap: -18
     },
     "N3": {
         level : 10,
+        color : "#f80220",
+        textColor : "white",
         value: "N3", 
         handicap: -21
     },
     "N2": {
         level : 11,
+        color : "#f80220",
+        textColor : "white",
         value: "N2",
         handicap: -21
     },
     "N1": {
         level : 12,
+        color : "#f80220",
+        textColor : "white",
         value: "N1",
         handicap: -21
     }
