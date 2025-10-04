@@ -268,6 +268,10 @@ div.propertyRow{
     flex-direction: column;
 }
 
+.playerLevel {
+    flex-direction: row;
+}
+
 button.bouton{
     margin: 5px;
 }

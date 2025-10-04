@@ -23,6 +23,7 @@ function preventZoom(e) {
 
 var DB_NAME = "tournoiBad";
 var storage = new LocalStorage(DB_NAME);
+var currentEditionId = -1;
 
 window.addEventListener("dblclick", function (evt) { evt.preventDefault(); });
 
@@ -390,25 +391,25 @@ function buildHandicaps() {
 
     var divHandicap;
 
-    for (var gen in storage.tournoi.genreListe) {
+    for (var gen in genreListe) {
         divHandicap = MH.makeDiv(null, "handicapGenre");
-        divHandicap.appendChild(MH.makeSpan(storage.tournoi.genreListe[gen].value));
+        divHandicap.appendChild(MH.makeSpan(genreListe[gen].value));
         divHandicap.appendChild(buildPropertyEditor(undefined, "numberSpinner", {
             "min": -20,
             "max": 20,
-            "value": storage.tournoi.genreListe[gen].handicap,
+            "value": genreListe[gen].handicap,
             "id": gen
         }));
         all.appendChild(divHandicap);
     }
 
-    for (var niv in storage.tournoi.niveauListe) {
+    for (var niv in niveauListe) {
         divHandicap = MH.makeDiv(null, "handicapNiveau");
-        divHandicap.appendChild(MH.makeSpan(storage.tournoi.niveauListe[niv].value));
+        divHandicap.appendChild(MH.makeSpan(niveauListe[niv].value));
         divHandicap.appendChild(buildPropertyEditor(undefined, "numberSpinner", {
             "min": -20,
             "max": 20,
-            "value": storage.tournoi.niveauListe[niv].handicap,
+            "value": niveauListe[niv].handicap,
             "id": niv
         }));
         all.appendChild(divHandicap);
@@ -707,7 +708,7 @@ function buildListJoueur() {
                         if (storage.joueurs[i].selected) {
                             divJoueur = buildJoueur(storage.joueurs[i], i);
                             divJoueur.classList.add("accueil");
-                            divJoueur.classList.add(storage.joueurs[i].genre.value == storage.tournoi.genreListe.HOMME.value ? "homme" : "femme");
+                            divJoueur.classList.add(storage.joueurs[i].genre.value == genreListe.HOMME.value ? "homme" : "femme");
                             divJoueurs.appendChild(divJoueur);
                             flag = true;
                         }
@@ -717,7 +718,7 @@ function buildListJoueur() {
                         var newId = MH.getNewId();
                         var divJoueurSelection = MH.makeDiv(newId, "joueurSelection");
                         divJoueur = buildJoueur(storage.joueurs[i], i);
-                        divJoueurSelection.classList.add(storage.joueurs[i].genre.value == storage.tournoi.genreListe.HOMME.value ? "homme" : "femme");
+                        divJoueurSelection.classList.add(storage.joueurs[i].genre.value == genreListe.HOMME.value ? "homme" : "femme");
                         divJoueurSelection.appendChild(divJoueur);
                         divJoueurSelection.appendChild(MH.makeButton({
                             type: "click",
@@ -745,7 +746,7 @@ function buildJoueur(joueur, i) {
     if (i == -1) {
         joueurDom.classList.add("homme");
     } else {
-        joueurDom.classList.add(joueur.genre.value == storage.tournoi.genreListe.HOMME.value ? "homme" : "femme");
+        joueurDom.classList.add(joueur.genre.value == genreListe.HOMME.value ? "homme" : "femme");
     }
     switch (currentPage) {
         case pages.SELECTION_JOUEUR:
@@ -766,8 +767,8 @@ function buildJoueur(joueur, i) {
         case pages.MODIFICATION_JOUEUR:
             joueurDom.appendChild(buildPropertyEditor("Nom", "text", { "id": "nomJoueur", value: joueur.name }));
             var elementsGenre = [];
-            for (var gen in storage.tournoi.genreListe) {
-                elementsGenre.push({ "id": gen, "name": "genre", "value": storage.tournoi.genreListe[gen].value, "checked": joueur.genre.value === storage.tournoi.genreListe[gen].value })
+            for (var gen in genreListe) {
+                elementsGenre.push({ "id": gen, "name": "genre", "value": genreListe[gen].value, "checked": joueur.genre.value === genreListe[gen].value })
             }
 
             joueurDom.appendChild(buildPropertyEditor("Genre", "radio",
@@ -775,12 +776,12 @@ function buildJoueur(joueur, i) {
             MH.addNewEvent("HOMME", "change", changeGenre.bind(this));
             MH.addNewEvent("FEMME", "change", changeGenre.bind(this));
             var elementsNiv = [];
-            for (var niv in storage.tournoi.niveauListe) {
-                elementsNiv.push({ "id": niv, "name": "niveau", "value": storage.tournoi.niveauListe[niv].value, "checked": joueur.niveau.value === storage.tournoi.niveauListe[niv].value })
+            for (var niv in niveauListe) {
+                elementsNiv.push({ "id": niv, "name": "niveau", "value": niveauListe[niv].value, "checked": joueur.niveau.value === niveauListe[niv].value })
             }
             joueurDom.appendChild(buildPropertyEditor("Niveau", "radio",
-                { name: "niveau", elements: elementsNiv }));
-            for (var niv in storage.tournoi.niveauListe) {
+                { name: "niveau", elements: elementsNiv }, ["playerLevel"]));
+            for (var niv in niveauListe) {
                 var nive = joueurDom.querySelector("#" + niv).nextSibling;
                 nive.classList.add("badge");
                 if (niv[0] == "P") {
@@ -824,7 +825,7 @@ function buildPropertyViewer(pKey, pValue) {
     return property;
 }
 
-function buildPropertyEditor(pKey, type, attributes) {
+function buildPropertyEditor(pKey, type, attributes, classes = []) {
     var property = MH.makeDiv(null, "property");
     if (type == "checkbox") property.classList.add("propertyRow");
     var key = MH.makeLabel(pKey);
@@ -832,6 +833,7 @@ function buildPropertyEditor(pKey, type, attributes) {
     key.setAttribute("for", attributes["id"]);
     var value = buildEditor(type, attributes);
     value.classList.add("propertyValue");
+    classes.forEach(elt => {value.classList.add(elt); })
     if (attributes["column-reverse"] == true) {
         key.classList.add("columnReverse");
         property.appendChild(value);
@@ -1080,15 +1082,15 @@ function validModificationJoueur() {
     if (currentEditionId == -1) {
         ok = storage.addJoueur(new Joueur(
             nomJoueur,
-            storage.tournoi.genreListe[document.body.querySelector("div.radiogenre input:checked").id],
-            storage.tournoi.niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
+            genreListe[document.body.querySelector("div.radiogenre input:checked").id],
+            niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
             false
         ));
     } else {
         ok = storage.updateJoueur(currentEditionId, {
             "name": nomJoueur,
-            "niveau": storage.tournoi.niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
-            "genre": storage.tournoi.genreListe[document.body.querySelector("div.radiogenre input:checked").id],
+            "niveau": niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
+            "genre": genreListe[document.body.querySelector("div.radiogenre input:checked").id],
         });
     }
     if (ok) selectPage(pages.SELECTION_JOUEUR);
@@ -1601,11 +1603,11 @@ function testContraintes(match) {
                 var nbHommeEquipeA = 0;
                 var nbHommeEquipeB = 0;
                 for (var k = 0; k < match["equipeA"].length; k++) {
-                    if (match["equipeA"][k].genre.value == storage.tournoi.genreListe.HOMME.value)
+                    if (match["equipeA"][k].genre.value == genreListe.HOMME.value)
                         nbHommeEquipeA++;
                 }
                 for (var k = 0; k < match["equipeB"].length; k++) {
-                    if (match["equipeB"][k].genre.value == storage.tournoi.genreListe.HOMME.value)
+                    if (match["equipeB"][k].genre.value == genreListe.HOMME.value)
                         nbHommeEquipeB++;
                 }
                 if (nbHommeEquipeA != nbHommeEquipeB) {
