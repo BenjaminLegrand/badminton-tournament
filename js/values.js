@@ -47,65 +47,70 @@ export var contrainteListe = [
     }
 ]
 export var niveauListe = {
-    "P12": {
+    "NC": {
         level : 0,
+        value: "NC", 
+        handicap: 0
+    },
+    "P12": {
+        level : 1,
         value: "P12", 
         handicap: 0
     },
     "P11": {
-        level : 1,
+        level : 2,
         value: "P11",
-        handicap: -2
+        handicap: 0
     },
     "P10": {
-        level : 2,
+        level : 3,
         value: "P10",
-        handicap: -4
+        handicap: -3
     },
     "D9": {
-        level : 3,
+        level : 4,
         value: "D9", 
-        handicap: -8
+        handicap: -5
     },
     "D8": {
-        level : 4,
+        level : 5,
         value: "D8",
         handicap: -10
     },
     "D7": {
-        level : 5,
-        value: "D7",
-        handicap: -12
-    },
-    "R6": {
         level : 6,
-        value: "R6", 
-        handicap: -13
-    },
-    "R5": {
-        level : 7,
-        value: "R5",
+        value: "D7",
         handicap: -14
     },
-    "R4": {
+    "R6": {
+        level : 7,
+        value: "R6", 
+        handicap: -14
+    },
+    "R5": {
         level : 8,
+        value: "R5",
+        handicap: -18
+    },
+    "R4": {
+        level : 9,
         value: "R4",
-        handicap: -15
+        handicap: -18
     },
     "N3": {
-        level : 9,
+        level : 10,
         value: "N3", 
-        handicap: -16
+        handicap: -21
     },
     "N2": {
-        level : 10,
+        level : 11,
         value: "N2",
-        handicap: -17
+        handicap: -21
     },
     "N1": {
-        level : 11,
+        level : 12,
         value: "N1",
-        handicap: -18
+        handicap: -21
     }
 }
 export var genreListe = {

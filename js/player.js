@@ -5,7 +5,7 @@ export class Joueur{
     constructor(pName, pGenre, pNiveau, pSelected){
         this.name = pName ?? "";
         this.genre = pGenre != undefined ? pGenre : genreListe.HOMME;
-        this.niveau = pNiveau != undefined ? pNiveau : niveauListe.P12;
+        this.niveau = pNiveau != undefined ? pNiveau : niveauListe.NC;
         this.selected = pSelected != undefined ? pSelected : false;
         this.adversaires = [];
         this.coequipiers = [];
