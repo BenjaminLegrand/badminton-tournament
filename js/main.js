@@ -65,7 +65,7 @@ function buildPage() {
 }
 
 function buildHeader() {
-    var header = MH.makeDiv("header", "container");
+    var header = MH.makeDiv("header");
     switch (currentPage) {
         case pages.ACCUEIL:
             header.appendChild(MH.makeSpan("Générateur de tournoi", "headerTitle"));
@@ -140,7 +140,7 @@ function buildHeader() {
 }
 var currentIndexMatch;
 function buildBody() {
-    var body = MH.makeDiv("body", "container");
+    var body = MH.makeDiv("body");
     switch (currentPage) {
         case pages.ACCUEIL:
             body.appendChild(buildListJoueur());
@@ -176,7 +176,7 @@ function buildBody() {
 }
 
 function buildFooter() {
-    var footer = MH.makeDiv("footer", "container");
+    var footer = MH.makeDiv("footer");
     switch (currentPage) {
         case pages.ACCUEIL:
             var buttonLancerTournoi = MH.makeButton({
@@ -264,7 +264,7 @@ function buildFooter() {
 }
 
 function buildHeaderPreparation() {
-    var header = MH.makeDiv("headerPreparation", "container");
+    var header = MH.makeDiv("headerPreparation");
     switch (currentPage) {
         case pages.ACCUEIL:
             header.appendChild(MH.makeSpan("Préparation"));
@@ -381,12 +381,11 @@ function buildClassement() {
 
 function buildHandicaps() {
 
-    var all = MH.makeDiv(null, "container handicaps");
+    var all = MH.makeDiv(null, "handicaps");
 
     var scoreNeg = buildPropertyEditor("Début de match avec un score négatif ?", "checkbox",
         { id: "departMatchNegatif", value: storage.tournoi.departMatchNegatif });
     scoreNeg.setAttribute("id", "divMatchNegatif");
-    scoreNeg.classList.add("container");
     all.appendChild(scoreNeg);
 
     var divHandicap;
@@ -419,7 +418,7 @@ function buildHandicaps() {
 }
 
 function buildHeaderTour(i) {
-    var header = MH.makeDiv("headerTour" + i, "headerTour container sticky-top");
+    var header = MH.makeDiv("headerTour" + i, "headerTour sticky-top");
     var ssTitle = MH.makeDiv(null, "divSsTitle");
     var ss1 = MH.makeSpan("Tour " + (i + 1), "ssTitle");
     ssTitle.appendChild(ss1);
@@ -571,7 +570,7 @@ function buildMatch(match, j) {
 }
 
 function buildHeaderJoueur() {
-    var header = MH.makeDiv("headerJoueur", "container sticky-top");
+    var header = MH.makeDiv("headerJoueur", "sticky-top");
     switch (currentPage) {
         case pages.ACCUEIL:
             var ssTitle = MH.makeDiv(null, "divSsTitle");
@@ -593,7 +592,7 @@ function buildHeaderJoueur() {
 }
 
 function buildHeaderJoueurClassement() {
-    var header = MH.makeDiv("headerJoueurClassement", "container sticky-top");
+    var header = MH.makeDiv("headerJoueurClassement", "sticky-top");
     var ssTitle = MH.makeDiv(null, "divSsTitle");
     var ss1 = MH.makeSpan("Classement", "ssTitle");
     var ss2 = MH.makeSpan("Tournoi du " + storage.tournoi.date.toLocaleDateString() + " à " + storage.tournoi.date.toLocaleTimeString(), "nbSsTitle");
@@ -604,7 +603,7 @@ function buildHeaderJoueurClassement() {
 }
 
 function buildHeaderContrainte() {
-    var header = MH.makeDiv("headerContrainte", "container sticky-top");
+    var header = MH.makeDiv("headerContrainte", "sticky-top");
     switch (currentPage) {
         case pages.MODIFICATION_PREPARATION:
             var ssTitle = MH.makeDiv(null, "divSsTitle");
