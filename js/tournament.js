@@ -45,8 +45,7 @@ export class Tournoi{
                     currentJoueur = new Joueur(
                         currentMatch["equipeA"][k]["name"], 
                         currentMatch["equipeA"][k]["genre"], 
-                        currentMatch["equipeA"][k]["niveau"], 
-                        currentMatch["equipeA"][k]["points"])
+                        currentMatch["equipeA"][k]["niveau"])
                     equipeA.push(currentJoueur);
                 }
                 equipeB = [];
@@ -54,8 +53,7 @@ export class Tournoi{
                     currentJoueur = new Joueur(
                         currentMatch["equipeB"][k]["name"], 
                         currentMatch["equipeB"][k]["genre"], 
-                        currentMatch["equipeB"][k]["niveau"], 
-                        currentMatch["equipeB"][k]["points"])
+                        currentMatch["equipeB"][k]["niveau"])
                     equipeB.push(currentJoueur);
                 }
                 matchs.push({"equipeA": equipeA, "equipeB": equipeB, "ptsEquipeA": currentMatch["ptsEquipeA"], "ptsEquipeB": currentMatch["ptsEquipeB"], "ptsEquipeADepart": currentMatch["ptsEquipeADepart"], "ptsEquipeBDepart": currentMatch["ptsEquipeBDepart"]  })
@@ -65,8 +63,7 @@ export class Tournoi{
                 joueurAttente.push(new Joueur(
                     this.tours[i]["joueurAttente"][j]["name"], 
                     this.tours[i]["joueurAttente"][j]["genre"], 
-                    this.tours[i]["joueurAttente"][j]["niveau"], 
-                    this.tours[i]["joueurAttente"][j]["points"]
+                    this.tours[i]["joueurAttente"][j]["niveau"]
                 ));
             }
             tours.push({"matchs": matchs, "joueurAttente": joueurAttente})

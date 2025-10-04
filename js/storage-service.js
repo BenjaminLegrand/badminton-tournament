@@ -90,8 +90,7 @@ export class LocalStorage{
                 datas["joueurs"][i].name,
                 datas["joueurs"][i].genre,
                 datas["joueurs"][i].niveau,
-                datas["joueurs"][i].selected,
-                datas["joueurs"][i].points
+                datas["joueurs"][i].selected
                 ));
         }
         this.tournoi = new Tournoi(

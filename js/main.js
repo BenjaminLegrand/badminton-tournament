@@ -26,57 +26,6 @@ var storage = new LocalStorage(DB_NAME);
 
 window.addEventListener("dblclick", function (evt) { evt.preventDefault(); });
 
-//Listes
-
-
-var groupeJoueurs = {
-    "Badlevier": [
-        new Joueur("John", genreListe.HOMME, niveauListe.D9, 0),
-        new Joueur("Carole", genreListe.FEMME, niveauListe.P10, 0),
-        new Joueur("Olivier", genreListe.HOMME, niveauListe.D9, 0),
-        new Joueur("Christophe", genreListe.HOMME, niveauListe.D9, 0),
-        new Joueur("Norbert", genreListe.HOMME, niveauListe.P10, 0),
-        new Joueur("Marc", genreListe.HOMME, niveauListe.P10, 0),
-        new Joueur("Aurélien", genreListe.HOMME, niveauListe.D9, 0),
-        new Joueur("Gaby", genreListe.HOMME, niveauListe.P11, 0),
-        new Joueur("Marie", genreListe.FEMME, niveauListe.P10, 0),
-        new Joueur("Ludivine", genreListe.FEMME, niveauListe.P10, 0),
-    ],
-    "Knowllence": [
-        new Joueur("John", genreListe.HOMME, niveauListe.D9, 0),
-        new Joueur("Olga", genreListe.FEMME, niveauListe.D7, 0),
-        new Joueur("Alexandre", genreListe.HOMME, niveauListe.D9, 0),
-        new Joueur("Christine", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Christophe", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Corinne", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Dominique", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Manu B.", genreListe.HOMME, niveauListe.P10, 0),
-        new Joueur("Manu D.", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Fabien", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Isabelle", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Jean-Denys", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Jorge", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Laetitia", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Laurent", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Lydie", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Marie", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Mehmet", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Michael", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Mireille", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Mohamed", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Oksana", genreListe.FEMME, niveauListe.D9, 0),
-        new Joueur("Olivier", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Samir", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Sandrine", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Sara", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Sebastien", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Stephanie", genreListe.FEMME, niveauListe.P12, 0),
-        new Joueur("Thierry", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Thomas", genreListe.HOMME, niveauListe.P12, 0),
-        new Joueur("Yassine", genreListe.HOMME, niveauListe.P12, 0),
-    ]
-}
-
 //Pages
 var pages = {
     "ACCUEIL": "Accueil",
@@ -118,13 +67,6 @@ function buildHeader() {
     var header = MH.makeDiv("header", "container");
     switch (currentPage) {
         case pages.ACCUEIL:
-            var newId = MH.getNewId();
-            var buttonCredit = MH.makeIcon("logoLigue", true, "jpg");
-            buttonCredit.setAttribute("id", newId);
-            buttonCredit.classList.add("logoLigue");
-            buttonCredit.setAttribute("width", "");
-            buttonCredit.setAttribute("height", "50");
-            header.appendChild(buttonCredit);
             header.appendChild(MH.makeSpan("Générateur de tournoi", "headerTitle"));
             header.appendChild(buildInterfaceHeaderAccueil());
             break;
@@ -411,17 +353,23 @@ function buildClassement() {
     var thead = MH.makeElt("thead", "theadClassement");
     thead.appendChild(MH.makeTh("Classement"));
     thead.appendChild(MH.makeTh("Joueur"));
-    thead.appendChild(MH.makeTh("Score"));
+    thead.appendChild(MH.makeTh("Point Average"));
+    thead.appendChild(MH.makeTh("Matchs gagnés"));
+    thead.appendChild(MH.makeTh("Sets gagnés"));
+    thead.appendChild(MH.makeTh("Sets perdus"));
     thead.appendChild(MH.makeTh("Niveau"));
     tableClassement.appendChild(thead);
     var listJoueursSelected = storage.joueurs.filter(j => j.selected);
-    var listJoueurSort = listJoueursSelected.sort((a, b) => b.points - a.points);
+    var listJoueurSort = listJoueursSelected.sort((a, b) => b.totalPointAverage - a.totalPointAverage);
     var trJoueur;
     for (var i = 0; i < listJoueurSort.length; i++) {
         trJoueur = MH.makeElt("tr", null, "trJoueurClassement");
         trJoueur.appendChild(MH.makeTd(i + 1, "classementJoueur"));
         trJoueur.appendChild(MH.makeTd(listJoueurSort[i].name, "nomJoueur"));
-        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].points, "pointsJoueur"));
+        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalPointAverage, "playerData"));
+        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalWonMatches, "playerData"));
+        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalWonSet, "playerData"));
+        trJoueur.appendChild(MH.makeTd(listJoueurSort[i].totalLostSet, "playerData"));
         trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(listJoueurSort[i]).outerHTML));
         tableClassement.appendChild(trJoueur);
     }
@@ -1134,8 +1082,8 @@ function validModificationJoueur() {
             nomJoueur,
             storage.tournoi.genreListe[document.body.querySelector("div.radiogenre input:checked").id],
             storage.tournoi.niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
-            false,
-            0));
+            false
+        ));
     } else {
         ok = storage.updateJoueur(currentEditionId, {
             "name": nomJoueur,
@@ -1733,7 +1681,6 @@ function genereTournoi() {
     for (var i = 0; i < storage.joueurs.length; i++) {
         storage.joueurs[i].adversaires = [];
         storage.joueurs[i].coequipiers = [];
-        storage.joueurs[i].points = 0;
     }
 
     var nbMatch;
@@ -1835,65 +1782,38 @@ function genereTournoi() {
 
 function computeLeaderboard() {
     storage.joueurs.forEach(player => {
-        player.points = 0;
+        player.totalPointAverage = 0;
+        player.totalWonMatches = 0;
+        player.totalWonSet = 0;
+        player.totalLostSet = 0;
     })
     storage.tournoi.tours.forEach(turn => {
         turn.matchs.forEach(match => {
             let firstTeamScore = match.ptsEquipeA;
             let secondTeamScore = match.ptsEquipeB;
-
             match.equipeA.forEach(player => {
-                getTournamentPlayerByName(player.name).points += 1;
+                let tournamentPlayer = getTournamentPlayerByName(player.name)
+                tournamentPlayer.totalPointAverage += (firstTeamScore - secondTeamScore);
+                // TODO walk through each set
+                if(firstTeamScore > secondTeamScore){
+                    tournamentPlayer.totalWonMatches += 1; 
+            // totalWonSet
+            // totalLostSet
+                }
             })
 
             match.equipeB.forEach(player => {
-                getTournamentPlayerByName(player.name).points += 1;
+                let tournamentPlayer = getTournamentPlayerByName(player.name)
+                tournamentPlayer.totalPointAverage += (secondTeamScore - firstTeamScore);
+                // TODO walk through each set
+                 if(secondTeamScore > firstTeamScore){
+                    tournamentPlayer.totalWonMatches += 1; 
+            // totalWonSet
+            // totalLostSet
+                }
             })
         })
     });
-    // for (var i = 0; i < storage.tournoi.tours.length; i++){
-    //     // Check all matches in a turn
-    //     for (var j = 0; j < storage.tournoi.tours[i].matchs.length; j++){
-    //         // First team score for the match
-    //         scoreEquipeA = storage.tournoi.tours[i].matchs[j].ptsEquipeA;
-    //         // Second team score for the match
-    //         scoreEquipeB = storage.tournoi.tours[i].matchs[j].ptsEquipeB;
-
-    //         // Draw between the two teams
-    //         egalite = scoreEquipeA == scoreEquipeB;
-
-    //         // First team wins by more than 2 points
-    //         equipeAGagne = scoreEquipeA > scoreEquipeB && (scoreEquipeA - scoreEquipeB > 2);
-
-    //         // First team wins by less than or equal 2 points
-    //         equipeAGagneMoins = scoreEquipeA > scoreEquipeB && (scoreEquipeA - scoreEquipeB <= 2);
-
-    //         // Second team wins by less than or equal 2 points
-    //         equipeBGagneMoins = scoreEquipeB > scoreEquipeA && (scoreEquipeB - scoreEquipeA <= 2);
-
-    //         // For each player of the first team, add points to its total
-    //         for (var k = 0; k < storage.tournoi.tours[i].matchs[j].equipeA.length; k++){
-    //             // Draw : +4
-    //             // Team wins by more than 2 points : +5
-    //             // Team wins by less than or equal 2 points : +3
-    //             // Team loses by less or equal 2 points : +2
-    //             // Team loses by more than 2 points : +1
-    //             storage.tournoi.tours[i].matchs[j].equipeA[k].points += 
-    //             egalite ? 4 : (equipeAGagne ? 5 : (equipeAGagneMoins ? 3 : (equipeBGagneMoins ? 2 : 1)));
-    //         }
-
-    //         // For each player of the second team, add points to its total
-    //         for (var m = 0; m < storage.tournoi.tours[i].matchs[j].equipeB.length; m++){
-    //             // Draw : +4
-    //             // Team loses by more than 2 points : +1
-    //             // Team loses by less or equal 2 points : +2
-    //             // Team wins by less than or equal 2 points : +3
-    //             // Team wins by more than 2 points : +5
-    //             storage.tournoi.tours[i].matchs[j].equipeB[m].points += 
-    //             egalite ? 4 : (equipeAGagne ? 1 : (equipeAGagneMoins ? 2 : (equipeBGagneMoins ? 3 : 5)));
-    //         }
-    //     }
-    // }
 }
 
 function getTournamentPlayerByName(name) {
