@@ -1,8 +1,11 @@
+
+import { niveauListe, genreListe } from './values.js'
+
 export class Joueur{
     constructor(pName, pGenre, pNiveau, pSelected, pPoints){
-        this.name = pName == undefined ? "Nouveau joueur " + (storage.joueurs.length + 1) : pName;
-        this.genre = pGenre != undefined ? pGenre : storage.tournoi.genreListe.HOMME;
-        this.niveau = pNiveau != undefined ? pNiveau : storage.tournoi.niveauListe.P12;
+        this.name = pName == undefined ? "Nouveau joueur" : pName;
+        this.genre = pGenre != undefined ? pGenre : genreListe.HOMME;
+        this.niveau = pNiveau != undefined ? pNiveau : niveauListe.P12;
         this.selected = pSelected != undefined ? pSelected : false;
         this.adversaires = [];
         this.coequipiers = [];

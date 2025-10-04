@@ -236,7 +236,6 @@ function buildFooter() {
     var footer = MH.makeDiv("footer", "container");
     switch (currentPage) {
         case pages.ACCUEIL:
-            footer.appendChild(div);
             var buttonLancerTournoi = MH.makeButton({
                 type: "click",
                 func: preLancerTournoi.bind(this)
@@ -1062,6 +1061,7 @@ function finTournoi() {
     $('#modalFinTournoi').modal('hide');
     selectPage(pages.ACCUEIL);
 }
+
 function validTour() {
     var matchsNonTermine = false;
     for (var i = 0; i < storage.tournoi.tours[storage.tournoi.currentTour].matchs.length; i++) {
@@ -1726,8 +1726,6 @@ function testContraintes(match) {
 // E  x  x  x  x  x   
 
 function genereTournoi() {
-
-    selecteurMatch = -1;
     storage.tournoi.tours = [];
     joueurAttente = [];
 
@@ -1901,3 +1899,9 @@ function computeLeaderboard() {
 function getTournamentPlayerByName(name) {
     return storage.joueurs.find(player => { return player.name == name; });
 }
+
+
+window.finTournoi = finTournoi;
+window.reset = reset;
+window.deleteJoueur = deleteJoueur;
+window.lancerTournoi = lancerTournoi;

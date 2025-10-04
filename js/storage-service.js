@@ -1,5 +1,9 @@
 import { Joueur } from './player.js'
 import { Tournoi } from './tournament.js'
+import {
+    typeTournoiListe,
+} from './values.js'
+
 
 export class LocalStorage{
     constructor(dbName){

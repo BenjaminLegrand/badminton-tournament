@@ -1,5 +1,6 @@
 
 import { typeTournoiListe, modeTournoiListe, niveauListe, genreListe, contrainteListe } from './values.js'
+import { Joueur } from './player.js'
 
 export class Tournoi{
     constructor(pTypeTournoi, pModeTournoi, pNbTour, pNbTerrain, pDepartMatchNegatif, pNiveauListe, pGenreListe, pContraintes, pTours, pCurrentTour, pLimitPoint, pDate, pNbPoint){
