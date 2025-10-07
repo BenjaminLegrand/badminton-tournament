@@ -1342,9 +1342,16 @@ function refreshMatch(domMatch, matchIndex) {
     }
 
     if (isAtThirdSet(match)) {
+        if(firstTeamThirdSet.classList.contains("gone")){
+            // Third set appearing - Update scores with startScores
+            storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, match.firstTeamStartScore);
+            storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, match.secondTeamStartScore);
+        }
         firstTeamThirdSet.classList.remove("gone")
         secondTeamThirdSet.classList.remove("gone")
     } else {
+        match.scores[2].SET_SCORE_FIRST_TEAM_KEY = 0
+        match.scores[2].SET_SCORE_SECOND_TEAM_KEY = 0
         firstTeamThirdSet.classList.add("gone")
         secondTeamThirdSet.classList.add("gone")
     }
