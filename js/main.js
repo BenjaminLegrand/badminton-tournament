@@ -1361,7 +1361,7 @@ function refreshMatch(domMatch, matchIndex) {
 //***** MAKER HTML */
 
 /********GENERATION DU TOURNOI */
-var sac, allMatchs, playedMatches, joueurAttente;
+var sac, playedMatches;
 function alea(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -1493,7 +1493,7 @@ function sameTeams(teamA, teamB) {
     return JSON.stringify(teamANames) === JSON.stringify(teamBNames);
 }
 
-function testContraintes(match) {
+function testContraintes(match, waitingPlayers) {
     var facteur = 1;
     storage.tournoi.contraintes.forEach(constraint => {
         if (constraint.actif && !constraint.disabled) {
@@ -1546,13 +1546,15 @@ function testContraintes(match) {
                 });
             } else if (constraint.name == "ATTENTE") {
                 match.firstTeam.forEach(player => {
-                    if (joueurAttente.find(waitingPlayer => waitingPlayer.name == player.name)) {
-                        match.pointContrainte -= (facteur * joueurAttente[0]["nb"]);
+                    const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
+                    if (waitingPlayer != null) {
+                        match.pointContrainte -= (facteur * waitingPlayer.count);
                     }
                 });
                 match.secondTeam.forEach(player => {
-                    if (joueurAttente.find(waitingPlayer => waitingPlayer.name == player.name)) {
-                        match.pointContrainte -= (facteur * joueurAttente[0]["nb"]);
+                    const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
+                    if (waitingPlayer != null) {
+                        match.pointContrainte -= (facteur * waitingPlayer.count);
                     }
                 });
             }
@@ -1569,8 +1571,9 @@ function testContraintes(match) {
 
 function genereTournoi() {
     storage.tournoi.tours = [];
-    joueurAttente = [];
     playedMatches = [];
+
+    const waitingPlayers = [];
 
     //init
     for (var i = 0; i < storage.joueurs.length; i++) {
@@ -1580,29 +1583,31 @@ function genereTournoi() {
 
     var nbMatch;
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
+        const selectedMatches = [];
+
         mettreJoueursDansSac();
-        allMatchs = populateAllMatchs();
+        var turnMatches = populateAllMatchs();
 
         //nombre de mathc par tour
         nbMatch = Math.min(
             Math.floor(sac.length / (typeTournoiListe.SIMPLE ? 2 : 4)),
-            allMatchs.length,
+            turnMatches.length,
             storage.tournoi.nbTerrain
         );
 
         //on teste tous les matchs en les priorisant
-        for (var j = 0; j < allMatchs.length; j++) {
-            testContraintes(allMatchs[j]);
+        for (var j = 0; j < turnMatches.length; j++) {
+            testContraintes(turnMatches[j], waitingPlayers);
         }
         //on tri la liste
-        allMatchs.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
-        var matchs = [];
-        var currentMatch;
+        turnMatches.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
+
         for (var j = 0; j < nbMatch; j++) {
-            if (allMatchs.length == 0) break; //s'il n'y a plus de match dispo on sort
-            currentMatch = allMatchs[0];
+            if (turnMatches.length == 0) break; //s'il n'y a plus de match dispo on sort
+            const currentMatch = turnMatches[0];
+
             playedMatches.push(currentMatch);
-            matchs.push(currentMatch);
+            selectedMatches.push(currentMatch);
             //attribution adversaires
             currentMatch.firstTeam.forEach(player => {
                 player.adversaires.push(...currentMatch.secondTeam.map(p => { return p.name }));
@@ -1621,7 +1626,7 @@ function genereTournoi() {
 
 
             //on supprime tous les match ayant des joueurs déjà affecté sur ce tour
-            allMatchs = allMatchs.filter(match =>
+            turnMatches = turnMatches.filter(match =>
                 match.firstTeam.filter(joueur => currentMatch.firstTeam.includes(joueur)).length == 0 &&
                 match.secondTeam.filter(joueur => currentMatch.secondTeam.includes(joueur)).length == 0 &&
                 match.firstTeam.filter(joueur => currentMatch.secondTeam.includes(joueur)).length == 0 &&
@@ -1641,19 +1646,16 @@ function genereTournoi() {
         }
 
         //on ajoute dans joueur attente les joueurs restant dans le sac
-        var flag;
-        for (var k = 0; k < sac.length; k++) {
-            flag = false;
-            for (var m = 0; m < joueurAttente.length; m++) {
-                if (joueurAttente[m].name == sac[k].name) {
-                    joueurAttente[m]["nb"]++;
-                    flag = true;
-                }
+        sac.forEach(player => {
+            const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
+            if(waitingPlayer == null){
+                waitingPlayers.push({ name : player.name, count : 1});
+            }else{
+                waitingPlayer.count++;
             }
-            if (!flag) joueurAttente.push({ "name": sac[k].name, "nb": 1 });
-        }
+        })
 
-        storage.tournoi.tours.push({ done: false, matchs: matchs, joueurAttente: sac });
+        storage.tournoi.tours.push({ done: false, matchs: selectedMatches, joueurAttente: sac });
     }
 
 }
