@@ -369,6 +369,7 @@ function buildClassement() {
     thead.appendChild(MH.makeTh("Sets gagnés"));
     thead.appendChild(MH.makeTh("Sets perdus"));
     thead.appendChild(MH.makeTh("Niveau"));
+    thead.appendChild(MH.makeTh("Age"));
     tableClassement.appendChild(thead);
 
     const leaderboard = computeLeaderboard();
@@ -381,6 +382,7 @@ function buildClassement() {
         trJoueur.appendChild(MH.makeTd(player.totalWonSet, "playerData"));
         trJoueur.appendChild(MH.makeTd(player.totalLostSet, "playerData"));
         trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(player).outerHTML));
+        trJoueur.appendChild(MH.makeTd(player.age, "playerData"));
         tableClassement.appendChild(trJoueur);
     })
 
@@ -825,6 +827,7 @@ function buildJoueur(joueur, i) {
             break;
         case pages.MODIFICATION_JOUEUR:
             joueurDom.appendChild(buildPropertyEditor("Nom", "text", { "id": "nomJoueur", value: joueur.name }));
+            joueurDom.appendChild(buildPropertyEditor("Age", "text", { "id": "ageJoueur", value: joueur.age ?? "" }));
             var elementsGenre = [];
             for (var gen in genreListe) {
                 elementsGenre.push({ "id": gen, "name": "genre", "value": genreListe[gen].value, "checked": joueur.genre.value === genreListe[gen].value })
@@ -1092,9 +1095,11 @@ function editSelectionJoueurs() {
 function validModificationJoueur() {
     var ok = true;
     var nomJoueur = document.getElementById("nomJoueur").value;
+    var age = document.getElementById("ageJoueur").value;
     if (currentEditionId == -1) {
         ok = storage.addJoueur(new Joueur(
             nomJoueur,
+            age,
             genreListe[document.body.querySelector("div.radiogenre input:checked").id],
             niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
             false
@@ -1102,6 +1107,7 @@ function validModificationJoueur() {
     } else {
         ok = storage.updateJoueur(currentEditionId, {
             "name": nomJoueur,
+            "age" : age,
             "niveau": niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
             "genre": genreListe[document.body.querySelector("div.radiogenre input:checked").id],
         });

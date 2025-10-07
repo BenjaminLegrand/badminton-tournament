@@ -2,8 +2,9 @@
 import { niveauListe, genreListe } from './values.js'
 
 export class Joueur{
-    constructor(pName, pGenre, pNiveau, pSelected){
+    constructor(pName, age, pGenre, pNiveau, pSelected){
         this.name = pName ?? "";
+        this.age = age;
         this.genre = pGenre != undefined ? pGenre : genreListe.HOMME;
         this.niveau = pNiveau != undefined ? pNiveau : niveauListe.NC;
         this.selected = pSelected != undefined ? pSelected : false;
@@ -12,6 +13,7 @@ export class Joueur{
     }
     name = null;
     genre = null;
+    age = null;
     niveau = null;
     selected = false;
     adversaires = null;
