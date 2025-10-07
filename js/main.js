@@ -1018,8 +1018,9 @@ function showModalDeleteJoueur() {
 }
 
 function lancerTournoi() {
+    // TODO put in if
+    genereTournoi();
     if (storage.tournoi.currentTour == -1) {
-        genereTournoi();
         storage.updateTournoi({ "date": new Date() });
         storage.updateTournoi({ "currentTour": 0 });
     }
@@ -1107,7 +1108,7 @@ function validModificationJoueur() {
     } else {
         ok = storage.updateJoueur(currentEditionId, {
             "name": nomJoueur,
-            "age" : age,
+            "age": age,
             "niveau": niveauListe[document.body.querySelector("div.radioniveau input:checked").id],
             "genre": genreListe[document.body.querySelector("div.radiogenre input:checked").id],
         });
@@ -1342,7 +1343,7 @@ function refreshMatch(domMatch, matchIndex) {
     }
 
     if (isAtThirdSet(match)) {
-        if(firstTeamThirdSet.classList.contains("gone")){
+        if (firstTeamThirdSet.classList.contains("gone")) {
             // Third set appearing - Update scores with startScores
             storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, match.firstTeamStartScore);
             storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, match.secondTeamStartScore);
@@ -1360,7 +1361,7 @@ function refreshMatch(domMatch, matchIndex) {
 //***** MAKER HTML */
 
 /********GENERATION DU TOURNOI */
-var sac, allMatchs, joueurAttente;
+var sac, allMatchs, playedMatches, joueurAttente;
 function alea(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
@@ -1385,7 +1386,7 @@ function populateAllMatchs() {
             for (var j = 0; j < sac.length; j++) {
                 const firstTeam = [sac[i]];
                 const secondTeam = [sac[j]];
-                if (matchCoherent(firstTeam, secondTeam)) {
+                if (matchCoherent(allMatchs, firstTeam, secondTeam)) {
                     allMatchs.push(newMatch(firstTeam, secondTeam));
                 }
             }
@@ -1406,7 +1407,7 @@ function populateAllMatchs() {
             for (var j = 0; j < binomes.length; j++) {
                 const firstTeam = binomes[i];
                 const secondTeam = binomes[j];
-                if (matchCoherent(firstTeam, secondTeam)) {
+                if (matchCoherent(allMatchs, firstTeam, secondTeam)) {
                     allMatchs.push(newMatch(firstTeam, secondTeam));
                 }
             }
@@ -1474,16 +1475,30 @@ function newMatch(firstTeam, secondTeam) {
     );
 }
 
-function matchCoherent(firstTeam, secondTeam) {
-    return firstTeam.every(player => { return !secondTeam.includes(player); })
+function matchCoherent(allMatchs, firstTeam, secondTeam) {
+    const differentTeams = firstTeam.every(player => { return !secondTeam.includes(player); });
+    const existingMatch = allMatchs.some(match => {
+        return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
+    });
+    const playedMatch = playedMatches.some(match => {
+        return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
+    });
+    console.log(playedMatch)
+    return differentTeams && !existingMatch && !playedMatch;
+}
+
+function sameTeams(teamA, teamB) {
+    const teamANames = teamA.map(player => { return player.name; });
+    const teamBNames = teamB.map(player => { return player.name; });
+    return JSON.stringify(teamANames) === JSON.stringify(teamBNames);
 }
 
 function testContraintes(match) {
     var facteur = 1;
-    for (var j = storage.tournoi.contraintes.length - 1; j >= 0; j--) {
-        if (storage.tournoi.contraintes[j].actif && !storage.tournoi.contraintes[j].disabled) {
+    storage.tournoi.contraintes.forEach(constraint => {
+        if (constraint.actif && !constraint.disabled) {
             facteur *= 10;
-            if (storage.tournoi.contraintes[j].name == "ISOSEXE") {
+            if (constraint.name == "ISOSEXE") {
                 var nbHommeFirstTeam = 0;
                 var nbHommeSecondTeam = 0;
                 match.firstTeam.forEach(player => {
@@ -1499,11 +1514,11 @@ function testContraintes(match) {
                 if (nbHommeFirstTeam != nbHommeSecondTeam) {
                     match.pointContrainte += facteur;
                 }
-            } else if (storage.tournoi.contraintes[j].name == "LIMITPOINT") {
+            } else if (constraint.name == "LIMITPOINT") {
                 if (Math.abs(match.firstTeamHandicap - match.secondTeamHandicap) > storage.tournoi.limitPoint) {
                     match.pointContrainte += facteur;
                 }
-            } else if (storage.tournoi.contraintes[j].name == "ADVERSAIRE") {
+            } else if (constraint.name == "ADVERSAIRE") {
                 match.firstTeam.forEach(firstPlayer => {
                     match.secondTeam.forEach(secondPlayer => {
                         if (firstPlayer.adversaires.includes(secondPlayer.name)) {
@@ -1514,7 +1529,7 @@ function testContraintes(match) {
                         }
                     });
                 });
-            } else if (storage.tournoi.contraintes[j].name == "COEQUIPIER") {
+            } else if (constraint.name == "COEQUIPIER") {
                 match.firstTeam.forEach(firstPlayer1 => {
                     match.firstTeam.forEach(firstPlayer2 => {
                         if (firstPlayer1.coequipiers.includes(firstPlayer2.name) || firstPlayer2.coequipiers.includes(firstPlayer1.name)) {
@@ -1529,7 +1544,7 @@ function testContraintes(match) {
                         }
                     });
                 });
-            } else if (storage.tournoi.contraintes[j].name == "ATTENTE") {
+            } else if (constraint.name == "ATTENTE") {
                 match.firstTeam.forEach(player => {
                     if (joueurAttente.find(waitingPlayer => waitingPlayer.name == player.name)) {
                         match.pointContrainte -= (facteur * joueurAttente[0]["nb"]);
@@ -1542,7 +1557,7 @@ function testContraintes(match) {
                 });
             }
         }
-    }
+    });
 }
 
 // A  B  C  D  E
@@ -1555,6 +1570,7 @@ function testContraintes(match) {
 function genereTournoi() {
     storage.tournoi.tours = [];
     joueurAttente = [];
+    playedMatches = [];
 
     //init
     for (var i = 0; i < storage.joueurs.length; i++) {
@@ -1580,11 +1596,15 @@ function genereTournoi() {
         }
         //on tri la liste
         allMatchs.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
+        allMatchs.forEach(match => {
+            console.log(`TOUR ${i} : ${match.firstTeam[0].name} vs ${match.secondTeam[0].name} - CTR : ${match.pointContrainte}`);
+        });
         var matchs = [];
         var currentMatch;
         for (var j = 0; j < nbMatch; j++) {
             if (allMatchs.length == 0) break; //s'il n'y a plus de match dispo on sort
             currentMatch = allMatchs[0];
+            playedMatches.push(currentMatch);
             matchs.push(currentMatch);
             //attribution adversaires
             currentMatch.firstTeam.forEach(player => {
@@ -1636,7 +1656,7 @@ function genereTournoi() {
             if (!flag) joueurAttente.push({ "name": sac[k].name, "nb": 1 });
         }
 
-        storage.tournoi.tours.push({ done:false, matchs: matchs, joueurAttente: sac });
+        storage.tournoi.tours.push({ done: false, matchs: matchs, joueurAttente: sac });
     }
 
 }
