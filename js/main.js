@@ -1372,13 +1372,14 @@ function mettreJoueursDansSac() {
         if (storage.joueurs[i].selected) {
             storage.joueurs[i].index = i;
             sac.splice(alea(sac.length), 0, storage.joueurs[i]);
+            // TODO RANDOM OR NOT
         }
     }
 }
 
 //on créé tous les matchs possibles
 function populateAllMatchs() {
-    allMatchs = [];
+    const matches = [];
     var single = storage.tournoi.typeTournoi == typeTournoiListe.SIMPLE;
 
     if (single) {
@@ -1386,8 +1387,8 @@ function populateAllMatchs() {
             for (var j = 0; j < sac.length; j++) {
                 const firstTeam = [sac[i]];
                 const secondTeam = [sac[j]];
-                if (matchCoherent(allMatchs, firstTeam, secondTeam)) {
-                    allMatchs.push(newMatch(firstTeam, secondTeam));
+                if (matchCoherent(matches, firstTeam, secondTeam)) {
+                    matches.push(newMatch(firstTeam, secondTeam));
                 }
             }
         }
@@ -1407,13 +1408,13 @@ function populateAllMatchs() {
             for (var j = 0; j < binomes.length; j++) {
                 const firstTeam = binomes[i];
                 const secondTeam = binomes[j];
-                if (matchCoherent(allMatchs, firstTeam, secondTeam)) {
-                    allMatchs.push(newMatch(firstTeam, secondTeam));
+                if (matchCoherent(matches, firstTeam, secondTeam)) {
+                    matches.push(newMatch(firstTeam, secondTeam));
                 }
             }
         }
     }
-    return allMatchs;
+    return matches;
 }
 
 function newMatch(firstTeam, secondTeam) {
@@ -1475,15 +1476,14 @@ function newMatch(firstTeam, secondTeam) {
     );
 }
 
-function matchCoherent(allMatchs, firstTeam, secondTeam) {
+function matchCoherent(matches, firstTeam, secondTeam) {
     const differentTeams = firstTeam.every(player => { return !secondTeam.includes(player); });
-    const existingMatch = allMatchs.some(match => {
+    const existingMatch = matches.some(match => {
         return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
     });
     const playedMatch = playedMatches.some(match => {
         return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
     });
-    console.log(playedMatch)
     return differentTeams && !existingMatch && !playedMatch;
 }
 
@@ -1580,8 +1580,8 @@ function genereTournoi() {
 
     var nbMatch;
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
-        mettreJoueursDansSac(); //on met tous les joueurs selectionné dans un sac et on mélange
-        populateAllMatchs(); //on générre tous les matchs possibles à partir des joueurs dans sac
+        mettreJoueursDansSac();
+        allMatchs = populateAllMatchs();
 
         //nombre de mathc par tour
         nbMatch = Math.min(
@@ -1596,9 +1596,6 @@ function genereTournoi() {
         }
         //on tri la liste
         allMatchs.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
-        allMatchs.forEach(match => {
-            console.log(`TOUR ${i} : ${match.firstTeam[0].name} vs ${match.secondTeam[0].name} - CTR : ${match.pointContrainte}`);
-        });
         var matchs = [];
         var currentMatch;
         for (var j = 0; j < nbMatch; j++) {
