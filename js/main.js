@@ -298,8 +298,8 @@ function buildPreparation() {
             divPrep.appendChild(tournamentNameInput);
             divPrep.appendChild(buildPropertyViewer("Type de tournoi", storage.tournoi.typeTournoi));
             divPrep.appendChild(buildPropertyViewer("Mode", storage.tournoi.modeTournoi));
-            divPrep.appendChild(buildPropertyViewer("Nombre de tour", storage.tournoi.nbTour));
-            divPrep.appendChild(buildPropertyViewer("Nombre de terrain", storage.tournoi.nbTerrain));
+            divPrep.appendChild(buildPropertyViewer("Nombre de tours", storage.tournoi.nbTour));
+            divPrep.appendChild(buildPropertyViewer("Nombre de terrains", storage.tournoi.nbTerrain));
             listPrep.appendChild(divPrep);
             break;
         case pages.MODIFICATION_PREPARATION:
@@ -322,19 +322,19 @@ function buildPreparation() {
             divPrep.appendChild(buildPropertyEditor("Mode", "radio",
                 { name: "modeTournoi", elements: elementsModeTournoi }));
 
-            divPrep.appendChild(buildPropertyEditor("Nombre de tour", "numberSpinner", {
+            divPrep.appendChild(buildPropertyEditor("Nombre de tours", "numberSpinner", {
                 "min": 1,
-                "max": 10,
+                "max": 20,
                 "value": storage.tournoi.nbTour,
                 "id": "nbTour"
             }));
             divPrep.appendChild(buildPropertyEditor("Nombre de terrain", "numberSpinner", {
                 "min": 1,
-                "max": 20,
+                "max": 50,
                 "value": storage.tournoi.nbTerrain,
                 "id": "nbTerrain"
             }));
-            divPrep.appendChild(buildPropertyEditor("Nombre de points", "numberSpinner", {
+            divPrep.appendChild(buildPropertyEditor("Nombre de points par set", "numberSpinner", {
                 "min": 1,
                 "max": 30,
                 "value": storage.tournoi.nbPoints,
@@ -1709,10 +1709,10 @@ function getMatchWinner(match) {
 }
 
 function isSetFinished(firstTeamScore, secondTeamScore) {
-    return (firstTeamScore == 21 && firstTeamScore - secondTeamScore >= 2) ||
-        (secondTeamScore == 21 && secondTeamScore - firstTeamScore >= 2) ||
-        (firstTeamScore > 21 && firstTeamScore - secondTeamScore == 2) ||
-        (secondTeamScore > 21 && secondTeamScore - firstTeamScore == 2) ||
+    return (firstTeamScore == storage.tournoi.nbPoints && firstTeamScore - secondTeamScore >= 2) ||
+        (secondTeamScore == storage.tournoi.nbPoints && secondTeamScore - firstTeamScore >= 2) ||
+        (firstTeamScore > storage.tournoi.nbPoints && firstTeamScore - secondTeamScore == 2) ||
+        (secondTeamScore > storage.tournoi.nbPoints && secondTeamScore - firstTeamScore == 2) ||
         (firstTeamScore == 30 && secondTeamScore == 29) ||
         (secondTeamScore == 30 && firstTeamScore == 29)
 }
