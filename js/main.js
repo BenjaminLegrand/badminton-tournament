@@ -1605,7 +1605,7 @@ function genereTournoi() {
 
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
         const playedMatches = storage.tournoi.tours.flatMap(turn => turn.matchs);
-        const turn = generateTurn(playedMatches);
+        const turn = generateTurn(i, playedMatches);
         storage.tournoi.tours.splice(i, 0, turn);
     }
 }
@@ -1613,19 +1613,20 @@ function genereTournoi() {
 function regenerateTurn(fromIndex) {
     for (var turnIndex = fromIndex; turnIndex < storage.tournoi.nbTour; turnIndex++) {
         const playedMatches = storage.tournoi.tours.filter((_, index) => { return index < turnIndex }).flatMap(turn => turn.matchs);
-        const turn = generateTurn(playedMatches);
+        const turn = generateTurn(turnIndex, playedMatches);
         storage.tournoi.tours.splice(turnIndex, 1, turn);
     }
 }
 
-function generateTurn(playedMatches) {
+function generateTurn(index, playedMatches) {
     const selectedMatches = [];
     const waitingPlayers = [];
 
     const availablePlayers = generateRandomPlayerList();
     var turnMatches = generateAllTurnMatches(playedMatches, availablePlayers);
     console.log("-----------------")
-    console.log("PLAYED MATCHES")
+    console.log(`TURN ${index+1}`)
+    console.log("ALREADY PLAYED MATCHES")
     console.log(playedMatches)
     console.log("GENERATED TURN MATCHES")
     console.log(turnMatches)
