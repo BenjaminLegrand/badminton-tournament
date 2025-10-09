@@ -90,6 +90,11 @@ export class LocalStorage {
         this.save();
     }
 
+    resetTournament(){
+        this.tournoi = new Tournoi();
+        this.save();
+    }
+
     updateTournamentName(name){
         this.tournoi.name = name;
         this.save();

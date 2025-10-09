@@ -98,12 +98,14 @@ function buildHeader() {
                 header.appendChild(MH.makeSpan("Création d'un joueur", "headerTitle"));
             } else {
                 header.appendChild(MH.makeSpan("Modification d'un joueur", "headerTitle"));
-                var del = MH.makeButton({
-                    type: "click",
-                    func: showModalDeleteJoueur.bind(this)
-                }, "delete");
-                del.classList.add("btn-danger");
-                header.appendChild(del);
+                if (storage.tournoi.currentTour == -1) {
+                    var del = MH.makeButton({
+                        type: "click",
+                        func: showModalDeleteJoueur.bind(this)
+                    }, "delete");
+                    del.classList.add("btn-danger");
+                    header.appendChild(del);
+                }
             }
             break;
         case pages.MODIFICATION_PREPARATION:
@@ -452,11 +454,7 @@ function buildHeaderTour(i) {
             MH.makeButton({
                 type: "click",
                 func: function () {
-                    const playedMatches = storage.tournoi.tours.flatMap(turn => { return turn.matchs }).filter(match => { return getMatchWinner(match) != null });
-                    for (var turnIndex = i; turnIndex < storage.tournoi.nbTour; turnIndex++) {
-                        const turn = generateTurn(playedMatches);
-                        storage.tournoi.tours.splice(turnIndex, 1, turn);
-                    }
+                    regenerateTurn(i);
                     selectPage(pages.EXECUTION_TOURNOI);
                     document.body.querySelector("#headerTour" + i).scrollIntoView({
                         behavior: 'smooth'
@@ -1036,14 +1034,16 @@ function showModalDeleteJoueur() {
 }
 
 function lancerTournoi() {
-    // TODO put in if
-    genereTournoi();
     if (storage.tournoi.currentTour == -1) {
+        // TODO put in if
+        genereTournoi();
         storage.updateTournoi({ "date": new Date() });
         storage.updateTournoi({ "currentTour": 0 });
     }
+
     selectPage(pages.EXECUTION_TOURNOI);
 }
+
 
 function finTournoi() {
     selectPage(pages.ACCUEIL);
@@ -1582,8 +1582,8 @@ function testContraintes(match, waitingPlayers) {
 
 
 function genereTournoi() {
-    storage.tournoi.tours = [];
-    //init
+    storage.resetTournament();
+
     for (var i = 0; i < storage.joueurs.length; i++) {
         storage.joueurs[i].adversaires = [];
         storage.joueurs[i].coequipiers = [];
@@ -1592,6 +1592,14 @@ function genereTournoi() {
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
         const turn = generateTurn(storage.tournoi.tours.flatMap(turn => turn.matchs));
         storage.tournoi.tours.splice(i, 0, turn);
+    }
+}
+
+function regenerateTurn(fromIndex) {
+    const playedMatches = storage.tournoi.tours.flatMap(turn => { return turn.matchs }).filter(match => { return getMatchWinner(match) != null });
+    for (var turnIndex = fromIndex; turnIndex < storage.tournoi.nbTour; turnIndex++) {
+        const turn = generateTurn(playedMatches);
+        storage.tournoi.tours.splice(turnIndex, 1, turn);
     }
 }
 
@@ -1714,8 +1722,7 @@ function computeLeaderboard() {
     });
 
 
-    var selectedPlayers = storage.joueurs.filter(player => { return player.selected });
-    return selectedPlayers.sort((p1, p2) => {
+    return storage.joueurs.sort((p1, p2) => {
         if (p1.totalPointAverage != p2.totalPointAverage) return p2.totalPointAverage - p1.totalPointAverage;
         if (p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
         if (p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
