@@ -1376,23 +1376,10 @@ function refreshMatch(domMatch, matchIndex) {
     }
 }
 
-//***** MAKER HTML */
-
-/********GENERATION DU TOURNOI */
-function alea(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
-
 function generateRandomPlayerList() {
-    const randomList = [];
-    for (var i = 0; i < storage.joueurs.length; i++) {
-        if (storage.joueurs[i].selected) {
-            storage.joueurs[i].index = i;
-            randomList.splice(alea(randomList.length), 0, storage.joueurs[i]);
-            // TODO RANDOM OR NOT
-        }
-    }
-    return randomList;
+    return storage.joueurs.map(value => ({ value, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .map(({ value }) => value)
 }
 
 //on créé tous les matchs possibles
@@ -1596,9 +1583,11 @@ function genereTournoi() {
 }
 
 function regenerateTurn(fromIndex) {
-    const playedMatches = storage.tournoi.tours.flatMap(turn => { return turn.matchs }).filter(match => { return getMatchWinner(match) != null });
+    const playedMatches = storage.tournoi.tours.flatMap(turn => turn.matchs).filter(match => { return getMatchWinner(match) != null });
+    console.log(playedMatches)
     for (var turnIndex = fromIndex; turnIndex < storage.tournoi.nbTour; turnIndex++) {
         const turn = generateTurn(playedMatches);
+        playedMatches.push(...turn.matchs);
         storage.tournoi.tours.splice(turnIndex, 1, turn);
     }
 }
@@ -1628,7 +1617,6 @@ function generateTurn(playedMatches) {
         if (turnMatches.length == 0) break; //s'il n'y a plus de match dispo on sort
         const currentMatch = turnMatches[0];
 
-        playedMatches.push(currentMatch);
         selectedMatches.push(currentMatch);
         //attribution adversaires
         currentMatch.firstTeam.forEach(player => {
