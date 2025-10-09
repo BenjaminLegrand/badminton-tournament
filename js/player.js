@@ -8,16 +8,12 @@ export class Joueur{
         this.genre = pGenre != undefined ? pGenre : genreListe.HOMME;
         this.niveau = pNiveau != undefined ? pNiveau : niveauListe.NC;
         this.selected = pSelected != undefined ? pSelected : false;
-        this.adversaires = [];
-        this.coequipiers = [];
     }
     name = null;
     genre = null;
     age = null;
     niveau = null;
     selected = false;
-    adversaires = null;
-    coequipiers = null;
     totalPointAverage = 0;
     totalWonMatches = 0;
     totalWonSet = 0;

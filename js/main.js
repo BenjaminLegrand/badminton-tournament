@@ -1378,14 +1378,32 @@ function refreshMatch(domMatch, matchIndex) {
 
 function generateRandomPlayerList() {
     return storage.joueurs.map(value => ({ value, sort: Math.random() }))
-    .sort((a, b) => a.sort - b.sort)
-    .map(({ value }) => value)
+        .sort((a, b) => a.sort - b.sort)
+        .map((elt) => { return {...elt.value}})
 }
 
-//on créé tous les matchs possibles
-function populateAllMatchs(playedMatches, players) {
+// Generate all possibles matches of a single turn, considering played matches of previous turns 
+function generateAllTurnMatches(playedMatches, players) {
     const matches = [];
     var single = storage.tournoi.typeTournoi == typeTournoiListe.SIMPLE;
+    players.forEach(player => {
+        //Associate all opponents of players for all their previous played matches
+        player.opponents = getPlayerMatches(playedMatches, player).flatMap(match => {
+            if(match.firstTeam.map(p => p.name).includes(player.name)){
+                return match.secondTeam.map(p => p.name);
+            }else{
+                return match.firstTeam.map(p => p.name);
+            }
+        });
+        //Associate all partners of players for all their previous played matches
+        player.partners =  getPlayerMatches(playedMatches, player).flatMap(match => {
+            if(match.firstTeam.map(p => p.name).includes(player.name)){
+                return match.firstTeam.map(p => p.name).filter(elt => elt != player.name);
+            }else{
+                return match.secondTeam.map(p => p.name).filter(elt => elt != player.name);
+            }
+        });
+    })
 
     if (single) {
         for (var i = 0; i < players.length; i++) {
@@ -1420,6 +1438,12 @@ function populateAllMatchs(playedMatches, players) {
         }
     }
     return matches;
+}
+
+function getPlayerMatches(matches, player){
+    return matches.filter(match => {
+        return match.firstTeam.some(p => p.name == player.name) || match.secondTeam.some(p => p.name == player.name);
+    });
 }
 
 function newMatch(firstTeam, secondTeam) {
@@ -1517,19 +1541,23 @@ function testContraintes(match, waitingPlayers) {
                     }
                 });
                 if (nbHommeFirstTeam != nbHommeSecondTeam) {
+                    console.log(`Constraint ${constraint.name} found for match ` + match)
                     match.pointContrainte += facteur;
                 }
             } else if (constraint.name == "LIMITPOINT") {
                 if (Math.abs(match.firstTeamHandicap - match.secondTeamHandicap) > storage.tournoi.limitPoint) {
+                    console.log(`Constraint ${constraint.name} found for match ` + match)
                     match.pointContrainte += facteur;
                 }
             } else if (constraint.name == "ADVERSAIRE") {
                 match.firstTeam.forEach(firstPlayer => {
                     match.secondTeam.forEach(secondPlayer => {
-                        if (firstPlayer.adversaires.includes(secondPlayer.name)) {
+                        if (firstPlayer.opponents.includes(secondPlayer.name)) {
+                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
-                        if (secondPlayer.adversaires.includes(firstPlayer.name)) {
+                        if (secondPlayer.opponents.includes(firstPlayer.name)) {
+                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1537,14 +1565,16 @@ function testContraintes(match, waitingPlayers) {
             } else if (constraint.name == "COEQUIPIER") {
                 match.firstTeam.forEach(firstPlayer1 => {
                     match.firstTeam.forEach(firstPlayer2 => {
-                        if (firstPlayer1.coequipiers.includes(firstPlayer2.name) || firstPlayer2.coequipiers.includes(firstPlayer1.name)) {
+                        if (firstPlayer1.partners.includes(firstPlayer2.name) || firstPlayer2.partners.includes(firstPlayer1.name)) {
+                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                     });
                 });
                 match.secondTeam.forEach(secondPlayer1 => {
                     match.secondTeam.forEach(secondPlayer2 => {
-                        if (secondPlayer1.coequipiers.includes(secondPlayer2.name) || secondPlayer2.coequipiers.includes(secondPlayer1.name)) {
+                        if (secondPlayer1.partners.includes(secondPlayer2.name) || secondPlayer2.partners.includes(secondPlayer1.name)) {
+                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1553,12 +1583,14 @@ function testContraintes(match, waitingPlayers) {
                 match.firstTeam.forEach(player => {
                     const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
                     if (waitingPlayer != null) {
+                        console.log(`Constraint ${constraint.name} found for match ` + match)
                         match.pointContrainte -= (facteur * waitingPlayer.count);
                     }
                 });
                 match.secondTeam.forEach(player => {
                     const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
                     if (waitingPlayer != null) {
+                        console.log(`Constraint ${constraint.name} found for match ` + match)
                         match.pointContrainte -= (facteur * waitingPlayer.count);
                     }
                 });
@@ -1571,23 +1603,17 @@ function testContraintes(match, waitingPlayers) {
 function genereTournoi() {
     storage.resetTournament();
 
-    for (var i = 0; i < storage.joueurs.length; i++) {
-        storage.joueurs[i].adversaires = [];
-        storage.joueurs[i].coequipiers = [];
-    }
-
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
-        const turn = generateTurn(storage.tournoi.tours.flatMap(turn => turn.matchs));
+        const playedMatches = storage.tournoi.tours.flatMap(turn => turn.matchs);
+        const turn = generateTurn(playedMatches);
         storage.tournoi.tours.splice(i, 0, turn);
     }
 }
 
 function regenerateTurn(fromIndex) {
-    const playedMatches = storage.tournoi.tours.flatMap(turn => turn.matchs).filter(match => { return getMatchWinner(match) != null });
-    console.log(playedMatches)
     for (var turnIndex = fromIndex; turnIndex < storage.tournoi.nbTour; turnIndex++) {
+        const playedMatches = storage.tournoi.tours.filter((_, index) => { return index < turnIndex }).flatMap(turn => turn.matchs);
         const turn = generateTurn(playedMatches);
-        playedMatches.push(...turn.matchs);
         storage.tournoi.tours.splice(turnIndex, 1, turn);
     }
 }
@@ -1597,8 +1623,13 @@ function generateTurn(playedMatches) {
     const waitingPlayers = [];
 
     const availablePlayers = generateRandomPlayerList();
-    var turnMatches = populateAllMatchs(playedMatches, availablePlayers);
-
+    var turnMatches = generateAllTurnMatches(playedMatches, availablePlayers);
+    console.log("-----------------")
+    console.log("PLAYED MATCHES")
+    console.log(playedMatches)
+    console.log("GENERATED TURN MATCHES")
+    console.log(turnMatches)
+    console.log("-----------------")
     //nombre de mathc par tour
     const nbMatch = Math.min(
         Math.floor(availablePlayers.length / (typeTournoiListe.SIMPLE ? 2 : 4)),
@@ -1607,9 +1638,10 @@ function generateTurn(playedMatches) {
     );
 
     //on teste tous les matchs en les priorisant
-    for (var j = 0; j < turnMatches.length; j++) {
-        testContraintes(turnMatches[j], waitingPlayers);
-    }
+    turnMatches.forEach(match => {
+        testContraintes(match, waitingPlayers);
+    })
+
     //on tri la liste
     turnMatches.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
 
@@ -1618,22 +1650,6 @@ function generateTurn(playedMatches) {
         const currentMatch = turnMatches[0];
 
         selectedMatches.push(currentMatch);
-        //attribution adversaires
-        currentMatch.firstTeam.forEach(player => {
-            player.adversaires.push(...currentMatch.secondTeam.map(p => { return p.name }));
-        })
-        currentMatch.secondTeam.forEach(player => {
-            player.adversaires.push(...currentMatch.firstTeam.map(p => { return p.name }));
-        })
-
-        //et coequipiers equipe A
-        currentMatch.firstTeam.forEach(player => {
-            player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
-        })
-        currentMatch.secondTeam.forEach(player => {
-            player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
-        })
-
 
         //on supprime tous les match ayant des joueurs déjà affecté sur ce tour
         turnMatches = turnMatches.filter(match =>
