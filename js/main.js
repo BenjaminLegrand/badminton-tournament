@@ -447,6 +447,24 @@ function buildHeaderTour(i) {
     }
     ssTitle.appendChild(ss2);
     header.appendChild(ssTitle);
+    if (storage.tournoi.tours[i].matchs.every(match => { return getMatchWinner(match) == null })) {
+        header.appendChild(
+            MH.makeButton({
+                type: "click",
+                func: function () {
+                    const playedMatches = storage.tournoi.tours.flatMap(turn => { return turn.matchs }).filter(match => { return getMatchWinner(match) != null });
+                    for (var turnIndex = i; turnIndex < storage.tournoi.nbTour; turnIndex++) {
+                        const turn = generateTurn(playedMatches);
+                        storage.tournoi.tours.splice(turnIndex, 1, turn);
+                    }
+                    selectPage(pages.EXECUTION_TOURNOI);
+                    document.body.querySelector("#headerTour" + i).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            }, null, "Regénérer le tour")
+        )
+    }
     return header;
 }
 
@@ -1361,33 +1379,33 @@ function refreshMatch(domMatch, matchIndex) {
 //***** MAKER HTML */
 
 /********GENERATION DU TOURNOI */
-var sac, playedMatches;
 function alea(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
-//on met les joueurs dans le sac de façon aléatoire
-function mettreJoueursDansSac() {
-    sac = [];
+
+function generateRandomPlayerList() {
+    const randomList = [];
     for (var i = 0; i < storage.joueurs.length; i++) {
         if (storage.joueurs[i].selected) {
             storage.joueurs[i].index = i;
-            sac.splice(alea(sac.length), 0, storage.joueurs[i]);
+            randomList.splice(alea(randomList.length), 0, storage.joueurs[i]);
             // TODO RANDOM OR NOT
         }
     }
+    return randomList;
 }
 
 //on créé tous les matchs possibles
-function populateAllMatchs() {
+function populateAllMatchs(playedMatches, players) {
     const matches = [];
     var single = storage.tournoi.typeTournoi == typeTournoiListe.SIMPLE;
 
     if (single) {
-        for (var i = 0; i < sac.length; i++) {
-            for (var j = 0; j < sac.length; j++) {
-                const firstTeam = [sac[i]];
-                const secondTeam = [sac[j]];
-                if (matchCoherent(matches, firstTeam, secondTeam)) {
+        for (var i = 0; i < players.length; i++) {
+            for (var j = 0; j < players.length; j++) {
+                const firstTeam = [players[i]];
+                const secondTeam = [players[j]];
+                if (matchCoherent(playedMatches, matches, firstTeam, secondTeam)) {
                     matches.push(newMatch(firstTeam, secondTeam));
                 }
             }
@@ -1396,10 +1414,10 @@ function populateAllMatchs() {
 
         //on génére tous les binomes possible
         var binomes = [];
-        for (var i = 0; i < sac.length; i++) {
-            for (var j = 0; j < sac.length; j++) {
+        for (var i = 0; i < players.length; i++) {
+            for (var j = 0; j < players.length; j++) {
                 if (j > i) {
-                    binomes.push([sac[i], sac[j]]);
+                    binomes.push([players[i], players[j]]);
                 }
             }
         }
@@ -1408,7 +1426,7 @@ function populateAllMatchs() {
             for (var j = 0; j < binomes.length; j++) {
                 const firstTeam = binomes[i];
                 const secondTeam = binomes[j];
-                if (matchCoherent(matches, firstTeam, secondTeam)) {
+                if (matchCoherent(playedMatches, matches, firstTeam, secondTeam)) {
                     matches.push(newMatch(firstTeam, secondTeam));
                 }
             }
@@ -1476,9 +1494,9 @@ function newMatch(firstTeam, secondTeam) {
     );
 }
 
-function matchCoherent(matches, firstTeam, secondTeam) {
+function matchCoherent(playedMatches, alreadyGeneratedMatches, firstTeam, secondTeam) {
     const differentTeams = firstTeam.every(player => { return !secondTeam.includes(player); });
-    const existingMatch = matches.some(match => {
+    const existingMatch = alreadyGeneratedMatches.some(match => {
         return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
     });
     const playedMatch = playedMatches.some(match => {
@@ -1562,104 +1580,96 @@ function testContraintes(match, waitingPlayers) {
     });
 }
 
-// A  B  C  D  E
-// A  x  1  1  1  1 
-// B  x  x  1  1  1
-// C  x  x  x  1  1 
-// D  x  x  x  x  1
-// E  x  x  x  x  x   
 
 function genereTournoi() {
     storage.tournoi.tours = [];
-    playedMatches = [];
-
-    const waitingPlayers = [];
-
     //init
     for (var i = 0; i < storage.joueurs.length; i++) {
         storage.joueurs[i].adversaires = [];
         storage.joueurs[i].coequipiers = [];
     }
 
-    var nbMatch;
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
-        const selectedMatches = [];
-
-        mettreJoueursDansSac();
-        var turnMatches = populateAllMatchs();
-
-        //nombre de mathc par tour
-        nbMatch = Math.min(
-            Math.floor(sac.length / (typeTournoiListe.SIMPLE ? 2 : 4)),
-            turnMatches.length,
-            storage.tournoi.nbTerrain
-        );
-
-        //on teste tous les matchs en les priorisant
-        for (var j = 0; j < turnMatches.length; j++) {
-            testContraintes(turnMatches[j], waitingPlayers);
-        }
-        //on tri la liste
-        turnMatches.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
-
-        for (var j = 0; j < nbMatch; j++) {
-            if (turnMatches.length == 0) break; //s'il n'y a plus de match dispo on sort
-            const currentMatch = turnMatches[0];
-
-            playedMatches.push(currentMatch);
-            selectedMatches.push(currentMatch);
-            //attribution adversaires
-            currentMatch.firstTeam.forEach(player => {
-                player.adversaires.push(...currentMatch.secondTeam.map(p => { return p.name }));
-            })
-            currentMatch.secondTeam.forEach(player => {
-                player.adversaires.push(...currentMatch.firstTeam.map(p => { return p.name }));
-            })
-
-            //et coequipiers equipe A
-            currentMatch.firstTeam.forEach(player => {
-                player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
-            })
-            currentMatch.secondTeam.forEach(player => {
-                player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
-            })
-
-
-            //on supprime tous les match ayant des joueurs déjà affecté sur ce tour
-            turnMatches = turnMatches.filter(match =>
-                match.firstTeam.filter(joueur => currentMatch.firstTeam.includes(joueur)).length == 0 &&
-                match.secondTeam.filter(joueur => currentMatch.secondTeam.includes(joueur)).length == 0 &&
-                match.firstTeam.filter(joueur => currentMatch.secondTeam.includes(joueur)).length == 0 &&
-                match.secondTeam.filter(joueur => currentMatch.firstTeam.includes(joueur)).length == 0
-            );
-
-            //on supprime du sac les joueurs affectés a currentMatch
-            var currentIndexOf;
-            currentMatch.firstTeam.forEach(player => {
-                currentIndexOf = sac.indexOf(player);
-                if (currentIndexOf != -1) sac.splice(currentIndexOf, 1);
-            });
-            currentMatch.secondTeam.forEach(player => {
-                currentIndexOf = sac.indexOf(player);
-                if (currentIndexOf != -1) sac.splice(currentIndexOf, 1);
-            });
-        }
-
-        //on ajoute dans joueur attente les joueurs restant dans le sac
-        sac.forEach(player => {
-            const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
-            if(waitingPlayer == null){
-                waitingPlayers.push({ name : player.name, count : 1});
-            }else{
-                waitingPlayer.count++;
-            }
-        })
-
-        storage.tournoi.tours.push({ done: false, matchs: selectedMatches, joueurAttente: sac });
+        const turn = generateTurn(storage.tournoi.tours.flatMap(turn => turn.matchs));
+        storage.tournoi.tours.splice(i, 0, turn);
     }
-
 }
 
+function generateTurn(playedMatches) {
+    const selectedMatches = [];
+    const waitingPlayers = [];
+
+    const availablePlayers = generateRandomPlayerList();
+    var turnMatches = populateAllMatchs(playedMatches, availablePlayers);
+
+    //nombre de mathc par tour
+    const nbMatch = Math.min(
+        Math.floor(availablePlayers.length / (typeTournoiListe.SIMPLE ? 2 : 4)),
+        turnMatches.length,
+        storage.tournoi.nbTerrain
+    );
+
+    //on teste tous les matchs en les priorisant
+    for (var j = 0; j < turnMatches.length; j++) {
+        testContraintes(turnMatches[j], waitingPlayers);
+    }
+    //on tri la liste
+    turnMatches.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
+
+    for (var j = 0; j < nbMatch; j++) {
+        if (turnMatches.length == 0) break; //s'il n'y a plus de match dispo on sort
+        const currentMatch = turnMatches[0];
+
+        playedMatches.push(currentMatch);
+        selectedMatches.push(currentMatch);
+        //attribution adversaires
+        currentMatch.firstTeam.forEach(player => {
+            player.adversaires.push(...currentMatch.secondTeam.map(p => { return p.name }));
+        })
+        currentMatch.secondTeam.forEach(player => {
+            player.adversaires.push(...currentMatch.firstTeam.map(p => { return p.name }));
+        })
+
+        //et coequipiers equipe A
+        currentMatch.firstTeam.forEach(player => {
+            player.coequipiers.push(...currentMatch.firstTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
+        })
+        currentMatch.secondTeam.forEach(player => {
+            player.coequipiers.push(...currentMatch.secondTeam.filter(elt => { return elt.name != player.name }).map(p => { return p.name }));
+        })
+
+
+        //on supprime tous les match ayant des joueurs déjà affecté sur ce tour
+        turnMatches = turnMatches.filter(match =>
+            match.firstTeam.filter(joueur => currentMatch.firstTeam.includes(joueur)).length == 0 &&
+            match.secondTeam.filter(joueur => currentMatch.secondTeam.includes(joueur)).length == 0 &&
+            match.firstTeam.filter(joueur => currentMatch.secondTeam.includes(joueur)).length == 0 &&
+            match.secondTeam.filter(joueur => currentMatch.firstTeam.includes(joueur)).length == 0
+        );
+
+        //Remove match plkayers from available players
+        var currentIndexOf;
+        currentMatch.firstTeam.forEach(player => {
+            currentIndexOf = availablePlayers.indexOf(player);
+            if (currentIndexOf != -1) availablePlayers.splice(currentIndexOf, 1);
+        });
+        currentMatch.secondTeam.forEach(player => {
+            currentIndexOf = availablePlayers.indexOf(player);
+            if (currentIndexOf != -1) availablePlayers.splice(currentIndexOf, 1);
+        });
+    }
+
+    //Put remaining available players as waiting players
+    availablePlayers.forEach(player => {
+        const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
+        if (waitingPlayer == null) {
+            waitingPlayers.push({ name: player.name, count: 1 });
+        } else {
+            waitingPlayer.count++;
+        }
+    })
+    return { done: false, matchs: selectedMatches, joueurAttente: availablePlayers }
+}
 
 function computeLeaderboard() {
     storage.joueurs.forEach(player => {
