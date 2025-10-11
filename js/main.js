@@ -457,7 +457,7 @@ function buildHeaderTour(i) {
                     regenerateTurn(i);
                     selectPage(pages.EXECUTION_TOURNOI);
                     document.body.querySelector("#headerTour" + i).scrollIntoView({
-                        behavior: 'smooth'
+                        behavior: 'instant'
                     });
                 }
             }, null, "Regénérer le tour")
@@ -1317,9 +1317,9 @@ function refreshMatch(domMatch, matchIndex) {
     const secondTeamThirdSet = domMatch.querySelector(".secondTeamThirdSet");
 
 
-    const firstSetWinner = getSetWinner(match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY);
-    const secondSetWinner = getSetWinner(match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY);
-    const thirdSetWinner = getSetWinner(match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY);
+    const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY);
+    const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY);
+    const thirdSetWinner = getSetWinner(match.setPoints, match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY);
 
     if (firstSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
         firstTeamFirstSet.classList.add("set-winner");
@@ -1703,7 +1703,7 @@ function computeLeaderboard() {
                 match.scores.forEach(score => {
                     const firstTeamScore = score.SET_SCORE_FIRST_TEAM_KEY;
                     const secondTeamScore = score.SET_SCORE_SECOND_TEAM_KEY;
-                    const setWinner = getSetWinner(firstTeamScore, secondTeamScore);
+                    const setWinner = getSetWinner(match.setPoints, firstTeamScore, secondTeamScore);
                     tournamentPlayer.totalPointAverage += (firstTeamScore - secondTeamScore);
                     tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
                     tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
@@ -1718,7 +1718,7 @@ function computeLeaderboard() {
                 match.scores.forEach(score => {
                     const firstTeamScore = score.SET_SCORE_FIRST_TEAM_KEY
                     const secondTeamScore = score.SET_SCORE_SECOND_TEAM_KEY
-                    const setWinner = getSetWinner(firstTeamScore, secondTeamScore);
+                    const setWinner = getSetWinner(match.setPoints, firstTeamScore, secondTeamScore);
                     tournamentPlayer.totalPointAverage += (secondTeamScore - firstTeamScore);
                     tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
                     tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
@@ -1744,9 +1744,9 @@ function getTournamentPlayerByName(name) {
 }
 
 function getMatchWinner(match) {
-    const firstSetWinner = getSetWinner(match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
-    const secondSetWinner = getSetWinner(match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
-    const thirdSetWinner = getSetWinner(match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY)
+    const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
+    const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
+    const thirdSetWinner = getSetWinner(match.setPoints, match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY)
 
     if (firstSetWinner == null || secondSetWinner == null) {
         return null;
@@ -1758,23 +1758,23 @@ function getMatchWinner(match) {
     return thirdSetWinner;
 }
 
-function isSetFinished(match, firstTeamScore, secondTeamScore) {
-    return (firstTeamScore == match.setPoints && firstTeamScore - secondTeamScore >= 2) ||
-        (secondTeamScore == match.setPoints && secondTeamScore - firstTeamScore >= 2) ||
-        (firstTeamScore > match.setPoints && firstTeamScore - secondTeamScore == 2) ||
-        (secondTeamScore > match.setPoints && secondTeamScore - firstTeamScore == 2) ||
+function isSetFinished(setPoints, firstTeamScore, secondTeamScore) {
+    return (firstTeamScore == setPoints && firstTeamScore - secondTeamScore >= 2) ||
+        (secondTeamScore == setPoints && secondTeamScore - firstTeamScore >= 2) ||
+        (firstTeamScore > setPoints && firstTeamScore - secondTeamScore == 2) ||
+        (secondTeamScore > setPoints && secondTeamScore - firstTeamScore == 2) ||
         (firstTeamScore == 30 && secondTeamScore == 29) ||
         (secondTeamScore == 30 && firstTeamScore == 29)
 }
 
 function isAtThirdSet(match) {
-    const firstSetWinner = getSetWinner(match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
-    const secondSetWinner = getSetWinner(match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
+    const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY)
+    const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY)
     return firstSetWinner != null && secondSetWinner != null && firstSetWinner != secondSetWinner
 }
 
-function getSetWinner(firstTeamScore, secondTeamScore) {
-    const setFinished = isSetFinished(firstTeamScore, secondTeamScore)
+function getSetWinner(setPoints, firstTeamScore, secondTeamScore) {
+    const setFinished = isSetFinished(setPoints, firstTeamScore, secondTeamScore)
 
     if (setFinished) {
         if (firstTeamScore > secondTeamScore) {
