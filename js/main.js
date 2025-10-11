@@ -1484,6 +1484,7 @@ function newMatch(firstTeam, secondTeam) {
     }
 
     return new Match(
+        storage.tournoi.nbPoints,
         firstTeam,
         secondTeam,
         firstTeamHandicap,
@@ -1733,6 +1734,7 @@ function computeLeaderboard() {
         if (p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
         if (p1.totalLostSet != p2.totalLostSet) return p1.totalLostSet - p2.totalLostSet;
         if (p1.niveau != p2.niveau) return p1.niveau.level - p2.niveau.level;
+        if (p1.age != p2.age) return p1.age - p2.age;
         return -1;
     });
 }
@@ -1756,11 +1758,11 @@ function getMatchWinner(match) {
     return thirdSetWinner;
 }
 
-function isSetFinished(firstTeamScore, secondTeamScore) {
-    return (firstTeamScore == storage.tournoi.nbPoints && firstTeamScore - secondTeamScore >= 2) ||
-        (secondTeamScore == storage.tournoi.nbPoints && secondTeamScore - firstTeamScore >= 2) ||
-        (firstTeamScore > storage.tournoi.nbPoints && firstTeamScore - secondTeamScore == 2) ||
-        (secondTeamScore > storage.tournoi.nbPoints && secondTeamScore - firstTeamScore == 2) ||
+function isSetFinished(match, firstTeamScore, secondTeamScore) {
+    return (firstTeamScore == match.setPoints && firstTeamScore - secondTeamScore >= 2) ||
+        (secondTeamScore == match.setPoints && secondTeamScore - firstTeamScore >= 2) ||
+        (firstTeamScore > match.setPoints && firstTeamScore - secondTeamScore == 2) ||
+        (secondTeamScore > match.setPoints && secondTeamScore - firstTeamScore == 2) ||
         (firstTeamScore == 30 && secondTeamScore == 29) ||
         (secondTeamScore == 30 && firstTeamScore == 29)
 }
