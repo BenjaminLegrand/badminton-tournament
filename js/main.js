@@ -1763,7 +1763,7 @@ function computeLeaderboard() {
         if (p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
         if (p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
         if (p1.totalLostSet != p2.totalLostSet) return p1.totalLostSet - p2.totalLostSet;
-        if (p1.niveau != p2.niveau) return p1.niveau.level - p2.niveau.level;
+        if (p1.niveau.level != p2.niveau.level) return p1.niveau.level - p2.niveau.level;
         if (p1.age != p2.age) return p1.age - p2.age;
         return -1;
     });
