@@ -3,11 +3,11 @@ export const SET_SCORE_SECOND_TEAM_KEY = "SET_SCORE_SECOND_TEAM_KEY"
 
 export var typeTournoiListe = {
     "SIMPLE": "Simple",
-    "DOUBLE": "Double"
+    "DOUBLE": "Double aléatoire",
+    "DOUBLE_MX": "Double mixte"
 }
 export var modeTournoiListe = {
     "ONESHOT": "Tous les tours <br> <span> On génére tous les tours en une fois dans le but de faire jouer tout le monde avec tout le monde quelque soit les niveaux. </span>",
-    "STEPBYSTEP": "Tour par tour <br> <span> On génére le premier tour,  "
 }
 export var contrainteListe = [
     {

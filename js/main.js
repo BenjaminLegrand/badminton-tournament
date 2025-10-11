@@ -189,8 +189,9 @@ function buildFooter() {
             });
             var nbJoueurSelected = storage.getNbJoueurSelected();
             var typeTournoi = storage.tournoi.typeTournoi;
-            if ((typeTournoi == typeTournoiListe.SIMPLE && nbJoueurSelected < 2) ||
-                (typeTournoi == typeTournoiListe.DOUBLE && nbJoueurSelected < 4)) {
+            const singles = typeTournoi == typeTournoiListe.SIMPLE
+            const doubles = typeTournoi == typeTournoiListe.DOUBLE || typeTournoi == typeTournoiListe.DOUBLE_MX
+            if ((singles && nbJoueurSelected < 2) || (doubles && nbJoueurSelected < 4)) {
                 buttonLancerTournoi.innerHTML = "Nombre de joueurs insuffisant";
                 buttonLancerTournoi.classList.add("btn-secondary");
                 buttonLancerTournoi.setAttribute("disabled", true);
@@ -329,6 +330,7 @@ function buildPreparation() {
                 { name: "typeTournoi", elements: elementsTypeTournoi });
             MH.addNewEvent("SIMPLE", "change", validModificationPreparation.bind(this, true));
             MH.addNewEvent("DOUBLE", "change", validModificationPreparation.bind(this, true));
+            MH.addNewEvent("DOUBLE_MX", "change", validModificationPreparation.bind(this, true));
 
             divPrep.appendChild(typeTournoiRadio);
 
@@ -1422,36 +1424,36 @@ function generateAllTurnMatches(playedMatches, players) {
     })
 
     if (single) {
-        for (var i = 0; i < players.length; i++) {
-            for (var j = 0; j < players.length; j++) {
-                const firstTeam = [players[i]];
-                const secondTeam = [players[j]];
+        players.forEach(first => {
+            players.forEach(second => {
+                const firstTeam = [first];
+                const secondTeam = [second];
                 if (matchCoherent(playedMatches, matches, firstTeam, secondTeam)) {
                     matches.push(newMatch(firstTeam, secondTeam));
                 }
-            }
-        }
+            })
+        })
     } else {
+        const playerPairs = [];
+        players.forEach(first => {
+            players.forEach(second => {
+                if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE) {
+                    playerPairs.push([first, second]);
+                } else {
+                    if (first.genre.value != second.genre.value) {
+                        playerPairs.push([first, second]);
+                    }
+                }
+            })
+        })
+        playerPairs.forEach(first => {
+            playerPairs.forEach(second => {
+                if (matchCoherent(playedMatches, matches, first, second)) {
+                    matches.push(newMatch(first, second));
+                }
+            })
+        })
 
-        //on génére tous les binomes possible
-        var binomes = [];
-        for (var i = 0; i < players.length; i++) {
-            for (var j = 0; j < players.length; j++) {
-                if (j > i) {
-                    binomes.push([players[i], players[j]]);
-                }
-            }
-        }
-        //on génére tous les matchs possibles
-        for (var i = 0; i < binomes.length; i++) {
-            for (var j = 0; j < binomes.length; j++) {
-                const firstTeam = binomes[i];
-                const secondTeam = binomes[j];
-                if (matchCoherent(playedMatches, matches, firstTeam, secondTeam)) {
-                    matches.push(newMatch(firstTeam, secondTeam));
-                }
-            }
-        }
     }
     return matches;
 }
@@ -1558,23 +1560,19 @@ function testContraintes(match, waitingPlayers) {
                     }
                 });
                 if (nbHommeFirstTeam != nbHommeSecondTeam) {
-                    console.log(`Constraint ${constraint.name} found for match ` + match)
                     match.pointContrainte += facteur;
                 }
             } else if (constraint.name == "LIMITPOINT") {
                 if (Math.abs(match.firstTeamHandicap - match.secondTeamHandicap) > storage.tournoi.limitPoint) {
-                    console.log(`Constraint ${constraint.name} found for match ` + match)
                     match.pointContrainte += facteur;
                 }
             } else if (constraint.name == "ADVERSAIRE") {
                 match.firstTeam.forEach(firstPlayer => {
                     match.secondTeam.forEach(secondPlayer => {
                         if (firstPlayer.opponents.includes(secondPlayer.name)) {
-                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                         if (secondPlayer.opponents.includes(firstPlayer.name)) {
-                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1583,7 +1581,6 @@ function testContraintes(match, waitingPlayers) {
                 match.firstTeam.forEach(firstPlayer1 => {
                     match.firstTeam.forEach(firstPlayer2 => {
                         if (firstPlayer1.partners.includes(firstPlayer2.name) || firstPlayer2.partners.includes(firstPlayer1.name)) {
-                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1591,7 +1588,6 @@ function testContraintes(match, waitingPlayers) {
                 match.secondTeam.forEach(secondPlayer1 => {
                     match.secondTeam.forEach(secondPlayer2 => {
                         if (secondPlayer1.partners.includes(secondPlayer2.name) || secondPlayer2.partners.includes(secondPlayer1.name)) {
-                            console.log(`Constraint ${constraint.name} found for match ` + match)
                             match.pointContrainte += facteur;
                         }
                     });
@@ -1600,14 +1596,12 @@ function testContraintes(match, waitingPlayers) {
                 match.firstTeam.forEach(player => {
                     const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
                     if (waitingPlayer != null) {
-                        console.log(`Constraint ${constraint.name} found for match ` + match)
                         match.pointContrainte -= (facteur * waitingPlayer.count);
                     }
                 });
                 match.secondTeam.forEach(player => {
                     const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
                     if (waitingPlayer != null) {
-                        console.log(`Constraint ${constraint.name} found for match ` + match)
                         match.pointContrainte -= (facteur * waitingPlayer.count);
                     }
                 });
