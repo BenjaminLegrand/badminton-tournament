@@ -1328,61 +1328,65 @@ function refreshMatch(domMatch, matchIndex) {
     const secondTeamSecondSet = domMatch.querySelector(".secondTeamSecondSet");
     const secondTeamThirdSet = domMatch.querySelector(".secondTeamThirdSet");
 
+    if (isMatchInCurrentTurn(matchIndex)) {
+        const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY);
+        const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY);
+        const thirdSetWinner = getSetWinner(match.setPoints, match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY);
 
-    const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY);
-    const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY);
-    const thirdSetWinner = getSetWinner(match.setPoints, match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY);
-
-    if (firstSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
-        firstTeamFirstSet.classList.add("set-winner");
-        secondTeamFirstSet.classList.add("set-loser");
-    } else if (firstSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
-        secondTeamFirstSet.classList.add("set-winner");
-        firstTeamFirstSet.classList.add("set-loser");
-    } else {
-        firstTeamFirstSet.classList.remove("set-winner");
-        firstTeamFirstSet.classList.remove("set-loser");
-        secondTeamFirstSet.classList.remove("set-winner");
-        secondTeamFirstSet.classList.remove("set-loser");
-    }
-
-    if (secondSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
-        firstTeamSecondSet.classList.add("set-winner");
-        secondTeamSecondSet.classList.add("set-loser");
-    } else if (secondSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
-        secondTeamSecondSet.classList.add("set-winner");
-        firstTeamSecondSet.classList.add("set-loser");
-    } else {
-        firstTeamSecondSet.classList.remove("set-winner");
-        firstTeamSecondSet.classList.remove("set-loser");
-        secondTeamSecondSet.classList.remove("set-winner");
-        secondTeamSecondSet.classList.remove("set-loser");
-    }
-
-    if (thirdSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
-        firstTeamThirdSet.classList.add("set-winner");
-        secondTeamThirdSet.classList.add("set-loser");
-    } else if (thirdSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
-        secondTeamThirdSet.classList.add("set-winner");
-        firstTeamThirdSet.classList.add("set-loser");
-    } else {
-        firstTeamThirdSet.classList.remove("set-winner");
-        firstTeamThirdSet.classList.remove("set-loser");
-        secondTeamThirdSet.classList.remove("set-winner");
-        secondTeamThirdSet.classList.remove("set-loser");
-    }
-
-    if (isAtThirdSet(match)) {
-        if (firstTeamThirdSet.classList.contains("gone")) {
-            // Third set appearing - Update scores with startScores
-            storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, match.firstTeamStartScore);
-            storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, match.secondTeamStartScore);
+        if (firstSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
+            firstTeamFirstSet.classList.add("set-winner");
+            secondTeamFirstSet.classList.add("set-loser");
+        } else if (firstSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
+            secondTeamFirstSet.classList.add("set-winner");
+            firstTeamFirstSet.classList.add("set-loser");
+        } else {
+            firstTeamFirstSet.classList.remove("set-winner");
+            firstTeamFirstSet.classList.remove("set-loser");
+            secondTeamFirstSet.classList.remove("set-winner");
+            secondTeamFirstSet.classList.remove("set-loser");
         }
-        firstTeamThirdSet.classList.remove("gone")
-        secondTeamThirdSet.classList.remove("gone")
+
+        if (secondSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
+            firstTeamSecondSet.classList.add("set-winner");
+            secondTeamSecondSet.classList.add("set-loser");
+        } else if (secondSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
+            secondTeamSecondSet.classList.add("set-winner");
+            firstTeamSecondSet.classList.add("set-loser");
+        } else {
+            firstTeamSecondSet.classList.remove("set-winner");
+            firstTeamSecondSet.classList.remove("set-loser");
+            secondTeamSecondSet.classList.remove("set-winner");
+            secondTeamSecondSet.classList.remove("set-loser");
+        }
+
+        if (thirdSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
+            firstTeamThirdSet.classList.add("set-winner");
+            secondTeamThirdSet.classList.add("set-loser");
+        } else if (thirdSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
+            secondTeamThirdSet.classList.add("set-winner");
+            firstTeamThirdSet.classList.add("set-loser");
+        } else {
+            firstTeamThirdSet.classList.remove("set-winner");
+            firstTeamThirdSet.classList.remove("set-loser");
+            secondTeamThirdSet.classList.remove("set-winner");
+            secondTeamThirdSet.classList.remove("set-loser");
+        }
+
+        if (isAtThirdSet(match)) {
+            if (firstTeamThirdSet.classList.contains("gone")) {
+                // Third set appearing - Update scores with startScores
+                storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, match.firstTeamStartScore);
+                storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, match.secondTeamStartScore);
+            }
+            firstTeamThirdSet.classList.remove("gone")
+            secondTeamThirdSet.classList.remove("gone")
+        } else {
+            match.scores[2].SET_SCORE_FIRST_TEAM_KEY = 0
+            match.scores[2].SET_SCORE_SECOND_TEAM_KEY = 0
+            firstTeamThirdSet.classList.add("gone")
+            secondTeamThirdSet.classList.add("gone")
+        }
     } else {
-        match.scores[2].SET_SCORE_FIRST_TEAM_KEY = 0
-        match.scores[2].SET_SCORE_SECOND_TEAM_KEY = 0
         firstTeamThirdSet.classList.add("gone")
         secondTeamThirdSet.classList.add("gone")
     }
@@ -1623,8 +1627,8 @@ function genereTournoi() {
     }
 }
 
-function onTurnRegenRequested(){
-     $('#turnRegenModal').modal('toggle');
+function onTurnRegenRequested() {
+    $('#turnRegenModal').modal('toggle');
     regenerateTurn(storage.tournoi.currentTour);
     selectPage(pages.EXECUTION_TOURNOI);
     document.body.querySelector("#headerTour" + storage.tournoi.currentTour).scrollIntoView({
@@ -1632,8 +1636,8 @@ function onTurnRegenRequested(){
     });
 }
 
-function displayTurnRegenModal(){
-     $('#turnRegenModal').modal('show');
+function displayTurnRegenModal() {
+    $('#turnRegenModal').modal('show');
 }
 window.onTurnRegenRequested = onTurnRegenRequested;
 
@@ -1813,8 +1817,23 @@ function getSetWinner(setPoints, firstTeamScore, secondTeamScore) {
     }
 }
 
+function isMatchInCurrentTurn(matchIndex) {
+    if (storage.tournoi.currentTour == -1) return false;
+    var currentIndex = 0
+    var result = false;
+    storage.tournoi.tours.forEach((turn, turnIndex) => {
+        turn.matchs.forEach(_ => {
+            if (matchIndex == currentIndex) {
+                result = turnIndex == storage.tournoi.currentTour;
+            }
+            currentIndex++;
+        });
+    });
+    return result;
+}
+
 function isTournamentFinished() {
-    return storage.tournoi.tours.length > 0 && storage.tournoi.tours.flatMap(turn => turn.matchs).every(match => getMatchWinner(match) != null);
+    return storage.tournoi.tours.length > 0 && storage.tournoi.tours.every(turn => turn.done);
 }
 
 function getPlayerHandicap(player) {
