@@ -90,8 +90,9 @@ export class LocalStorage {
         this.save();
     }
 
-    resetTournament(){
-        this.tournoi = new Tournoi();
+    resetTournamentMatches(){
+        this.tournoi.tours = [];
+        this.tournoi.currentTour = -1;
         this.save();
     }
 

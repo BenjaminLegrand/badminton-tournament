@@ -66,6 +66,27 @@
             </div>
         </div>
 
+           <!-- Modal Turn Generation-->
+        <div class="modal fade" id="turnRegenModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Regénération d'un tour</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  Le tour en cours et tous les suivants seront recalculés.
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary"  data-dismiss="modal">Annuler</button>
+                  <button type="button" onclick="onTurnRegenRequested();" class="btn btn-danger">Continuer</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
         <!-- Modal Joueur existant-->
         <div class="modal fade" id="modalJoueurExist" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
           <div class="modal-dialog" role="document">

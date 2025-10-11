@@ -147,10 +147,10 @@ function buildBody() {
     var body = MH.makeDiv("body");
     switch (currentPage) {
         case pages.ACCUEIL:
-            body.appendChild(buildListJoueur());
-            body.appendChild(buildPreparation());
             if (storage.tournoi.tours.length > 0)
                 body.appendChild(buildClassement());
+            body.appendChild(buildListJoueur());
+            body.appendChild(buildPreparation());
             break;
         case pages.SELECTION_JOUEUR:
             body.appendChild(buildListJoueur());
@@ -197,12 +197,28 @@ function buildFooter() {
             } else if (storage.tournoi.currentTour == -1) {
                 buttonLancerTournoi.innerHTML = "Lancer le tournoi";
                 buttonLancerTournoi.classList.add("btn-success");
+            } else if (isTournamentFinished()) {
+                buttonLancerTournoi.innerHTML = "Tournoi terminé";
+                buttonLancerTournoi.classList.add("btn-secondary");
+                buttonLancerTournoi.setAttribute("disabled", true);
             } else {
                 buttonLancerTournoi.innerHTML = "Continuer le tournoi";
                 buttonLancerTournoi.classList.add("btn-primary");
             }
-
             footer.appendChild(buttonLancerTournoi);
+            if (storage.tournoi.currentTour != -1) {
+                var resetTournament = MH.makeButton({
+                    type: "click",
+                    func: function () {
+                        storage.export();
+                        storage.resetTournamentMatches();
+                        selectPage(pages.ACCUEIL);
+                    }
+                });
+                resetTournament.innerHTML = "Réinitialiser le tournoi";
+                resetTournament.classList.add("btn-danger");
+                footer.appendChild(resetTournament);
+            }
             break;
         case pages.SELECTION_JOUEUR:
             var retour = MH.makeButton({
@@ -449,16 +465,12 @@ function buildHeaderTour(i) {
     }
     ssTitle.appendChild(ss2);
     header.appendChild(ssTitle);
-    if (storage.tournoi.tours[i].matchs.every(match => { return getMatchWinner(match) == null })) {
+    if (storage.tournoi.currentTour == i) {
         header.appendChild(
             MH.makeButton({
                 type: "click",
                 func: function () {
-                    regenerateTurn(i);
-                    selectPage(pages.EXECUTION_TOURNOI);
-                    document.body.querySelector("#headerTour" + i).scrollIntoView({
-                        behavior: 'instant'
-                    });
+                    displayTurnRegenModal();
                 }
             }, null, "Regénérer le tour")
         )
@@ -1379,7 +1391,7 @@ function refreshMatch(domMatch, matchIndex) {
 function generateRandomPlayerList() {
     return storage.joueurs.map(value => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
-        .map((elt) => { return {...elt.value}})
+        .map((elt) => { return { ...elt.value } })
 }
 
 // Generate all possibles matches of a single turn, considering played matches of previous turns 
@@ -1389,17 +1401,17 @@ function generateAllTurnMatches(playedMatches, players) {
     players.forEach(player => {
         //Associate all opponents of players for all their previous played matches
         player.opponents = getPlayerMatches(playedMatches, player).flatMap(match => {
-            if(match.firstTeam.map(p => p.name).includes(player.name)){
+            if (match.firstTeam.map(p => p.name).includes(player.name)) {
                 return match.secondTeam.map(p => p.name);
-            }else{
+            } else {
                 return match.firstTeam.map(p => p.name);
             }
         });
         //Associate all partners of players for all their previous played matches
-        player.partners =  getPlayerMatches(playedMatches, player).flatMap(match => {
-            if(match.firstTeam.map(p => p.name).includes(player.name)){
+        player.partners = getPlayerMatches(playedMatches, player).flatMap(match => {
+            if (match.firstTeam.map(p => p.name).includes(player.name)) {
                 return match.firstTeam.map(p => p.name).filter(elt => elt != player.name);
-            }else{
+            } else {
                 return match.secondTeam.map(p => p.name).filter(elt => elt != player.name);
             }
         });
@@ -1440,7 +1452,7 @@ function generateAllTurnMatches(playedMatches, players) {
     return matches;
 }
 
-function getPlayerMatches(matches, player){
+function getPlayerMatches(matches, player) {
     return matches.filter(match => {
         return match.firstTeam.some(p => p.name == player.name) || match.secondTeam.some(p => p.name == player.name);
     });
@@ -1602,7 +1614,7 @@ function testContraintes(match, waitingPlayers) {
 
 
 function genereTournoi() {
-    storage.resetTournament();
+    storage.resetTournamentMatches();
 
     for (var i = 0; i < storage.tournoi.nbTour; i++) {
         const playedMatches = storage.tournoi.tours.flatMap(turn => turn.matchs);
@@ -1610,6 +1622,20 @@ function genereTournoi() {
         storage.tournoi.tours.splice(i, 0, turn);
     }
 }
+
+function onTurnRegenRequested(){
+     $('#turnRegenModal').modal('toggle');
+    regenerateTurn(storage.tournoi.currentTour);
+    selectPage(pages.EXECUTION_TOURNOI);
+    document.body.querySelector("#headerTour" + storage.tournoi.currentTour).scrollIntoView({
+        behavior: 'instant'
+    });
+}
+
+function displayTurnRegenModal(){
+     $('#turnRegenModal').modal('show');
+}
+window.onTurnRegenRequested = onTurnRegenRequested;
 
 function regenerateTurn(fromIndex) {
     for (var turnIndex = fromIndex; turnIndex < storage.tournoi.nbTour; turnIndex++) {
@@ -1626,7 +1652,7 @@ function generateTurn(index, playedMatches) {
     const availablePlayers = generateRandomPlayerList();
     var turnMatches = generateAllTurnMatches(playedMatches, availablePlayers);
     console.log("-----------------")
-    console.log(`TURN ${index+1}`)
+    console.log(`TURN ${index + 1}`)
     console.log("ALREADY PLAYED MATCHES")
     console.log(playedMatches)
     console.log("GENERATED TURN MATCHES")
@@ -1787,6 +1813,9 @@ function getSetWinner(setPoints, firstTeamScore, secondTeamScore) {
     }
 }
 
+function isTournamentFinished() {
+    return storage.tournoi.tours.length > 0 && storage.tournoi.tours.flatMap(turn => turn.matchs).every(match => getMatchWinner(match) != null);
+}
 
 function getPlayerHandicap(player) {
     return player.genre.handicap + player.niveau.handicap;
