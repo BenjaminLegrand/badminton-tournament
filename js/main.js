@@ -1448,16 +1448,16 @@ function generateAllTurnMatches(playedMatches, players) {
         players.forEach(first => {
             players.forEach(second => {
                 const pair = [first, second];
-                if (!checkExistingPairOrPairPlayed(pair, playerPairs, playedMatches)) {
-                    if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE) {
-                        playerPairs.push(pair);
-                    } else {
-                        if (first.genre.value != second.genre.value) {
+                if (first.name != second.name) {
+                    if (!checkExistingPairOrPairPlayed(pair, playerPairs, playedMatches)) {
+                        if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE) {
                             playerPairs.push(pair);
+                        } else {
+                            if (first.genre.value != second.genre.value) {
+                                playerPairs.push(pair);
+                            }
                         }
                     }
-                } else {
-                    console.log("Already existing pair")
                 }
             })
         })
