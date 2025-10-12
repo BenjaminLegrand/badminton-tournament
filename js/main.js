@@ -1552,10 +1552,11 @@ function checkExistingPairOrPairPlayed(pair, existingPairs, playedMatches) {
 }
 
 function matchCoherent(playedMatches, firstTeam, secondTeam) {
+    const noSamePlayer = firstTeam.every(player1 => secondTeam.every(player2 => player1.name != player2.name))
     const playedMatch = playedMatches.some(match => {
         return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
     });
-    return !sameTeams(firstTeam, secondTeam) && !playedMatch;
+    return noSamePlayer && !playedMatch;
 }
 
 function sameTeams(teamA, teamB) {
