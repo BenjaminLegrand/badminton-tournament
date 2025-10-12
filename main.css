@@ -1,63 +1,68 @@
 /* latin */
 @font-face {
-  font-family: 'Handlee';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/handlee/v9/-F6xfjBsISg9aMakPm3wow.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    font-family: 'Handlee';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/handlee/v9/-F6xfjBsISg9aMakPm3wow.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
 /* vietnamese */
 @font-face {
-  font-family: 'Inconsolata';
-  font-style: normal;
-  font-weight: 300;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inconsolata/v21/QldgNThLqRwH-OJ1UHjlKENVzkWGVkL3GZQmAwLYxYWI2qfdm7Lpp9s8WRL2l2eY.woff2) format('woff2');
-  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/inconsolata/v21/QldgNThLqRwH-OJ1UHjlKENVzkWGVkL3GZQmAwLYxYWI2qfdm7Lpp9s8WRL2l2eY.woff2) format('woff2');
+    unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+1EA0-1EF9, U+20AB;
 }
+
 /* latin-ext */
 @font-face {
-  font-family: 'Inconsolata';
-  font-style: normal;
-  font-weight: 300;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inconsolata/v21/QldgNThLqRwH-OJ1UHjlKENVzkWGVkL3GZQmAwLYxYWI2qfdm7Lpp9s8WRP2l2eY.woff2) format('woff2');
-  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/inconsolata/v21/QldgNThLqRwH-OJ1UHjlKENVzkWGVkL3GZQmAwLYxYWI2qfdm7Lpp9s8WRP2l2eY.woff2) format('woff2');
+    unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
+
 /* latin */
 @font-face {
-  font-family: 'Inconsolata';
-  font-style: normal;
-  font-weight: 300;
-  font-stretch: 100%;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/inconsolata/v21/QldgNThLqRwH-OJ1UHjlKENVzkWGVkL3GZQmAwLYxYWI2qfdm7Lpp9s8WR32lw.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    font-family: 'Inconsolata';
+    font-style: normal;
+    font-weight: 300;
+    font-stretch: 100%;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/inconsolata/v21/QldgNThLqRwH-OJ1UHjlKENVzkWGVkL3GZQmAwLYxYWI2qfdm7Lpp9s8WR32lw.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
 /* latin */
 @font-face {
-  font-family: 'Indie Flower';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/indieflower/v12/m8JVjfNVeKWVnh3QMuKkFcZVaUuH.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    font-family: 'Indie Flower';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/indieflower/v12/m8JVjfNVeKWVnh3QMuKkFcZVaUuH.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
 /* latin */
 @font-face {
-  font-family: 'Marvel';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url(https://fonts.gstatic.com/s/marvel/v10/nwpWtKeoNgBV0qawLXHQAF-n.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    font-family: 'Marvel';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/marvel/v10/nwpWtKeoNgBV0qawLXHQAF-n.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 
-body{
+body {
     font-family: 'Handlee', cursive;
     font-family: 'Inconsolata', monospace;
     font-family: 'Indie Flower', cursive;
@@ -66,21 +71,23 @@ body{
     overflow: hidden;
 }
 
-div#global{
+div#global {
     display: flex;
     flex-direction: column;
 }
 
-button.btn{
+button.btn {
     margin: 5px;
     max-height: 50px;
 }
 
-button.btn img{
+button.btn img {
     margin-right: 5px;
 }
-input[type="text"]{
-    border-radius: 5px;;
+
+input[type="text"] {
+    border-radius: 5px;
+    ;
 }
 
 div#header {
@@ -114,17 +121,21 @@ div#footer {
     z-index: 10;
 }
 
-div#footer.selection{
+div#footer.selection {
     justify-content: space-between;
 }
 
-div#headerJoueur, div#headerPreparation, div#headerContrainte, div#headerTour, div#headerJoueurClassement{
+div#headerJoueur,
+div#headerPreparation,
+div#headerContrainte,
+div#headerTour,
+div#headerJoueurClassement {
     background-color: rgb(209 205 205);
     display: flex;
     justify-content: space-between;
     padding: 0px 10px;
     align-items: center;
-    text-shadow: -1px -1px 0 rgba(0,0,0,0.4), 1px 1px 0 rgba(255,255,255,1);
+    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4), 1px 1px 0 rgba(255, 255, 255, 1);
     font-size: 1.5rem;
     font-weight: bold;
     color: #5b5b5b;
@@ -132,14 +143,17 @@ div#headerJoueur, div#headerPreparation, div#headerContrainte, div#headerTour, d
     box-shadow: 0px 3px 7px -1px #9a9a9a;
 }
 
-.headerTitle{
+.headerTitle {
     font-size: 1.5em;
     color: white;
     text-shadow: 2px 2px 1px #676565;
     line-height: 1em;
 }
 
-div#listJoueurs, div#listPreparation, div#listContraintes, div#listJoueursClassement{
+div#listJoueurs,
+div#listPreparation,
+div#listContraintes,
+div#listJoueursClassement {
     width: 100%;
 }
 
@@ -148,7 +162,7 @@ div#listJoueurs.accueilJoueur {
     flex-wrap: wrap;
 }
 
-div.joueur{
+div.joueur {
     display: flex;
     padding: 5px 10px;
     flex-direction: row;
@@ -157,9 +171,9 @@ div.joueur{
     border-bottom: 2px lightgray ridge;
     align-items: center;
     justify-content: flex-start;
-} 
+}
 
-div.joueur.selection{
+div.joueur.selection {
     flex: 1 1 auto;
     justify-content: space-between;
     border: none;
@@ -167,39 +181,41 @@ div.joueur.selection{
 }
 
 
-div.joueur.selection.homme{
+div.joueur.selection.homme {
     background-color: transparent !important;
 }
 
-div.joueur.selection.femme{
+div.joueur.selection.femme {
     background-color: transparent !important;
 }
 
-div.divPreparation{
+div.divPreparation {
     display: flex;
     margin: 0px 10px;
     padding: 5px;
     flex-direction: column;
     flex-wrap: wrap;
     align-items: start;
-} 
+}
 
-div.divJoueur.selectionJoueur{
+div.divJoueur.selectionJoueur {
     cursor: pointer;
 }
 
-div.joueur.homme{
+div.joueur.homme {
     background-color: rgb(168, 194, 210);
 }
-div.joueur.femme{
+
+div.joueur.femme {
     background-color: #feb494;
 }
 
-div.joueur:last-child, div.divPreparation:last-child {
+div.joueur:last-child,
+div.divPreparation:last-child {
     border: none;
 }
 
-div.joueur.accueil{
+div.joueur.accueil {
     border: 1px solid gray;
     margin: 5px;
     border-radius: 5px;
@@ -211,7 +227,7 @@ div.joueur.accueil{
     line-height: 16px;
 }
 
-div.joueur.player-match{
+div.joueur.player-match {
     border: 1px solid gray;
     margin: 5px;
     border-radius: 5px;
@@ -229,28 +245,31 @@ div.divJoueurs.accueil {
     flex-direction: row;
     flex-wrap: wrap;
     padding: 10px;
-}    
+}
 
-div.joueur.selection{
+div.joueur.selection {
     flex: 1 1 auto;
 }
 
-div.joueurSelection{
+div.joueurSelection {
     display: flex;
     border-bottom: 1px solid gray;
     cursor: pointer;
 }
 
-div.joueurSelection.homme:hover{
+div.joueurSelection.homme:hover {
     background-color: none;
-    background: linear-gradient(45deg, #dbdbdb, #a8c2d2);;
-}
-div.joueurSelection.femme:hover{
-    background-color: none;
-    background: linear-gradient(45deg, #dbdbdb,#feb494);;
+    background: linear-gradient(45deg, #dbdbdb, #a8c2d2);
+    ;
 }
 
-span.nomJoueur{
+div.joueurSelection.femme:hover {
+    background-color: none;
+    background: linear-gradient(45deg, #dbdbdb, #feb494);
+    ;
+}
+
+span.nomJoueur {
     margin: 0px 0px 5px 5px;
     flex: 1 1 auto;
     text-overflow: ellipsis;
@@ -258,20 +277,20 @@ span.nomJoueur{
     max-height: 70px;
 }
 
-div.property{
+div.property {
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
     margin: 10px;
 }
 
-div.propertyRow{
+div.propertyRow {
     flex-direction: row-reverse;
     justify-content: flex-end;
     align-items: center;
 }
 
-.propertyValue{
+.propertyValue {
     margin-left: 0px;
     display: flex;
     flex-wrap: wrap;
@@ -282,39 +301,40 @@ div.propertyRow{
     flex-direction: row;
 }
 
-button.bouton{
+button.bouton {
     margin: 5px;
 }
 
-label.propertyKey{
+label.propertyKey {
     color: gray;
     font-size: 1em;
     padding-left: 5px;
 }
-label.propertyKey.columnReverse{
-    margin-bottom:0px;
-    margin-top:0.5rem;
+
+label.propertyKey.columnReverse {
+    margin-bottom: 0px;
+    margin-top: 0.5rem;
 }
 
-span.propertyValue{
+span.propertyValue {
     color: black;
     font-size: 1em;
     padding: 5px;
     flex: 1 1 auto;
 }
 
-.noData{
+.noData {
     font-style: italic;
     margin: 10px;
 }
 
-.labelCheckbox{
+.labelCheckbox {
     margin-left: 5px;
     margin-bottom: 0px;
     cursor: pointer;
 }
 
-div.divRadio{
+div.divRadio {
     display: flex;
     align-items: center;
     margin: 10px;
@@ -325,141 +345,146 @@ div.divRadio label.labelCheckbox {
     cursor: pointer;
 }
 
-span.headerTitle{
+span.headerTitle {
     flex: 1 1 auto;
     margin-left: 10px;
 }
 
-label.selectionJoueur{
+label.selectionJoueur {
     margin-left: 10px;
     cursor: pointer;
     margin-bottom: 0px;
 }
 
-#navbarDropdownMenuLink{
+#navbarDropdownMenuLink {
     border-radius: 5px;
 }
 
-.numberSpinner{
+.numberSpinner {
     display: flex;
     flex-direction: row;
     align-items: center;
     border: gray 1px solid;
-    width:  140px;
+    width: 140px;
     height: initial;
     border-radius: 6px;
 }
 
-.numberSpinner.vertical{
+.numberSpinner.vertical {
     display: flex;
     flex-direction: column-reverse;
     justify-content: center;
     align-items: center;
     border: gray 1px solid;
-    width:  40px;
+    width: 40px;
     height: 132px;
     border-radius: 6px;
 }
 
-.numberSpinner.vertical button{
+.numberSpinner.vertical button {
     width: 40px;
 }
 
-.numberSpinner.vertical span{
+.numberSpinner.vertical span {
     line-height: 60px;
 }
 
-.numberSpinnerValue{
+.numberSpinnerValue {
     flex: 1 1 auto;
     justify-content: center;
     text-align: center;
 }
 
-.numberSpinnerPlusMoins{
+.numberSpinnerPlusMoins {
     margin: -1px !important;
     border: 0px;
 }
 
-.numberSpinnerPlus{
+.numberSpinnerPlus {
     border-top-left-radius: 0px !important;
     border-bottom-left-radius: 0px !important;
     border: 0px;
 }
 
-.numberSpinnerMoins{
+.numberSpinnerMoins {
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
     border: 0px;
 }
 
-.numberSpinnerPlusVertical{
+.numberSpinnerPlusVertical {
     border-bottom-left-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
     border: 0px;
 }
 
-.numberSpinnerMoinsVertical{
+.numberSpinnerMoinsVertical {
     border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important;
     border: 0px;
 }
 
-.handicaps{
+.handicaps {
     width: inherit;
     display: flex;
     flex-wrap: wrap;
 }
 
-.contrainteTitle{
+.contrainteTitle {
     font-size: 1.5em;
     font-weight: bold;
 }
-.contrainteDesc{
+
+.contrainteDesc {
     font-size: 1em;
     color: gray;
 }
 
-.contrainte{
+.contrainte {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
-.ssContrainte{
+
+.ssContrainte {
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
     margin-left: 10px;
     cursor: pointer;
 }
-div.divContrainte{
+
+div.divContrainte {
     display: flex;
     padding: 5px 10px;
     flex-direction: row;
     justify-content: space-between;
     border-bottom: 2px lightgray ridge;
-    margin: 10px 0px;   
+    margin: 10px 0px;
     align-items: center;
-} 
+}
 
 span.numContrainte {
     margin-left: 10px;
 }
 
-.divSsTitle{
+.divSsTitle {
     align-items: center;
     margin: 10px 0px;
 }
-.ssTitle{
+
+.ssTitle {
     margin-right: 10px;
     font-size: 1.3rem;
 }
-.nbSsTitle{
+
+.nbSsTitle {
     font-size: 0.7em;
     text-shadow: none;
-    color:  gray;
+    color: gray;
 }
 
-.match{
+.match {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -471,7 +496,7 @@ span.numContrainte {
     align-items: center;
 }
 
-.matchs{
+.matchs {
     flex-direction: row;
     display: flex;
     flex-wrap: wrap;
@@ -479,7 +504,8 @@ span.numContrainte {
     justify-content: center;
 }
 
-.firstTeamSets, .secondTeamSets{
+.firstTeamSets,
+.secondTeamSets {
     flex-direction: column;
     display: flex;
     align-items: center;
@@ -488,10 +514,10 @@ span.numContrainte {
 }
 
 .gone {
-    display:none;
+    display: none;
 }
 
-.divMatch{
+.divMatch {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -499,7 +525,7 @@ span.numContrainte {
     margin: 10px;
 }
 
-.joueurAttente{
+.joueurAttente {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -508,43 +534,47 @@ span.numContrainte {
     flex-wrap: wrap;
     padding: 5px;
 }
-.tour{
+
+.tour {
     width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.currentTour{
+.currentTour {
     background-color: #7bbaff;
 }
-.closedTour{
+
+.closedTour {
     background-color: #99ce99;
 }
-.forPlayingTour{
-    background-color: lightgray ;
+
+.forPlayingTour {
+    background-color: lightgray;
 }
 
-div.currentTour div.match{
-    background-color: white ;
+div.currentTour div.match {
+    background-color: white;
 }
 
-.match div.property{
+.match div.property {
     align-items: center;
 }
 
-.match span{
+.match span {
     text-align: center;
-    
+
 }
 
-.equipe{
+.equipe {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
-.headerTour{
+
+.headerTour {
     box-shadow: 0px 0px 14px 2px #9a9a9a;
     width: 100%;
     padding-left: 20px;
@@ -553,16 +583,71 @@ div.currentTour div.match{
     justify-content: space-between;
 }
 
-.badge{
+#player-matches-modal-content {
+    max-height: calc(100vh - 225px);
+    overflow-y: scroll;
+}
+#player-matches-modal-content > .joueur {
+   margin: 0;
+   margin-bottom: 10px;
+}
+.player-matches-modal-turn-text {
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.player-matches-player-info-with-title {
+   width:70px;
+}
+.player-matches-player-info-against-title {
+   width:70px;
+}
+.player-matches-player-info-with {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.player-matches-player-info-against {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.player-matches-modal-turn-0 {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    background-color: #e0e0e0;
+}
+
+.player-matches-modal-turn-1 {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+
+.player-matches-partners {
+    display: flex;
+    gap: 30;
+    flex-direction: row;
+}
+
+.player-matches-opponents {
+    display: flex;
+    gap: 30;
+    flex-direction: row;
+}
+
+.badge {
     font-size: 1rem;
     box-shadow: 0px 0px 5px 2px #9a9a9a;
     margin-left: 3px;
 }
 
-#divMatchNegatif label{
-    margin-bottom:0px;
+#divMatchNegatif label {
+    margin-bottom: 0px;
 }
-#divMatchNegatif{
+
+#divMatchNegatif {
     margin-bottom: 7px;
     font-size: 1.5rem;
     /* border-bottom: 1px solid gray; */
@@ -572,32 +657,32 @@ div.currentTour div.match{
     cursor: pointer;
 }
 
-.pointMatch{
+.pointMatch {
     margin: 0px !important;
 }
 
-.volant{
+.volant {
     height: 20px;
     margin: 10px 5px;
 }
 
-.divImgVolant{
+.divImgVolant {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
 }
 
-.sepVolant{
-        /* flex: 1 1 auto; */
-        background-color: gray;
-        height: 30px;
-        width: 2px;
-        border-radius: 50%;
-        box-shadow: 0px 0px 16px 1px #575757;
+.sepVolant {
+    /* flex: 1 1 auto; */
+    background-color: gray;
+    height: 30px;
+    width: 2px;
+    border-radius: 50%;
+    box-shadow: 0px 0px 16px 1px #575757;
 }
 
-.allSelect{
+.allSelect {
     display: flex;
     margin-bottom: 0px;
     justify-content: flex-start;
@@ -606,34 +691,38 @@ div.currentTour div.match{
     cursor: pointer;
 }
 
-#listGroupeJoueur{
+#listGroupeJoueur {
     display: flex;
     width: 100%;
 }
-.groupeJoueur{
+
+.groupeJoueur {
     cursor: pointer;
     width: 100%;
     padding: 10px;
 }
-.groupeJoueur:hover{
+
+.groupeJoueur:hover {
     background-color: lightgray;
 }
-.groupeJoueur span{
-    margin-left:10px;
+
+.groupeJoueur span {
+    margin-left: 10px;
 }
 
-div.forPlayingTour button, div.closedTour button{
+div.forPlayingTour button,
+div.closedTour button {
     pointer-events: none;
 }
 
-.headerMatch{
+.headerMatch {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
 }
 
-.victoire{
+.victoire {
     background-color: transparent;
     border: none;
     height: 30px;
@@ -642,45 +731,46 @@ div.forPlayingTour button, div.closedTour button{
     opacity: 0.3;
     margin: 3px 0px !important;
 }
-.victoire:hover{
+
+.victoire:hover {
     /*background-color: #9ce9be;*/
     border: none;
     opacity: 1;
 }
 
-.set-winner{
+.set-winner {
     background-color: lightgreen;
     font-weight: bold;
 }
 
-.set-loser{
+.set-loser {
     background-color: coral;
 }
 
-#limitPoint{
+#limitPoint {
     width: 45px;
 }
 
-.divJoueurClassement{
+.divJoueurClassement {
     display: flex;
     justify-content: center;
 }
 
-.playerData{
+.playerData {
     flex: 0.5 1 auto;
 }
 
-.divJoueursClassement{
+.divJoueursClassement {
     margin: 10px 20%;
 }
 
-.tableClassement{
+.tableClassement {
     width: 100%;
     text-align: center;
 }
 
 
-.aide{
+.aide {
     padding: 10px;
     font-size: 1em;
     cursor: pointer;
@@ -690,25 +780,26 @@ div.forPlayingTour button, div.closedTour button{
     font-style: italic;
 }
 
-.aide:hover{
+.aide:hover {
     background-color: #f8dc9b;
 }
 
-.aide img{
+.aide img {
     margin-right: 5px;
     height: 20px;
 }
 
 .
+
 /* Style the tab */
 .tab {
     overflow: hidden;
     border: 1px solid #ccc;
     background-color: #f1f1f1;
-  }
-  
-  /* Style the buttons that are used to open the tab content */
-  .tab button {
+}
+
+/* Style the buttons that are used to open the tab content */
+.tab button {
     background-color: inherit;
     float: left;
     border: none;
@@ -716,32 +807,32 @@ div.forPlayingTour button, div.closedTour button{
     cursor: pointer;
     padding: 14px 16px;
     transition: 0.3s;
-  }
-  
-  /* Change background color of buttons on hover */
-  .tab button:hover {
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
     background-color: #ddd;
-  }
-  
-  /* Create an active/current tablink class */
-  .tab button.active {
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
     background-color: #ccc;
-  }
-  
-  /* Style the tab content */
-  .tabcontent {
+}
+
+/* Style the tab content */
+.tabcontent {
     display: none;
     padding: 6px 12px;
     border: 1px solid #ccc;
     border-top: none;
-  }
+}
 
-  .checkInclude{
-      pointer-events: none;
-  }
+.checkInclude {
+    pointer-events: none;
+}
 
-  #theadClassement th{
+#theadClassement th {
     font-weight: 800;
     color: white;
     background-color: #919191;
-  }
+}

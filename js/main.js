@@ -510,7 +510,12 @@ function buildMatch(match, j) {
     var listFirstTeam = MH.makeDiv(null, "equipe");
 
     match.firstTeam.forEach((player, index) => {
-        listFirstTeam.appendChild(buildJoueur(player, index));
+        const playerUI = buildJoueur(player, index)
+        playerUI.addEventListener('click', function (e) {
+            $('#playerMatchesModal').modal('show');
+            buildPlayerMatches(player);
+        })
+        listFirstTeam.appendChild(playerUI);
     })
 
     var firstTeamSets = MH.makeDiv(null, "firstTeamSets");
@@ -563,7 +568,12 @@ function buildMatch(match, j) {
 
     var listSecondTeam = MH.makeDiv(null, "equipe");
     match.secondTeam.forEach((player, index) => {
-        listSecondTeam.appendChild(buildJoueur(player, index));
+        const playerUI = buildJoueur(player, index)
+        playerUI.addEventListener('click', function (e) {
+            $('#playerMatchesModal').modal('show');
+            buildPlayerMatches(player);
+        })
+        listSecondTeam.appendChild(playerUI);
     })
 
     var secondTeamSets = MH.makeDiv(null, "secondTeamSets");
@@ -1437,12 +1447,17 @@ function generateAllTurnMatches(playedMatches, players) {
         const playerPairs = [];
         players.forEach(first => {
             players.forEach(second => {
-                if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE) {
-                    playerPairs.push([first, second]);
-                } else {
-                    if (first.genre.value != second.genre.value) {
-                        playerPairs.push([first, second]);
+                const pair = [first, second];
+                if (!checkExistingPairOrPairPlayed(pair, playerPairs, playedMatches)) {
+                    if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE) {
+                        playerPairs.push(pair);
+                    } else {
+                        if (first.genre.value != second.genre.value) {
+                            playerPairs.push(pair);
+                        }
                     }
+                } else {
+                    console.log("Already existing pair")
                 }
             })
         })
@@ -1524,6 +1539,18 @@ function newMatch(firstTeam, secondTeam) {
     );
 }
 
+function checkExistingPairOrPairPlayed(pair, existingPairs, playedMatches) {
+    const pairPlayed = playedMatches.some(match => {
+        return sameTeams(match.firstTeam, pair) || sameTeams(match.secondTeam, pair);
+    });
+    const pairNames = { name1: pair[0].name, name2: pair[1].name }
+    return existingPairs.some(existingPair => {
+        const existingPairNames = { name1: existingPair[0].name, name2: existingPair[1].name }
+        return (pairNames.name1 == existingPairNames.name1 && pairNames.name2 == existingPairNames.name2) ||
+            (pairNames.name2 == existingPairNames.name1 && pairNames.name1 == existingPairNames.name2)
+    }) || pairPlayed
+}
+
 function matchCoherent(playedMatches, alreadyGeneratedMatches, firstTeam, secondTeam) {
     const differentTeams = firstTeam.every(player => { return !secondTeam.includes(player); });
     const existingMatch = alreadyGeneratedMatches.some(match => {
@@ -1536,9 +1563,10 @@ function matchCoherent(playedMatches, alreadyGeneratedMatches, firstTeam, second
 }
 
 function sameTeams(teamA, teamB) {
-    const teamANames = teamA.map(player => { return player.name; });
     const teamBNames = teamB.map(player => { return player.name; });
-    return JSON.stringify(teamANames) === JSON.stringify(teamBNames);
+    return teamA.every(playerA => {
+        return teamBNames.includes(playerA.name);
+    })
 }
 
 function testContraintes(match, waitingPlayers) {
@@ -1811,6 +1839,36 @@ function getSetWinner(setPoints, firstTeamScore, secondTeamScore) {
     }
 }
 
+function isPlayerInMatch(player, match) {
+    const firstTeamNames = match.firstTeam.map(p => p.name);
+    const secondTeamNames = match.secondTeam.map(p => p.name);
+    return firstTeamNames.includes(player.name) || secondTeamNames.includes(player.name)
+}
+
+function getOpponents(player, match) {
+    const firstTeamNames = match.firstTeam.map(p => p.name);
+    const secondTeamNames = match.secondTeam.map(p => p.name);
+    var opponents = "";
+    if (firstTeamNames.includes(player.name)) {
+        return match.secondTeam.filter(p => p.name != player.name)
+    } else if (secondTeamNames.includes(player.name)) {
+        return match.firstTeam.filter(p => p.name != player.name)
+    }
+    return opponents;
+}
+
+function getPartner(player, match) {
+    const firstTeamNames = match.firstTeam.map(p => p.name);
+    const secondTeamNames = match.secondTeam.map(p => p.name);
+    var partner = null;
+    if (firstTeamNames.includes(player.name)) {
+        return match.firstTeam.filter(p => p.name != player.name)
+    } else if (secondTeamNames.includes(player.name)) {
+        return match.secondTeam.filter(p => p.name != player.name)
+    }
+    return partner;
+}
+
 function isMatchInCurrentTurn(matchIndex) {
     if (storage.tournoi.currentTour == -1) return false;
     var currentIndex = 0
@@ -1846,6 +1904,47 @@ function handleImport(evt) {
     file.readAsText(evt.target.files[0]);
 }
 
+function closePlayerMatchesModal() {
+    $('#playerMatchesModal').modal('toggle');
+    $('#player-matches-modal-content').empty();
+}
 
+function buildPlayerMatches(player) {
+    var container = $('#player-matches-modal-content');
+    container.append(buildJoueur(player))
+    storage.tournoi.tours.forEach((turn, index) => {
+        const turnDiv = MH.makeDiv("player-matches-modal-turn-" + index, "player-matches-modal-turn-" + index % 2)
+        const matchs = turn.matchs.filter(match => {
+            return isPlayerInMatch(player, match);
+        });
+        turnDiv.appendChild(MH.makeSpan(`Tour ${index + 1}`, "player-matches-modal-turn-text"))
+        if (matchs.length == 0) {
+            turnDiv.appendChild(MH.makeSpan("En attente"))
+        } else {
+            const playerInfoDiv = MH.makeDiv("player-matches-player-info-turn-" + index, "player-matches-player-info")
+            if (storage.tournoi.typeTournoi != typeTournoiListe.SIMPLE) {
+                const withDiv = MH.makeDiv("player-matches-player-info-with-turn-" + index, "player-matches-player-info-with")
+                withDiv.appendChild(MH.makeSpan("Avec", "player-matches-player-info-with-title"))
+                const partnerDiv = MH.makeDiv("partner-div-turn" + index, "player-matches-partners")
+                getPartner(player, matchs[0]).forEach(partner => {
+                    partnerDiv.appendChild(buildJoueur(partner))
+                })
+                withDiv.appendChild(partnerDiv)
+                turnDiv.appendChild(withDiv)
+            }
+            const againstDiv = MH.makeDiv("player-matches-player-info-against-turn-" + index, "player-matches-player-info-against")
+            againstDiv.appendChild(MH.makeSpan("Contre", "player-matches-player-info-against-title"))
+            const opponentsDiv = MH.makeDiv("opponents-div-turn" + index, "player-matches-opponents")
+            getOpponents(player, matchs[0]).forEach(opponent => {
+                opponentsDiv.appendChild(buildJoueur(opponent))
+            })
+            againstDiv.appendChild(opponentsDiv)
+            turnDiv.appendChild(againstDiv)
+        }
+        container.append(turnDiv)
+    })
+}
+
+window.closePlayerMatchesModal = closePlayerMatchesModal;
 window.finTournoi = finTournoi;
 window.deleteJoueur = deleteJoueur;
