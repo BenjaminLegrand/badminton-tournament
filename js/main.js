@@ -1438,7 +1438,7 @@ function generateAllTurnMatches(playedMatches, players) {
             players.forEach(second => {
                 const firstTeam = [first];
                 const secondTeam = [second];
-                if (matchCoherent(playedMatches, matches, firstTeam, secondTeam)) {
+                if (matchCoherent(playedMatches, firstTeam, secondTeam)) {
                     matches.push(newMatch(firstTeam, secondTeam));
                 }
             })
@@ -1463,7 +1463,7 @@ function generateAllTurnMatches(playedMatches, players) {
         })
         playerPairs.forEach(first => {
             playerPairs.forEach(second => {
-                if (matchCoherent(playedMatches, matches, first, second)) {
+                if (matchCoherent(playedMatches, first, second)) {
                     matches.push(newMatch(first, second));
                 }
             })
@@ -1551,15 +1551,11 @@ function checkExistingPairOrPairPlayed(pair, existingPairs, playedMatches) {
     }) || pairPlayed
 }
 
-function matchCoherent(playedMatches, alreadyGeneratedMatches, firstTeam, secondTeam) {
-    const differentTeams = firstTeam.every(player => { return !secondTeam.includes(player); });
-    const existingMatch = alreadyGeneratedMatches.some(match => {
-        return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
-    });
+function matchCoherent(playedMatches, firstTeam, secondTeam) {
     const playedMatch = playedMatches.some(match => {
         return (sameTeams(match.firstTeam, firstTeam) && sameTeams(match.secondTeam, secondTeam)) || (sameTeams(match.secondTeam, firstTeam) && sameTeams(match.firstTeam, secondTeam));
     });
-    return differentTeams && !existingMatch && !playedMatch;
+    return !sameTeams(firstTeam, secondTeam) && !playedMatch;
 }
 
 function sameTeams(teamA, teamB) {
