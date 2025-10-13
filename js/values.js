@@ -69,70 +69,70 @@ export var niveauListe = {
         handicap: 0
     },
     "P10": {
-        level : 3,
+        level : 4,
         color : "#f8e71c",
         textColor : "black",
         value: "P10",
         handicap: -3
     },
     "D9": {
-        level : 4,
+        level : 6,
         color : "#7ed321",
         textColor : "black",
         value: "D9", 
         handicap: -5
     },
     "D8": {
-        level : 5,
+        level : 12,
         color : "#7ed321",
         textColor : "black",
         value: "D8",
         handicap: -10
     },
     "D7": {
-        level : 6,
+        level : 16,
         color : "#7ed321",
         textColor : "black",
         value: "D7",
         handicap: -14
     },
     "R6": {
-        level : 7,
+        level : 22,
         color : "#4a90e2",
         textColor : "white",
         value: "R6", 
         handicap: -14
     },
     "R5": {
-        level : 8,
+        level : 24,
         color : "#4a90e2",
         textColor : "white",
         value: "R5",
         handicap: -18
     },
     "R4": {
-        level : 9,
+        level :25,
         color : "#4a90e2",
         textColor : "white",
         value: "R4",
         handicap: -18
     },
     "N3": {
-        level : 10,
+        level : 26,
         color : "#f80220",
         textColor : "white",
         value: "N3", 
         handicap: -21
     },
     "N2": {
-        level : 11,
+        level : 27,
         color : "#f80220",
         textColor : "white",
         value: "N2",
         handicap: -21
     },
     "N1": {
-        level : 12,
+        level : 28,
         color : "#f80220",
         textColor : "white",
         value: "N1",

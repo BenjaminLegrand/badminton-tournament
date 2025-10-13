@@ -1566,9 +1566,9 @@ function sameTeams(teamA, teamB) {
     })
 }
 
-const DEFAULT_POINT_LIMIT_CONSTRAINT_VALUE = 100000
 function testContraintes(match, waitingPlayers) {
     var facteur = 1;
+    computeMainConstraints(match);
     storage.tournoi.contraintes.forEach(constraint => {
         if (constraint.actif && !constraint.disabled) {
             facteur *= 10;
@@ -1587,10 +1587,6 @@ function testContraintes(match, waitingPlayers) {
                 });
                 if (nbHommeFirstTeam != nbHommeSecondTeam) {
                     match.constraintScore += facteur;
-                }
-            } else if (constraint.name == "LIMITPOINT") {
-                if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
-                    match.constraintScore += DEFAULT_POINT_LIMIT_CONSTRAINT_VALUE;
                 }
             } else if (constraint.name == "ADVERSAIRE") {
                 match.firstTeam.forEach(firstPlayer => {
@@ -1636,7 +1632,34 @@ function testContraintes(match, waitingPlayers) {
     });
 }
 
+const DEFAULT_MAIN_CONSTRAINT_VALUE = 100000
+const MAX_LEVEL_DIFF = 3
+const MAX_LEVEL_MEAN_DIFF = 2
+function computeMainConstraints(match) {
+    if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
+        match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
+    }
 
+    const firstTeamLevels = match.firstTeam.map(player => player.niveau.level)
+    const secondTeamLevels = match.secondTeam.map(player => player.niveau.level)
+
+    const firstTeamMaxLevel = Math.max(...firstTeamLevels)
+    const secondTeamMaxLevel = Math.max(...secondTeamLevels)
+    const firstTeamMinLevel = Math.min(...firstTeamLevels)
+    const secondTeamMinLevel = Math.min(...secondTeamLevels)
+
+    const firstTeamMean = firstTeamLevels.reduce((a, b) => a + b) / firstTeamLevels.length;
+    const secondTeamMean = secondTeamLevels.reduce((a, b) => a + b) / secondTeamLevels.length;
+
+    if(firstTeamMaxLevel - firstTeamMinLevel > MAX_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel > MAX_LEVEL_DIFF){
+        match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
+    }
+
+    if(Math.abs(firstTeamMean - secondTeamMean) > MAX_LEVEL_MEAN_DIFF){
+        match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
+    }
+    
+}
 function genereTournoi() {
     storage.resetTournamentMatches();
 
