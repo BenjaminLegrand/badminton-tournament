@@ -1566,6 +1566,7 @@ function sameTeams(teamA, teamB) {
     })
 }
 
+const DEFAULT_POINT_LIMIT_CONSTRAINT_VALUE = 100000
 function testContraintes(match, waitingPlayers) {
     var facteur = 1;
     storage.tournoi.contraintes.forEach(constraint => {
@@ -1585,20 +1586,20 @@ function testContraintes(match, waitingPlayers) {
                     }
                 });
                 if (nbHommeFirstTeam != nbHommeSecondTeam) {
-                    match.pointContrainte += facteur;
+                    match.constraintScore += facteur;
                 }
             } else if (constraint.name == "LIMITPOINT") {
-                if (Math.abs(match.firstTeamHandicap - match.secondTeamHandicap) > storage.tournoi.limitPoint) {
-                    match.pointContrainte += facteur;
+                if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
+                    match.constraintScore += DEFAULT_POINT_LIMIT_CONSTRAINT_VALUE;
                 }
             } else if (constraint.name == "ADVERSAIRE") {
                 match.firstTeam.forEach(firstPlayer => {
                     match.secondTeam.forEach(secondPlayer => {
                         if (firstPlayer.opponents.includes(secondPlayer.name)) {
-                            match.pointContrainte += facteur;
+                            match.constraintScore += facteur;
                         }
                         if (secondPlayer.opponents.includes(firstPlayer.name)) {
-                            match.pointContrainte += facteur;
+                            match.constraintScore += facteur;
                         }
                     });
                 });
@@ -1606,14 +1607,14 @@ function testContraintes(match, waitingPlayers) {
                 match.firstTeam.forEach(firstPlayer1 => {
                     match.firstTeam.forEach(firstPlayer2 => {
                         if (firstPlayer1.partners.includes(firstPlayer2.name) || firstPlayer2.partners.includes(firstPlayer1.name)) {
-                            match.pointContrainte += facteur;
+                            match.constraintScore += facteur;
                         }
                     });
                 });
                 match.secondTeam.forEach(secondPlayer1 => {
                     match.secondTeam.forEach(secondPlayer2 => {
                         if (secondPlayer1.partners.includes(secondPlayer2.name) || secondPlayer2.partners.includes(secondPlayer1.name)) {
-                            match.pointContrainte += facteur;
+                            match.constraintScore += facteur;
                         }
                     });
                 });
@@ -1621,13 +1622,13 @@ function testContraintes(match, waitingPlayers) {
                 match.firstTeam.forEach(player => {
                     const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
                     if (waitingPlayer != null) {
-                        match.pointContrainte -= (facteur * waitingPlayer.count);
+                        match.constraintScore -= (facteur * waitingPlayer.count);
                     }
                 });
                 match.secondTeam.forEach(player => {
                     const waitingPlayer = waitingPlayers.find(waitingPlayer => waitingPlayer.name == player.name)
                     if (waitingPlayer != null) {
-                        match.pointContrainte -= (facteur * waitingPlayer.count);
+                        match.constraintScore -= (facteur * waitingPlayer.count);
                     }
                 });
             }
@@ -1678,9 +1679,6 @@ function generateTurn(index, playedMatches) {
     console.log(`TURN ${index + 1}`)
     console.log("ALREADY PLAYED MATCHES")
     console.log(playedMatches)
-    console.log("GENERATED TURN MATCHES")
-    console.log(turnMatches)
-    console.log("-----------------")
     //nombre de mathc par tour
     const nbMatch = Math.min(
         Math.floor(availablePlayers.length / (typeTournoiListe.SIMPLE ? 2 : 4)),
@@ -1694,7 +1692,11 @@ function generateTurn(index, playedMatches) {
     })
 
     //on tri la liste
-    turnMatches.sort((m1, m2) => m1.pointContrainte - m2.pointContrainte);
+    turnMatches.sort((m1, m2) => m1.constraintScore - m2.constraintScore);
+
+    console.log("GENERATED TURN MATCHES")
+    console.log(turnMatches)
+    console.log("-----------------")
 
     for (var j = 0; j < nbMatch; j++) {
         if (turnMatches.length == 0) break; //s'il n'y a plus de match dispo on sort
