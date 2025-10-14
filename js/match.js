@@ -13,6 +13,7 @@ export class Match {
     secondTeamStartScore = 0;
     constraintScore = 0;
     setPoints = 21;
+    disabled = false;
 
     scores = [];
 }
