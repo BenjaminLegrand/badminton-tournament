@@ -1638,20 +1638,20 @@ const HARD_CAP_LEVEL_DIFF = 5
 const SOFT_CAP_LEVEL_MEAN_DIFF = 2
 const HARD_CAP_LEVEL_MEAN_DIFF = 4
 function computeMainConstraints(match) {
-    if(firstTeamMinLevel > 4 && secondTeamMinLevel > 4){
-        return;
-    }
-    if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
-        match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
-    }
-
-    const firstTeamLevels = match.firstTeam.map(player => player.niveau.level)
+     const firstTeamLevels = match.firstTeam.map(player => player.niveau.level)
     const secondTeamLevels = match.secondTeam.map(player => player.niveau.level)
 
     const firstTeamMaxLevel = Math.max(...firstTeamLevels)
     const secondTeamMaxLevel = Math.max(...secondTeamLevels)
     const firstTeamMinLevel = Math.min(...firstTeamLevels)
     const secondTeamMinLevel = Math.min(...secondTeamLevels)
+    
+    if(firstTeamMinLevel > 4 && secondTeamMinLevel > 4){
+        return;
+    }
+    if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
+        match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
+    }
 
     const firstTeamMean = firstTeamLevels.reduce((a, b) => a + b) / firstTeamLevels.length;
     const secondTeamMean = secondTeamLevels.reduce((a, b) => a + b) / secondTeamLevels.length;
