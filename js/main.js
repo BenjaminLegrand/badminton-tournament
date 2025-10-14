@@ -1650,6 +1650,10 @@ function computeMainConstraints(match) {
     const firstTeamMinLevel = Math.min(...firstTeamLevels)
     const secondTeamMinLevel = Math.min(...secondTeamLevels)
 
+    if(firstTeamMinLevel > 4 && secondTeamMinLevel > 4){
+        return;
+    }
+
     const firstTeamMean = firstTeamLevels.reduce((a, b) => a + b) / firstTeamLevels.length;
     const secondTeamMean = secondTeamLevels.reduce((a, b) => a + b) / secondTeamLevels.length;
 
