@@ -1635,8 +1635,8 @@ function testContraintes(match, waitingPlayers) {
 const DEFAULT_MAIN_CONSTRAINT_VALUE = 100000
 const SOFT_CAP_LEVEL_DIFF = 3
 const HARD_CAP_LEVEL_DIFF = 5
-const SOFT_LEVEL_MEAN_DIFF = 2
-const HARD_LEVEL_MEAN_DIFF = 4
+const SOFT_CAP_LEVEL_MEAN_DIFF = 2
+const HARD_CAP_LEVEL_MEAN_DIFF = 4
 function computeMainConstraints(match) {
     if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
         match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
