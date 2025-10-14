@@ -1633,8 +1633,10 @@ function testContraintes(match, waitingPlayers) {
 }
 
 const DEFAULT_MAIN_CONSTRAINT_VALUE = 100000
-const MAX_LEVEL_DIFF = 3
-const MAX_LEVEL_MEAN_DIFF = 2
+const SOFT_CAP_LEVEL_DIFF = 3
+const HARD_CAP_LEVEL_DIFF = 5
+const SOFT_LEVEL_MEAN_DIFF = 2
+const HARD_LEVEL_MEAN_DIFF = 4
 function computeMainConstraints(match) {
     if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
         match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
@@ -1651,11 +1653,17 @@ function computeMainConstraints(match) {
     const firstTeamMean = firstTeamLevels.reduce((a, b) => a + b) / firstTeamLevels.length;
     const secondTeamMean = secondTeamLevels.reduce((a, b) => a + b) / secondTeamLevels.length;
 
-    if(firstTeamMaxLevel - firstTeamMinLevel > MAX_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel > MAX_LEVEL_DIFF){
+    // Make this rules only for P players
+    if(firstTeamMaxLevel - firstTeamMinLevel >= HARD_CAP_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel >= HARD_CAP_LEVEL_DIFF){
+        match.disabled = true;
+    }else if(firstTeamMaxLevel - firstTeamMinLevel > SOFT_CAP_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel > SOFT_CAP_LEVEL_DIFF){
         match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
     }
 
-    if(Math.abs(firstTeamMean - secondTeamMean) > MAX_LEVEL_MEAN_DIFF){
+    // Make this rules only for P players
+    if(Math.abs(firstTeamMean - secondTeamMean) > HARD_CAP_LEVEL_MEAN_DIFF){
+        match.disabled = true;
+    }else if(Math.abs(firstTeamMean - secondTeamMean) > SOFT_CAP_LEVEL_MEAN_DIFF){
         match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
     }
     
@@ -1713,6 +1721,7 @@ function generateTurn(index, playedMatches) {
     turnMatches.forEach(match => {
         testContraintes(match, waitingPlayers);
     })
+    turnMatches = turnMatches.filter(match => !match.disabled);
 
     //on tri la liste
     turnMatches.sort((m1, m2) => m1.constraintScore - m2.constraintScore);
