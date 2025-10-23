@@ -146,6 +146,6 @@ export var genreListe = {
     },
     "FEMME": {
         value: "Femme",
-        handicap: 2
+        handicap: 0
     }
 }
