@@ -1405,7 +1405,7 @@ function refreshMatch(domMatch, matchIndex) {
 }
 
 function generateRandomPlayerList() {
-    return storage.joueurs.map(value => ({ value, sort: Math.random() }))
+    return storage.joueurs.filter(elt => elt.selected).map(value => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map((elt) => { return { ...elt.value } })
 }
