@@ -275,6 +275,13 @@ span.nomJoueur {
     max-height: 70px;
 }
 
+span.leaderboardPlayerName {
+    display: block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 12vw;
+     white-space: nowrap;
+}
 div.property {
     display: flex;
     justify-content: flex-start;

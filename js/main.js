@@ -389,7 +389,7 @@ function buildClassement() {
         thead.appendChild(MH.makeTh("Classement"));
         thead.appendChild(MH.makeTh("Joueur"));
         thead.appendChild(MH.makeTh("Matchs joués"));
-        thead.appendChild(MH.makeTh("Point Average"));
+        thead.appendChild(MH.makeTh("Point average"));
         thead.appendChild(MH.makeTh("Matchs gagnés"));
         thead.appendChild(MH.makeTh("Sets gagnés"));
         thead.appendChild(MH.makeTh("Sets perdus"));
@@ -400,7 +400,7 @@ function buildClassement() {
         leaderboard.forEach((player, index) => {
             const trJoueur = MH.makeElt("tr", null, "trJoueurClassement" + index % 2);
             trJoueur.appendChild(MH.makeTd(player.ranking, "classementJoueur"));
-            trJoueur.appendChild(MH.makeTd(player.name, "nomJoueur"));
+            trJoueur.appendChild(MH.makeTd(player.name, "leaderboardPlayerName"));
             trJoueur.appendChild(MH.makeTd(player.playedMatches, "playerData"));
             trJoueur.appendChild(MH.makeTd(player.totalPointAverage, "playerData"));
             trJoueur.appendChild(MH.makeTd(player.totalWonMatches, "playerData"));
