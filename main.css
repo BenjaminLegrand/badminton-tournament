@@ -751,24 +751,43 @@ div.closedTour button {
     width: 45px;
 }
 
-.divJoueurClassement {
+.divJoueursClassement {
     display: flex;
     justify-content: center;
+}
+
+.trJoueurClassement0 {
+   background-color: #CFD8DC;
+}
+
+.trJoueurClassement1 {
+    background-color: transparent;
+}
+
+.trJoueurClassement0 > td{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.trJoueurClassement1 {
+    background-color: transparent;
+}
+.trJoueurClassement1 > td{
+    padding-top: 5px;
+    padding-bottom: 5px;
 }
 
 .playerData {
     flex: 0.5 1 auto;
 }
 
-.divJoueursClassement {
-    margin: 10px 20%;
-}
-
 .tableClassement {
-    width: 100%;
     text-align: center;
 }
 
+#theadClassement > th {
+    padding : 5px 10px;
+}
 
 .aide {
     padding: 10px;
@@ -788,8 +807,6 @@ div.closedTour button {
     margin-right: 5px;
     height: 20px;
 }
-
-.
 
 /* Style the tab */
 .tab {

@@ -395,7 +395,7 @@ function buildClassement() {
 
     const leaderboard = computeLeaderboard();
     leaderboard.forEach((player, index) => {
-        const trJoueur = MH.makeElt("tr", null, "trJoueurClassement");
+        const trJoueur = MH.makeElt("tr", null, "trJoueurClassement" + index%2);
         trJoueur.appendChild(MH.makeTd(index + 1, "classementJoueur"));
         trJoueur.appendChild(MH.makeTd(player.name, "nomJoueur"));
         trJoueur.appendChild(MH.makeTd(player.playedMatches, "playerData"));
