@@ -70,7 +70,7 @@ function buildHeader() {
     var header = MH.makeDiv("header");
     switch (currentPage) {
         case pages.ACCUEIL:
-            header.appendChild(MH.makeSpan("Générateur de tournoi", "headerTitle"));
+            header.appendChild(MH.makeSpan("Tournoi interne RBFD", "headerTitle"));
             header.appendChild(buildInterfaceHeaderAccueil());
             break;
         case pages.SELECTION_JOUEUR:

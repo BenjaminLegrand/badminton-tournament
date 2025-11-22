@@ -135,7 +135,6 @@ div#headerJoueurClassement {
     justify-content: space-between;
     padding: 0px 10px;
     align-items: center;
-    text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.4), 1px 1px 0 rgba(255, 255, 255, 1);
     font-size: 1.5rem;
     font-weight: bold;
     color: #5b5b5b;
@@ -146,7 +145,6 @@ div#headerJoueurClassement {
 .headerTitle {
     font-size: 1.5em;
     color: white;
-    text-shadow: 2px 2px 1px #676565;
     line-height: 1em;
 }
 
@@ -480,7 +478,6 @@ span.numContrainte {
 
 .nbSsTitle {
     font-size: 0.7em;
-    text-shadow: none;
     color: gray;
 }
 
