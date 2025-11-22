@@ -384,6 +384,7 @@ function buildClassement() {
     var thead = MH.makeElt("thead", "theadClassement");
     thead.appendChild(MH.makeTh("Classement"));
     thead.appendChild(MH.makeTh("Joueur"));
+    thead.appendChild(MH.makeTh("Matchs joués"));
     thead.appendChild(MH.makeTh("Point Average"));
     thead.appendChild(MH.makeTh("Matchs gagnés"));
     thead.appendChild(MH.makeTh("Sets gagnés"));
@@ -397,6 +398,7 @@ function buildClassement() {
         const trJoueur = MH.makeElt("tr", null, "trJoueurClassement");
         trJoueur.appendChild(MH.makeTd(index + 1, "classementJoueur"));
         trJoueur.appendChild(MH.makeTd(player.name, "nomJoueur"));
+        trJoueur.appendChild(MH.makeTd(player.playedMatches, "playerData"));
         trJoueur.appendChild(MH.makeTd(player.totalPointAverage, "playerData"));
         trJoueur.appendChild(MH.makeTd(player.totalWonMatches, "playerData"));
         trJoueur.appendChild(MH.makeTd(player.totalWonSet, "playerData"));
@@ -1772,8 +1774,10 @@ function generateTurn(index, playedMatches) {
 }
 
 function computeLeaderboard() {
-    storage.joueurs.forEach(player => {
+    const players = storage.joueurs.filter((elt) => { return elt.selected; });
+    players.forEach(player => {
         player.totalPointAverage = 0;
+        player.playedMatches = 0;
         player.totalWonMatches = 0;
         player.totalWonSet = 0;
         player.totalLostSet = 0;
@@ -1783,6 +1787,7 @@ function computeLeaderboard() {
             const matchWinner = getMatchWinner(match)
             match.firstTeam.forEach(player => {
                 let tournamentPlayer = getTournamentPlayerByName(player.name)
+                tournamentPlayer.playedMatches += 1;
                 if (matchWinner == SET_SCORE_FIRST_TEAM_KEY) {
                     tournamentPlayer.totalWonMatches += 1;
                 }
@@ -1798,6 +1803,7 @@ function computeLeaderboard() {
 
             match.secondTeam.forEach(player => {
                 let tournamentPlayer = getTournamentPlayerByName(player.name)
+                tournamentPlayer.playedMatches += 1;
                 if (matchWinner == SET_SCORE_SECOND_TEAM_KEY) {
                     tournamentPlayer.totalWonMatches += 1;
                 }
@@ -1814,7 +1820,7 @@ function computeLeaderboard() {
     });
 
 
-    return storage.joueurs.sort((p1, p2) => {
+    return players.sort((p1, p2) => {
         if (p1.totalPointAverage != p2.totalPointAverage) return p2.totalPointAverage - p1.totalPointAverage;
         if (p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
         if (p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
