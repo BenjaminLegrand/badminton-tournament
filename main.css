@@ -750,7 +750,9 @@ div.closedTour button {
 
 .divJoueursClassement {
     display: flex;
+    gap: 15px;
     justify-content: center;
+    align-items: start;
 }
 
 .trJoueurClassement0 {

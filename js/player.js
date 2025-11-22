@@ -14,6 +14,7 @@ export class Joueur{
     age = null;
     niveau = null;
     selected = false;
+    ranking = -1;
     totalPointAverage = 0;
     playedMatches = 0;
     totalWonMatches = 0;

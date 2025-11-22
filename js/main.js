@@ -380,36 +380,41 @@ function buildClassement() {
     var listJoueursClassement = MH.makeDiv("listJoueursClassement");
     listJoueursClassement.appendChild(buildHeaderJoueurClassement());
     var divJoueursClassement = MH.makeDiv(null, "divJoueursClassement");
-    var tableClassement = MH.makeElt("table", null, "tableClassement");
-    var thead = MH.makeElt("thead", "theadClassement");
-    thead.appendChild(MH.makeTh("Classement"));
-    thead.appendChild(MH.makeTh("Joueur"));
-    thead.appendChild(MH.makeTh("Matchs joués"));
-    thead.appendChild(MH.makeTh("Point Average"));
-    thead.appendChild(MH.makeTh("Matchs gagnés"));
-    thead.appendChild(MH.makeTh("Sets gagnés"));
-    thead.appendChild(MH.makeTh("Sets perdus"));
-    thead.appendChild(MH.makeTh("Niveau"));
-    thead.appendChild(MH.makeTh("Age"));
-    tableClassement.appendChild(thead);
 
-    const leaderboard = computeLeaderboard();
-    leaderboard.forEach((player, index) => {
-        const trJoueur = MH.makeElt("tr", null, "trJoueurClassement" + index%2);
-        trJoueur.appendChild(MH.makeTd(index + 1, "classementJoueur"));
-        trJoueur.appendChild(MH.makeTd(player.name, "nomJoueur"));
-        trJoueur.appendChild(MH.makeTd(player.playedMatches, "playerData"));
-        trJoueur.appendChild(MH.makeTd(player.totalPointAverage, "playerData"));
-        trJoueur.appendChild(MH.makeTd(player.totalWonMatches, "playerData"));
-        trJoueur.appendChild(MH.makeTd(player.totalWonSet, "playerData"));
-        trJoueur.appendChild(MH.makeTd(player.totalLostSet, "playerData"));
-        trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(player).outerHTML));
-        trJoueur.appendChild(MH.makeTd(player.age, "playerData"));
-        tableClassement.appendChild(trJoueur);
-    })
+    const leaderboards = computeLeaderboards();
 
-    divJoueursClassement.appendChild(tableClassement);
-    listJoueursClassement.appendChild(divJoueursClassement);
+    leaderboards.forEach((leaderboard) => {
+        var tableClassement = MH.makeElt("table", null, "tableClassement");
+        var thead = MH.makeElt("thead", "theadClassement");
+        thead.appendChild(MH.makeTh("Classement"));
+        thead.appendChild(MH.makeTh("Joueur"));
+        thead.appendChild(MH.makeTh("Matchs joués"));
+        thead.appendChild(MH.makeTh("Point Average"));
+        thead.appendChild(MH.makeTh("Matchs gagnés"));
+        thead.appendChild(MH.makeTh("Sets gagnés"));
+        thead.appendChild(MH.makeTh("Sets perdus"));
+        thead.appendChild(MH.makeTh("Niveau"));
+        thead.appendChild(MH.makeTh("Age"));
+        tableClassement.appendChild(thead);
+
+        leaderboard.forEach((player, index) => {
+            const trJoueur = MH.makeElt("tr", null, "trJoueurClassement" + index % 2);
+            trJoueur.appendChild(MH.makeTd(player.ranking, "classementJoueur"));
+            trJoueur.appendChild(MH.makeTd(player.name, "nomJoueur"));
+            trJoueur.appendChild(MH.makeTd(player.playedMatches, "playerData"));
+            trJoueur.appendChild(MH.makeTd(player.totalPointAverage, "playerData"));
+            trJoueur.appendChild(MH.makeTd(player.totalWonMatches, "playerData"));
+            trJoueur.appendChild(MH.makeTd(player.totalWonSet, "playerData"));
+            trJoueur.appendChild(MH.makeTd(player.totalLostSet, "playerData"));
+            trJoueur.appendChild(MH.makeTd(buildBadgeNiveau(player).outerHTML));
+            trJoueur.appendChild(MH.makeTd(player.age, "playerData"));
+            tableClassement.appendChild(trJoueur);
+        })
+
+        divJoueursClassement.appendChild(tableClassement);
+        listJoueursClassement.appendChild(divJoueursClassement);
+    });
+
     return listJoueursClassement;
 }
 
@@ -1640,15 +1645,15 @@ const HARD_CAP_LEVEL_DIFF = 5
 const SOFT_CAP_LEVEL_MEAN_DIFF = 2
 const HARD_CAP_LEVEL_MEAN_DIFF = 4
 function computeMainConstraints(match) {
-     const firstTeamLevels = match.firstTeam.map(player => player.niveau.level)
+    const firstTeamLevels = match.firstTeam.map(player => player.niveau.level)
     const secondTeamLevels = match.secondTeam.map(player => player.niveau.level)
 
     const firstTeamMaxLevel = Math.max(...firstTeamLevels)
     const secondTeamMaxLevel = Math.max(...secondTeamLevels)
     const firstTeamMinLevel = Math.min(...firstTeamLevels)
     const secondTeamMinLevel = Math.min(...secondTeamLevels)
-    
-    if(firstTeamMinLevel > 4 && secondTeamMinLevel > 4){
+
+    if (firstTeamMinLevel > 4 && secondTeamMinLevel > 4) {
         return;
     }
     if (Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) > storage.tournoi.limitPoint) {
@@ -1659,19 +1664,19 @@ function computeMainConstraints(match) {
     const secondTeamMean = secondTeamLevels.reduce((a, b) => a + b) / secondTeamLevels.length;
 
     // Make this rules only for P players
-    if(firstTeamMaxLevel - firstTeamMinLevel >= HARD_CAP_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel >= HARD_CAP_LEVEL_DIFF){
+    if (firstTeamMaxLevel - firstTeamMinLevel >= HARD_CAP_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel >= HARD_CAP_LEVEL_DIFF) {
         match.disabled = true;
-    }else if(firstTeamMaxLevel - firstTeamMinLevel > SOFT_CAP_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel > SOFT_CAP_LEVEL_DIFF){
+    } else if (firstTeamMaxLevel - firstTeamMinLevel > SOFT_CAP_LEVEL_DIFF || secondTeamMaxLevel - secondTeamMinLevel > SOFT_CAP_LEVEL_DIFF) {
         match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
     }
 
     // Make this rules only for P players
-    if(Math.abs(firstTeamMean - secondTeamMean) > HARD_CAP_LEVEL_MEAN_DIFF){
+    if (Math.abs(firstTeamMean - secondTeamMean) > HARD_CAP_LEVEL_MEAN_DIFF) {
         match.disabled = true;
-    }else if(Math.abs(firstTeamMean - secondTeamMean) > SOFT_CAP_LEVEL_MEAN_DIFF){
+    } else if (Math.abs(firstTeamMean - secondTeamMean) > SOFT_CAP_LEVEL_MEAN_DIFF) {
         match.constraintScore += DEFAULT_MAIN_CONSTRAINT_VALUE;
     }
-    
+
 }
 function genereTournoi() {
     storage.resetTournamentMatches();
@@ -1773,7 +1778,8 @@ function generateTurn(index, playedMatches) {
     return { done: false, matchs: selectedMatches, joueurAttente: availablePlayers }
 }
 
-function computeLeaderboard() {
+const LEADERBOARD_SPLIT_LIMIT = 20;
+function computeLeaderboards() {
     const players = storage.joueurs.filter((elt) => { return elt.selected; });
     players.forEach(player => {
         player.totalPointAverage = 0;
@@ -1820,7 +1826,8 @@ function computeLeaderboard() {
     });
 
 
-    return players.sort((p1, p2) => {
+    const ranking = players.sort((p1, p2) => {
+        if (p1.playedMatches != p2.playedMatches) return p2.playedMatches - p1.playedMatches;
         if (p1.totalPointAverage != p2.totalPointAverage) return p2.totalPointAverage - p1.totalPointAverage;
         if (p1.totalWonMatches != p2.totalWonMatches) return p2.totalWonMatches - p1.totalWonMatches;
         if (p1.totalWonSet != p2.totalWonSet) return p2.totalWonSet - p1.totalWonSet;
@@ -1829,6 +1836,11 @@ function computeLeaderboard() {
         if (p1.age != p2.age) return p1.age - p2.age;
         return -1;
     });
+    ranking.forEach((p, index) => {
+        p.ranking = index + 1;
+    });
+
+    return chunk(ranking, LEADERBOARD_SPLIT_LIMIT);
 }
 
 function getTournamentPlayerByName(name) {
@@ -1984,6 +1996,16 @@ function buildPlayerMatches(player) {
         container.append(turnDiv)
     })
 }
+
+function chunk(arr, size) {
+  return arr.reduce((acc, _, i) => {
+    if (i % size === 0) {
+      acc.push(arr.slice(i, i + size));
+    }
+    return acc;
+  }, []);
+}
+
 
 window.closePlayerMatchesModal = closePlayerMatchesModal;
 window.finTournoi = finTournoi;
