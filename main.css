@@ -107,7 +107,6 @@ div#body {
     align-items: center;
     flex-direction: column;
     overflow: auto;
-    /*background: linear-gradient(white, dimgrey);*/
 }
 
 div#footer {
@@ -280,8 +279,9 @@ span.leaderboardPlayerName {
     text-overflow: ellipsis;
     overflow: hidden;
     max-width: 12vw;
-     white-space: nowrap;
+    white-space: nowrap;
 }
+
 div.property {
     display: flex;
     justify-content: flex-start;
@@ -363,6 +363,29 @@ label.selectionJoueur {
 
 #navbarDropdownMenuLink {
     border-radius: 5px;
+}
+
+.pointMatch {
+    margin: 0px !important;
+    border: #757575 1px solid;
+    font-size: 18px;
+    text-align: center;
+    width: 80px;
+    height: 35px;
+    background-color: transparent;
+    border-radius: 6px;
+}
+
+/* Chrome, Safari, Edge, Opera */
+.pointMatch::-webkit-outer-spin-button,
+.pointMatch::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+.pointMatch[type=number] {
+  -moz-appearance: textfield;
 }
 
 .numberSpinner {
@@ -495,6 +518,7 @@ span.numContrainte {
     margin: 0px;
     gap: 20px;
     border-radius: 10px;
+    border: 1px solid #757575;
     background-color: #bfbfbf;
     padding: 10px;
     align-items: center;
@@ -547,11 +571,11 @@ span.numContrainte {
 }
 
 .currentTour {
-    background-color: #7bbaff;
+    background-color: #90CAF9;
 }
 
 .closedTour {
-    background-color: #99ce99;
+    background-color: #81C784;
 }
 
 .forPlayingTour {
@@ -591,30 +615,37 @@ div.currentTour div.match {
     max-height: calc(100vh - 225px);
     overflow-y: scroll;
 }
-#player-matches-modal-content > .joueur {
-   margin: 0;
-   margin-bottom: 10px;
+
+#player-matches-modal-content>.joueur {
+    margin: 0;
+    margin-bottom: 10px;
 }
+
 .player-matches-modal-turn-text {
     font-size: 1.4rem;
     font-weight: bold;
 }
+
 .player-matches-player-info-with-title {
-   width:70px;
+    width: 70px;
 }
+
 .player-matches-player-info-against-title {
-   width:70px;
+    width: 70px;
 }
+
 .player-matches-player-info-with {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+
 .player-matches-player-info-against {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
+
 .player-matches-modal-turn-0 {
     display: flex;
     flex-direction: column;
@@ -659,10 +690,6 @@ div.currentTour div.match {
     padding: 15px;
     border-radius: 5px;
     cursor: pointer;
-}
-
-.pointMatch {
-    margin: 0px !important;
 }
 
 .volant {
@@ -741,14 +768,19 @@ div.closedTour button {
     border: none;
     opacity: 1;
 }
+input:disabled{
+    color: black;
+}
 
 .set-winner {
-    background-color: lightgreen;
+    background-color: #2E7D32;
+    color: white !important;
     font-weight: bold;
 }
 
 .set-loser {
-    background-color: coral;
+    background-color: #C62828;
+    color: white !important;
 }
 
 #limitPoint {
@@ -763,14 +795,14 @@ div.closedTour button {
 }
 
 .trJoueurClassement0 {
-   background-color: #CFD8DC;
+    background-color: #CFD8DC;
 }
 
 .trJoueurClassement1 {
     background-color: transparent;
 }
 
-.trJoueurClassement0 > td{
+.trJoueurClassement0>td {
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -778,7 +810,8 @@ div.closedTour button {
 .trJoueurClassement1 {
     background-color: transparent;
 }
-.trJoueurClassement1 > td{
+
+.trJoueurClassement1>td {
     padding-top: 5px;
     padding-bottom: 5px;
 }
@@ -791,8 +824,8 @@ div.closedTour button {
     text-align: center;
 }
 
-#theadClassement > th {
-    padding : 5px 10px;
+#theadClassement>th {
+    padding: 5px 10px;
 }
 
 .aide {

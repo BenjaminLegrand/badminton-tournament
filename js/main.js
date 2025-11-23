@@ -528,38 +528,53 @@ function buildMatch(match, j) {
     })
 
     var firstTeamSets = MH.makeDiv(null, "firstTeamSets");
-    var firstTeamFirstSet = buildPropertyEditor(null, "numberSpinner", {
+    var firstTeamFirstSet = buildEditor("number", {
         "min": match.firstTeamStartScore,
         "max": 30,
         "value": match.scores[0].SET_SCORE_FIRST_TEAM_KEY,
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
-        "setIndex": 0,
-        "setTeam": SET_SCORE_FIRST_TEAM_KEY,
-        "vertical": false
     }, ["firstTeamFirstSet"]);
+    if (!isMatchInCurrentTurn(currentIndexMatch)) {
+        firstTeamFirstSet.setAttribute("disabled", "");
+    }
+    firstTeamFirstSet.addEventListener('input', function (evt) {
+        const matchIndex = Number(evt.target.getAttribute("indexmatch"))
+        storage.updateMatch(matchIndex, 0, SET_SCORE_FIRST_TEAM_KEY, Number(evt.target.value));
+        refreshMatch(matchDom, matchIndex);
+    });
     firstTeamFirstSet.classList.add("pointMatch");
-    var firstTeamSecondSet = buildPropertyEditor(null, "numberSpinner", {
+    var firstTeamSecondSet = buildEditor("number", {
         "min": match.firstTeamStartScore,
         "max": 30,
         "value": match.scores[1].SET_SCORE_FIRST_TEAM_KEY,
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
-        "setIndex": 1,
-        "setTeam": SET_SCORE_FIRST_TEAM_KEY,
-        "vertical": false
     }, ["firstTeamSecondSet"]);
+    if (!isMatchInCurrentTurn(currentIndexMatch)) {
+        firstTeamSecondSet.setAttribute("disabled", "");
+    }
+    firstTeamSecondSet.addEventListener('input', function (evt) {
+        const matchIndex = Number(evt.target.getAttribute("indexmatch"))
+        storage.updateMatch(matchIndex, 1, SET_SCORE_FIRST_TEAM_KEY, Number(evt.target.value));
+        refreshMatch(matchDom, matchIndex);
+    });
     firstTeamSecondSet.classList.add("pointMatch");
-    var firstTeamThirdSet = buildPropertyEditor(null, "numberSpinner", {
+    var firstTeamThirdSet = buildEditor("number", {
         "min": match.firstTeamStartScore,
         "max": 30,
         "value": match.scores[2].SET_SCORE_FIRST_TEAM_KEY,
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
-        "setIndex": 2,
-        "setTeam": SET_SCORE_FIRST_TEAM_KEY,
-        "vertical": false
     }, ["firstTeamThirdSet"]);
+    if (!isMatchInCurrentTurn(currentIndexMatch)) {
+        firstTeamThirdSet.setAttribute("disabled", "");
+    }
+    firstTeamThirdSet.addEventListener('input', function (evt) {
+        const matchIndex = Number(evt.target.getAttribute("indexmatch"))
+        storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, Number(evt.target.value));
+        refreshMatch(matchDom, matchIndex);
+    });
     firstTeamThirdSet.classList.add("pointMatch");
     firstTeamSets.appendChild(firstTeamFirstSet);
     firstTeamSets.appendChild(firstTeamSecondSet);
@@ -586,38 +601,53 @@ function buildMatch(match, j) {
     })
 
     var secondTeamSets = MH.makeDiv(null, "secondTeamSets");
-    var secondTeamFirstSet = buildPropertyEditor(null, "numberSpinner", {
+    var secondTeamFirstSet = buildEditor("number", {
         "min": match.secondTeamStartScore,
         "max": 30,
         "value": match.scores[0].SET_SCORE_SECOND_TEAM_KEY,
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
-        "setIndex": 0,
-        "setTeam": SET_SCORE_SECOND_TEAM_KEY,
-        "vertical": false
     }, ["secondTeamFirstSet"]);
+    if (!isMatchInCurrentTurn(currentIndexMatch)) {
+        secondTeamFirstSet.setAttribute("disabled", "");
+    }
+    secondTeamFirstSet.addEventListener('input', function (evt) {
+        const matchIndex = Number(evt.target.getAttribute("indexmatch"))
+        storage.updateMatch(matchIndex, 0, SET_SCORE_SECOND_TEAM_KEY, Number(evt.target.value));
+        refreshMatch(matchDom, matchIndex);
+    });
     secondTeamFirstSet.classList.add("pointMatch");
-    var secondTeamSecondSet = buildPropertyEditor(null, "numberSpinner", {
+    var secondTeamSecondSet = buildEditor("number", {
         "min": match.secondTeamStartScore,
         "max": 30,
         "value": match.scores[1].SET_SCORE_SECOND_TEAM_KEY,
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
-        "setIndex": 1,
-        "setTeam": SET_SCORE_SECOND_TEAM_KEY,
-        "vertical": false
     }, ["secondTeamSecondSet"]);
+    if (!isMatchInCurrentTurn(currentIndexMatch)) {
+        secondTeamSecondSet.setAttribute("disabled", "");
+    }
+    secondTeamSecondSet.addEventListener('input', function (evt) {
+        const matchIndex = Number(evt.target.getAttribute("indexmatch"))
+        storage.updateMatch(matchIndex, 1, SET_SCORE_SECOND_TEAM_KEY, Number(evt.target.value));
+        refreshMatch(matchDom, matchIndex);
+    });
     secondTeamSecondSet.classList.add("pointMatch");
-    var secondTeamThirdSet = buildPropertyEditor(null, "numberSpinner", {
+    var secondTeamThirdSet = buildEditor("number", {
         "min": match.secondTeamStartScore,
         "max": 30,
         "value": match.scores[2].SET_SCORE_SECOND_TEAM_KEY,
         "id": "match" + j,
         "indexmatch": currentIndexMatch,
-        "setIndex": 2,
-        "setTeam": SET_SCORE_SECOND_TEAM_KEY,
-        "vertical": false
     }, ["secondTeamThirdSet"]);
+    if (!isMatchInCurrentTurn(currentIndexMatch)) {
+        secondTeamThirdSet.setAttribute("disabled", "");
+    }
+    secondTeamThirdSet.addEventListener('input', function (evt) {
+        const matchIndex = Number(evt.target.getAttribute("indexmatch"))
+        storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, Number(evt.target.value));
+        refreshMatch(matchDom, matchIndex);
+    });
     secondTeamThirdSet.classList.add("pointMatch");
     matchDom.appendChild(listSecondTeam);
     secondTeamSets.appendChild(secondTeamFirstSet);
@@ -943,7 +973,7 @@ function buildPropertyEditor(pKey, type, attributes, classes = []) {
     return property;
 }
 
-function buildEditor(type, attributes) {
+function buildEditor(type, attributes, classes = []) {
     switch (type) {
         case "radio":
             var divInput, input, label;
@@ -973,10 +1003,10 @@ function buildEditor(type, attributes) {
             return input;
         case "number":
             var input = MH.makeInput("number");
-            input.setAttribute("min", attributes["min"]);
-            input.setAttribute("max", attributes["max"]);
-            input.setAttribute("value", attributes["value"]);
-            input.setAttribute("id", attributes["id"]);
+            classes.forEach(elt => { input.classList.add(elt); })
+            for (const key in attributes) {
+                input.setAttribute(key, attributes[key]);
+            }
             return input;
         case "numberSpinner":
             var vertical = attributes["vertical"] == true;
@@ -989,7 +1019,7 @@ function buildEditor(type, attributes) {
 
             var buttonMoins = MH.makeButton({
                 type: "click",
-                func: updateScore.bind(this, false, spanNumber, undefined,)
+                func: updateNumberSpinnerValue.bind(this, false, spanNumber, undefined,)
             });
             buttonMoins.addEventListener('touchstart', preventZoom);
             buttonMoins.innerHTML = "-";
@@ -1000,7 +1030,7 @@ function buildEditor(type, attributes) {
 
             var buttonPlus = MH.makeButton({
                 type: "click",
-                func: updateScore.bind(this, true, spanNumber, undefined)
+                func: updateNumberSpinnerValue.bind(this, true, spanNumber, undefined)
             });
             buttonPlus.addEventListener('touchstart', preventZoom);
             buttonPlus.innerHTML = "+";
@@ -1301,37 +1331,22 @@ function descendreContrainte(i) {
     }
     selectPage(pages.MODIFICATION_CONTRAINTES);
 }
-function updateScore(sens, span, newValue) {
-    var currentScore;
+function updateNumberSpinnerValue(sens, span, newValue) {
     var value = parseInt(span.innerHTML);
     if (newValue == undefined) {
         if (sens) {
             var max = parseInt(span.parentElement.getAttribute("max"));
             if (value < max) span.innerHTML = value + 1;
             span.parentElement.setAttribute("value", span.innerHTML);
-            currentScore = parseInt(span.innerHTML);
         } else {
             var min = parseInt(span.parentElement.getAttribute("min"));
             if (value > min) span.innerHTML = value - 1;
             span.parentElement.setAttribute("value", span.innerHTML);
-            currentScore = parseInt(span.innerHTML);
         }
     } else {
         span.innerHTML = newValue;
         span.parentElement.setAttribute("value", span.innerHTML);
-        currentScore = parseInt(span.innerHTML);
     }
-
-    switch (currentPage) {
-        case pages.EXECUTION_TOURNOI:
-            var indexMatch = parseInt(span.parentElement.getAttribute("indexmatch"));
-            var setIndex = span.parentElement.getAttribute("setIndex");
-            var setTeam = span.parentElement.getAttribute("setTeam");
-            storage.updateMatch(indexMatch, setIndex, setTeam, currentScore);
-            refreshMatch(span.closest(".match"), indexMatch);
-            break;
-    }
-
 }
 function editHandicaps() {
     selectPage(pages.MODIFICATION_HANDICAPS);
@@ -1349,65 +1364,72 @@ function refreshMatch(domMatch, matchIndex) {
     const secondTeamSecondSet = domMatch.querySelector(".secondTeamSecondSet");
     const secondTeamThirdSet = domMatch.querySelector(".secondTeamThirdSet");
 
-    if (isMatchInCurrentTurn(matchIndex)) {
-        const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY);
-        const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY);
-        const thirdSetWinner = getSetWinner(match.setPoints, match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY);
+    const firstSetWinner = getSetWinner(match.setPoints, match.scores[0].SET_SCORE_FIRST_TEAM_KEY, match.scores[0].SET_SCORE_SECOND_TEAM_KEY);
+    const secondSetWinner = getSetWinner(match.setPoints, match.scores[1].SET_SCORE_FIRST_TEAM_KEY, match.scores[1].SET_SCORE_SECOND_TEAM_KEY);
+    const thirdSetWinner = getSetWinner(match.setPoints, match.scores[2].SET_SCORE_FIRST_TEAM_KEY, match.scores[2].SET_SCORE_SECOND_TEAM_KEY);
 
-        if (firstSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
-            firstTeamFirstSet.classList.add("set-winner");
-            secondTeamFirstSet.classList.add("set-loser");
-        } else if (firstSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
-            secondTeamFirstSet.classList.add("set-winner");
-            firstTeamFirstSet.classList.add("set-loser");
-        } else {
-            firstTeamFirstSet.classList.remove("set-winner");
-            firstTeamFirstSet.classList.remove("set-loser");
-            secondTeamFirstSet.classList.remove("set-winner");
-            secondTeamFirstSet.classList.remove("set-loser");
-        }
-
-        if (secondSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
-            firstTeamSecondSet.classList.add("set-winner");
-            secondTeamSecondSet.classList.add("set-loser");
-        } else if (secondSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
-            secondTeamSecondSet.classList.add("set-winner");
-            firstTeamSecondSet.classList.add("set-loser");
-        } else {
-            firstTeamSecondSet.classList.remove("set-winner");
-            firstTeamSecondSet.classList.remove("set-loser");
-            secondTeamSecondSet.classList.remove("set-winner");
-            secondTeamSecondSet.classList.remove("set-loser");
-        }
-
-        if (thirdSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
-            firstTeamThirdSet.classList.add("set-winner");
-            secondTeamThirdSet.classList.add("set-loser");
-        } else if (thirdSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
-            secondTeamThirdSet.classList.add("set-winner");
-            firstTeamThirdSet.classList.add("set-loser");
-        } else {
-            firstTeamThirdSet.classList.remove("set-winner");
-            firstTeamThirdSet.classList.remove("set-loser");
-            secondTeamThirdSet.classList.remove("set-winner");
-            secondTeamThirdSet.classList.remove("set-loser");
-        }
-
-        if (isAtThirdSet(match)) {
-            if (firstTeamThirdSet.classList.contains("gone")) {
-                // Third set appearing - Update scores with startScores
-                storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, match.firstTeamStartScore);
-                storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, match.secondTeamStartScore);
-            }
-            firstTeamThirdSet.classList.remove("gone")
-            secondTeamThirdSet.classList.remove("gone")
-        } else {
-            match.scores[2].SET_SCORE_FIRST_TEAM_KEY = 0
-            match.scores[2].SET_SCORE_SECOND_TEAM_KEY = 0
-            firstTeamThirdSet.classList.add("gone")
-            secondTeamThirdSet.classList.add("gone")
-        }
+    if (firstSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
+        firstTeamFirstSet.classList.add("set-winner");
+        firstTeamFirstSet.classList.remove("set-loser");
+        secondTeamFirstSet.classList.add("set-loser");
+        secondTeamFirstSet.classList.remove("set-winner");
+    } else if (firstSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
+        secondTeamFirstSet.classList.add("set-winner");
+        secondTeamFirstSet.classList.remove("set-loser");
+        firstTeamFirstSet.classList.add("set-loser");
+        firstTeamFirstSet.classList.remove("set-winner");
     } else {
+        firstTeamFirstSet.classList.remove("set-winner");
+        firstTeamFirstSet.classList.remove("set-loser");
+        secondTeamFirstSet.classList.remove("set-winner");
+        secondTeamFirstSet.classList.remove("set-loser");
+    }
+
+    if (secondSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
+        firstTeamSecondSet.classList.add("set-winner");
+        firstTeamSecondSet.classList.remove("set-loser");
+        secondTeamSecondSet.classList.add("set-loser");
+        secondTeamSecondSet.classList.remove("set-winner");
+    } else if (secondSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
+        secondTeamSecondSet.classList.add("set-winner");
+        secondTeamSecondSet.classList.remove("set-loser");
+        firstTeamSecondSet.classList.add("set-loser");
+        firstTeamSecondSet.classList.remove("set-winner");
+    } else {
+        firstTeamSecondSet.classList.remove("set-winner");
+        firstTeamSecondSet.classList.remove("set-loser");
+        secondTeamSecondSet.classList.remove("set-winner");
+        secondTeamSecondSet.classList.remove("set-loser");
+    }
+
+    if (thirdSetWinner == SET_SCORE_FIRST_TEAM_KEY) {
+        firstTeamThirdSet.classList.add("set-winner");
+        firstTeamThirdSet.classList.remove("set-loser");
+        secondTeamThirdSet.classList.add("set-loser");
+        secondTeamThirdSet.classList.remove("set-winner");
+    } else if (thirdSetWinner == SET_SCORE_SECOND_TEAM_KEY) {
+        secondTeamThirdSet.classList.add("set-winner");
+        secondTeamThirdSet.classList.remove("set-loser");
+        firstTeamThirdSet.classList.add("set-loser");
+        firstTeamThirdSet.classList.remove("set-winner");
+    } else {
+        firstTeamThirdSet.classList.remove("set-winner");
+        firstTeamThirdSet.classList.remove("set-loser");
+        secondTeamThirdSet.classList.remove("set-winner");
+        secondTeamThirdSet.classList.remove("set-loser");
+    }
+
+    if (isAtThirdSet(match)) {
+        if (firstTeamThirdSet.classList.contains("gone") && isMatchInCurrentTurn(currentIndexMatch)) {
+            // Third set appearing - Update scores with startScores
+            storage.updateMatch(matchIndex, 2, SET_SCORE_FIRST_TEAM_KEY, match.firstTeamStartScore);
+            storage.updateMatch(matchIndex, 2, SET_SCORE_SECOND_TEAM_KEY, match.secondTeamStartScore);
+        }
+        firstTeamThirdSet.classList.remove("gone")
+        secondTeamThirdSet.classList.remove("gone")
+    } else {
+        match.scores[2].SET_SCORE_FIRST_TEAM_KEY = 0
+        match.scores[2].SET_SCORE_SECOND_TEAM_KEY = 0
         firstTeamThirdSet.classList.add("gone")
         secondTeamThirdSet.classList.add("gone")
     }
