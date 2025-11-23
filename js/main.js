@@ -2133,6 +2133,7 @@ function handleImport(evt) {
 function closePlayerMatchesModal() {
     $('#playerMatchesModal').modal('toggle');
     $('#player-matches-modal-content').empty();
+    $('#player-matches-modal-title').empty();
 }
 
 function buildPlayerMatches(player) {
