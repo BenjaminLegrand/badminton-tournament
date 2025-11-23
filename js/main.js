@@ -1483,6 +1483,13 @@ function generateRandomPlayerList() {
         .map((elt) => { return { ...elt.value } })
 }
 
+function shuffle(array) {
+    return array.map(value => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map((elt) => { return { ...elt.value } })
+}
+
+
 // Generate all possibles matches of a single turn, considering played matches of previous turns 
 function generateAllTurnMatches(playedMatches, players) {
     const matches = [];
@@ -1819,9 +1826,17 @@ function generateTurn(index, playedMatches) {
         storage.tournoi.nbTerrain
     );
 
+    const playerMatchesCount = new Map();
+
     //on teste tous les matchs en les priorisant
     turnMatches.forEach(match => {
         testContraintes(match, waitingPlayers);
+        match.firstTeam.forEach((p) => {
+            playerMatchesCount.set(p.name, (playerMatchesCount.get(p.name) ?? 0) + 1);
+        });
+        match.secondTeam.forEach((p) => {
+            playerMatchesCount.set(p.name, (playerMatchesCount.get(p.name) ?? 0) + 1);
+        });
     })
 
     //on tri la liste
@@ -1833,7 +1848,10 @@ function generateTurn(index, playedMatches) {
 
     for (var j = 0; j < nbMatch; j++) {
         if (turnMatches.length == 0) break; //s'il n'y a plus de match dispo on sort
-        const currentMatch = turnMatches[0];
+
+        const matchesCount = computePlayersMatchesCount(turnMatches, availablePlayers)
+
+        var currentMatch = findMatch(turnMatches, matchesCount, availablePlayers)
 
         selectedMatches.push(currentMatch);
 
@@ -1866,7 +1884,70 @@ function generateTurn(index, playedMatches) {
             waitingPlayer.count++;
         }
     })
-    return { done: false, matchs: selectedMatches, joueurAttente: availablePlayers }
+    return { done: false, matchs: shuffle(selectedMatches), joueurAttente: availablePlayers }
+}
+
+function findMatch(turnMatches, matchesCount, availablePlayers) {
+    const playerMatchesCount = matchesCount.playerMatchesCount
+    const leastMatchesPlayerName = matchesCount.leastMatchesPlayerName
+    console.log("LEAST MATCHES PLAYER : " + leastMatchesPlayerName)
+
+    var leastPlayerMatches = turnMatches.filter(m => {
+        if (leastMatchesPlayerName == null) return true;
+        const firstTeamNames = m.firstTeam.map(p => p.name)
+        const secondTeamNames = m.firstTeam.map(p => p.name)
+        return firstTeamNames.includes(leastMatchesPlayerName) || secondTeamNames.includes(leastMatchesPlayerName)
+    })
+    var selectedMatch = shuffle(leastPlayerMatches)[0]
+    if (selectedMatch == null) {
+        console.log("NO MATCH FOUND WITH PLAYER : " + leastMatchesPlayerName)
+        selectedMatch = turnMatches[0];
+    }
+    console.log("SELECTED MATCH : " + JSON.stringify(selectedMatch.firstTeam.map(p => p.name)) + " VS " + JSON.stringify(selectedMatch.secondTeam.map(p => p.name)))
+
+    // Compute next matches to check if any player has been excluded from playing future matches in turn
+    const nextMatches = turnMatches.filter(match =>
+        match.firstTeam.filter(joueur => selectedMatch.firstTeam.includes(joueur)).length == 0 &&
+        match.secondTeam.filter(joueur => selectedMatch.secondTeam.includes(joueur)).length == 0 &&
+        match.firstTeam.filter(joueur => selectedMatch.secondTeam.includes(joueur)).length == 0 &&
+        match.secondTeam.filter(joueur => selectedMatch.firstTeam.includes(joueur)).length == 0
+    );
+
+    const nextTurnPlayerMatchesCount = computePlayersMatchesCount(nextMatches, availablePlayers).playerMatchesCount
+
+    // If diff is above 4, this means a player has been excluded of next matches because of chosen match
+    console.log("Current player set : " + playerMatchesCount.size)
+    console.log("Next player set : " + nextTurnPlayerMatchesCount.size)
+    if (playerMatchesCount.size - nextTurnPlayerMatchesCount.size > 4) {
+        console.log("PLAYER EXCLUDED FROM NEXT MATCHES IN TURN - FINDING MATCH AGAIN...")
+        return findMatch(turnMatches, matchesCount, availablePlayers)
+    }
+
+    return selectedMatch;
+}
+
+function computePlayersMatchesCount(turnMatches, availablePlayers) {
+    const playerMatchesCount = new Map();
+
+    turnMatches.forEach(match => {
+        match.firstTeam.forEach((p) => {
+            playerMatchesCount.set(p.name, (playerMatchesCount.get(p.name) ?? 0) + 1);
+        });
+        match.secondTeam.forEach((p) => {
+            playerMatchesCount.set(p.name, (playerMatchesCount.get(p.name) ?? 0) + 1);
+        });
+    })
+
+    var minMatchCount = Number.MAX_VALUE
+    const availablePlayersNames = availablePlayers.map((p) => { return p.name });
+    var leastMatchesPlayerName = null
+    playerMatchesCount.forEach((value, key, _) => {
+        if (value < minMatchCount && availablePlayersNames.includes(key)) {
+            leastMatchesPlayerName = key
+            minMatchCount = value
+        }
+    })
+    return { playerMatchesCount: playerMatchesCount, leastMatchesPlayerName: leastMatchesPlayerName };
 }
 
 const LEADERBOARD_SPLIT_LIMIT = 20;
