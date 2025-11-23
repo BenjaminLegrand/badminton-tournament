@@ -1752,6 +1752,7 @@ function genereTournoi() {
         const turn = generateTurn(i, playedMatches);
         storage.tournoi.tours.splice(i, 0, turn);
     }
+    storage.save()
 }
 
 function onTurnRegenRequested() {
@@ -1774,6 +1775,7 @@ function regenerateTurn(fromIndex) {
         const turn = generateTurn(turnIndex, playedMatches);
         storage.tournoi.tours.splice(turnIndex, 1, turn);
     }
+    storage.save()
 }
 
 function generateTurn(index, playedMatches) {
