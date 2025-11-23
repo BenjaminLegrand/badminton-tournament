@@ -863,6 +863,10 @@ function buildListJoueur() {
                             func: editJoueur.bind(this, i)
                         }, "edit"));
                         divJoueurs.appendChild(divJoueurSelection);
+                        const playerSelector = divJoueur.querySelector("input[type=checkbox]")
+                        playerSelector.addEventListener('change', (evt) => {
+                            playerSelector.checked = !playerSelector.checked;
+                        });
                         MH.addNewEvent(newId, "click", selectJoueur.bind(this, divJoueur));
                         flag = true;
                         break;
@@ -891,7 +895,6 @@ function buildJoueur(joueur, addedClass = "") {
         case pages.SELECTION_JOUEUR:
             var check = MH.makeInput("checkbox");
             if (joueur.selected === true) check.setAttribute("checked", "true");
-            // check.setAttribute("id", "joueur" + i);
             joueurDom.appendChild(check);
             joueurDom.classList.add("selection");
             joueurDom.appendChild(MH.makeSpan(joueur.name, "nomJoueur"));
