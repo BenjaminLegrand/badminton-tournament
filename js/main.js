@@ -501,9 +501,11 @@ function buildTour(tour, i) {
     globalTour.appendChild(listMatchs);
     if (tour.joueurAttente.length > 0) {
         var listJoueurAttente = MH.makeDiv(null, "joueurAttente");
+        const waitingPlayers = MH.makeDiv(null, "waitingPlayers");
         listJoueurAttente.appendChild(MH.makeSpan("Joueurs en attente..."));
+        listJoueurAttente.appendChild(waitingPlayers);
         for (var i = 0; i < tour.joueurAttente.length; i++) {
-            listJoueurAttente.appendChild(buildJoueur(tour.joueurAttente[i], i));
+            waitingPlayers.appendChild(buildJoueur(tour.joueurAttente[i], "player-waiting"));
         }
         globalTour.appendChild(listJoueurAttente);
     }
@@ -518,8 +520,8 @@ function buildMatch(match, j) {
     var matchDom = MH.makeDiv(null, "match");
     var listFirstTeam = MH.makeDiv(null, "team firstTeam");
 
-    match.firstTeam.forEach((player, index) => {
-        const playerUI = buildJoueur(player, index)
+    match.firstTeam.forEach((player) => {
+        const playerUI = buildJoueur(player, "player-match")
         playerUI.addEventListener('click', function (e) {
             $('#playerMatchesModal').modal('show');
             buildPlayerMatches(player);
@@ -591,8 +593,8 @@ function buildMatch(match, j) {
     matchDom.appendChild(divImgVolant);
 
     var listSecondTeam = MH.makeDiv(null, "team secondTeam");
-    match.secondTeam.forEach((player, index) => {
-        const playerUI = buildJoueur(player, index)
+    match.secondTeam.forEach((player) => {
+        const playerUI = buildJoueur(player, "player-match")
         playerUI.addEventListener('click', function (e) {
             $('#playerMatchesModal').modal('show');
             buildPlayerMatches(player);
@@ -808,10 +810,10 @@ function buildListJoueur() {
     var divJoueur;
     if (currentPage == pages.MODIFICATION_JOUEUR) {
         if (currentEditionId == -1) {
-            divJoueur = buildJoueur(new Joueur(), currentEditionId);
+            divJoueur = buildJoueur(new Joueur());
             divJoueur.classList.add("homme");
         } else {
-            divJoueur = buildJoueur(storage.joueurs[currentEditionId], currentEditionId);
+            divJoueur = buildJoueur(storage.joueurs[currentEditionId]);
             divJoueur.classList.add("modificationJoueur");
         }
         divJoueurs.appendChild(divJoueur);
@@ -842,7 +844,7 @@ function buildListJoueur() {
                 switch (currentPage) {
                     case pages.ACCUEIL:
                         if (storage.joueurs[i].selected) {
-                            divJoueur = buildJoueur(storage.joueurs[i], i);
+                            divJoueur = buildJoueur(storage.joueurs[i]);
                             divJoueur.classList.add("accueil");
                             divJoueur.classList.add(storage.joueurs[i].genre.value == genreListe.HOMME.value ? "homme" : "femme");
                             divJoueurs.appendChild(divJoueur);
@@ -853,7 +855,7 @@ function buildListJoueur() {
                         if (storage.joueurs[i].selected) compt++;
                         var newId = MH.getNewId();
                         var divJoueurSelection = MH.makeDiv(newId, "joueurSelection");
-                        divJoueur = buildJoueur(storage.joueurs[i], i);
+                        divJoueur = buildJoueur(storage.joueurs[i]);
                         divJoueurSelection.classList.add(storage.joueurs[i].genre.value == genreListe.HOMME.value ? "homme" : "femme");
                         divJoueurSelection.appendChild(divJoueur);
                         divJoueurSelection.appendChild(MH.makeButton({
@@ -877,18 +879,19 @@ function buildListJoueur() {
     return listJoueurs;
 }
 
-function buildJoueur(joueur, i) {
+function buildJoueur(joueur, addedClass = "") {
     var joueurDom = MH.makeDiv(null, "joueur");
-    if (i == -1) {
-        joueurDom.classList.add("homme");
-    } else {
+    if (joueur.genre) {
         joueurDom.classList.add(joueur.genre.value == genreListe.HOMME.value ? "homme" : "femme");
+    } else {
+        joueurDom.classList.add("homme");
     }
+
     switch (currentPage) {
         case pages.SELECTION_JOUEUR:
             var check = MH.makeInput("checkbox");
             if (joueur.selected === true) check.setAttribute("checked", "true");
-            check.setAttribute("id", "joueur" + i);
+            // check.setAttribute("id", "joueur" + i);
             joueurDom.appendChild(check);
             joueurDom.classList.add("selection");
             joueurDom.appendChild(MH.makeSpan(joueur.name, "nomJoueur"));
@@ -900,7 +903,9 @@ function buildJoueur(joueur, i) {
             joueurDom.appendChild(buildBadgeNiveau(joueur));
             break;
         case pages.EXECUTION_TOURNOI:
-            joueurDom.classList.add("player-match");
+            if (addedClass) {
+                joueurDom.classList.add(addedClass);
+            }
             joueurDom.appendChild(MH.makeSpan(joueur.name, "nomJoueur"));
             joueurDom.appendChild(buildBadgeNiveau(joueur));
             break;
@@ -1436,8 +1441,6 @@ function refreshMatch(domMatch, matchIndex) {
 
     const firstTeamPlayers = domMatch.querySelectorAll(".firstTeam > .player-match");
     const secondTeamPlayers = domMatch.querySelectorAll(".secondTeam > .player-match");
-
-    console.log(firstTeamPlayers)
 
     const matchWinner = getMatchWinner(match)
 
@@ -2025,7 +2028,8 @@ function closePlayerMatchesModal() {
 
 function buildPlayerMatches(player) {
     var container = $('#player-matches-modal-content');
-    container.append(buildJoueur(player))
+    var title = $('#player-matches-modal-title');
+    title.append(buildJoueur(player, "player-planning"))
     storage.tournoi.tours.forEach((turn, index) => {
         const turnDiv = MH.makeDiv("player-matches-modal-turn-" + index, "player-matches-modal-turn-" + index % 2)
         const matchs = turn.matchs.filter(match => {
@@ -2041,7 +2045,7 @@ function buildPlayerMatches(player) {
                 withDiv.appendChild(MH.makeSpan("Avec", "player-matches-player-info-with-title"))
                 const partnerDiv = MH.makeDiv("partner-div-turn" + index, "player-matches-partners")
                 getPartner(player, matchs[0]).forEach(partner => {
-                    partnerDiv.appendChild(buildJoueur(partner))
+                    partnerDiv.appendChild(buildJoueur(partner, "player-planning"))
                 })
                 withDiv.appendChild(partnerDiv)
                 turnDiv.appendChild(withDiv)
@@ -2050,7 +2054,7 @@ function buildPlayerMatches(player) {
             againstDiv.appendChild(MH.makeSpan("Contre", "player-matches-player-info-against-title"))
             const opponentsDiv = MH.makeDiv("opponents-div-turn" + index, "player-matches-opponents")
             getOpponents(player, matchs[0]).forEach(opponent => {
-                opponentsDiv.appendChild(buildJoueur(opponent))
+                opponentsDiv.appendChild(buildJoueur(opponent, "player-planning"))
             })
             againstDiv.appendChild(opponentsDiv)
             turnDiv.appendChild(againstDiv)

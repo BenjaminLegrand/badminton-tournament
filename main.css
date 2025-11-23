@@ -234,9 +234,33 @@ div.joueur.player-match {
     overflow: hidden;
     flex-direction: column;
     line-height: 16px;
-    width: 100%;
+    flex: 1;
 }
 
+div.joueur.player-planning {
+    border: 1px solid gray;
+    margin: 5px;
+    border-radius: 5px;
+    align-items: center;
+    font-size: 0.9rem;
+    justify-content: center;
+    overflow: hidden;
+    flex-direction: column;
+    line-height: 16px;
+    flex: 1;
+}
+
+div.joueur.player-waiting {
+    border: 1px solid gray;
+    margin: 5px;
+    border-radius: 5px;
+    align-items: center;
+    font-size: 0.9rem;
+    justify-content: center;
+    overflow: hidden;
+    flex-direction: column;
+    line-height: 16px;
+}
 div.divJoueurs.accueil {
     display: flex;
     flex-direction: row;
@@ -555,12 +579,18 @@ span.numContrainte {
 
 .joueurAttente {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
-    flex-wrap: wrap;
     padding: 5px;
+}
+
+.waitingPlayers{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .tour {
@@ -598,7 +628,6 @@ div.currentTour div.match {
 .team {
     display: flex;
     justify-content: center;
-    align-items: center;
     flex-direction: column;
 }
 
@@ -659,16 +688,23 @@ div.currentTour div.match {
     padding: 10px;
 }
 
+#player-matches-modal-title {
+    display: flex;
+    width:100%;
+    justify-content: center;
+}
 
 .player-matches-partners {
     display: flex;
-    gap: 30;
+    flex: 1;
+    gap: 10px;
     flex-direction: row;
 }
 
 .player-matches-opponents {
     display: flex;
-    gap: 30;
+    flex: 1;
+    gap: 10px;
     flex-direction: row;
 }
 
