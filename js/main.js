@@ -516,7 +516,7 @@ function buildMatch(match, j) {
     var num = MH.makeSpan("Match " + (currentIndexMatch + 1));
 
     var matchDom = MH.makeDiv(null, "match");
-    var listFirstTeam = MH.makeDiv(null, "equipe");
+    var listFirstTeam = MH.makeDiv(null, "team firstTeam");
 
     match.firstTeam.forEach((player, index) => {
         const playerUI = buildJoueur(player, index)
@@ -590,7 +590,7 @@ function buildMatch(match, j) {
     divImgVolant.appendChild(MH.makeElt("div", null, "sepVolant"));
     matchDom.appendChild(divImgVolant);
 
-    var listSecondTeam = MH.makeDiv(null, "equipe");
+    var listSecondTeam = MH.makeDiv(null, "team secondTeam");
     match.secondTeam.forEach((player, index) => {
         const playerUI = buildJoueur(player, index)
         playerUI.addEventListener('click', function (e) {
@@ -1432,6 +1432,42 @@ function refreshMatch(domMatch, matchIndex) {
         match.scores[2].SET_SCORE_SECOND_TEAM_KEY = 0
         firstTeamThirdSet.classList.add("gone")
         secondTeamThirdSet.classList.add("gone")
+    }
+
+    const firstTeamPlayers = domMatch.querySelectorAll(".firstTeam > .player-match");
+    const secondTeamPlayers = domMatch.querySelectorAll(".secondTeam > .player-match");
+
+    console.log(firstTeamPlayers)
+
+    const matchWinner = getMatchWinner(match)
+
+    if (matchWinner == SET_SCORE_FIRST_TEAM_KEY) {
+        firstTeamPlayers.forEach(elt => {
+            elt.classList.add("set-winner")
+            elt.classList.remove("set-loser")
+        })
+        secondTeamPlayers.forEach(elt => {
+            elt.classList.add("set-loser")
+            elt.classList.remove("set-winner")
+        })
+    } else if (matchWinner == SET_SCORE_SECOND_TEAM_KEY) {
+        firstTeamPlayers.forEach(elt => {
+            elt.classList.add("set-loser")
+            elt.classList.remove("set-winner")
+        })
+        secondTeamPlayers.forEach(elt => {
+            elt.classList.add("set-winner")
+            elt.classList.remove("set-loser")
+        })
+    } else {
+        firstTeamPlayers.forEach(elt => {
+            elt.classList.remove("set-loser")
+            elt.classList.remove("set-winner")
+        })
+        secondTeamPlayers.forEach(elt => {
+            elt.classList.remove("set-winner")
+            elt.classList.remove("set-loser")
+        })
     }
 }
 

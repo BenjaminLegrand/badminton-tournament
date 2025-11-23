@@ -595,7 +595,7 @@ div.currentTour div.match {
 
 }
 
-.equipe {
+.team {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -773,13 +773,12 @@ input:disabled{
 }
 
 .set-winner {
-    background-color: #2E7D32;
+    background-color: #2E7D32 !important;
     color: white !important;
-    font-weight: bold;
 }
 
 .set-loser {
-    background-color: #C62828;
+    background-color: #C62828 !important;
     color: white !important;
 }
 
