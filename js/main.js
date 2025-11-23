@@ -1715,11 +1715,19 @@ function testContraintes(match, waitingPlayers) {
 
 const DEFAULT_MAIN_CONSTRAINT_VALUE = 100000
 const SOFT_CAP_LEVEL_DIFF = 3
-const HARD_CAP_LEVEL_DIFF = 5
 const SOFT_CAP_LEVEL_MEAN_DIFF = 2
-const HARD_CAP_LEVEL_MEAN_DIFF = 4
 
 function maxLevelDiffReached(firstTeam, secondTeam) {
+
+    var HARD_CAP_LEVEL_DIFF = 5
+    if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE_MX) {
+        HARD_CAP_LEVEL_DIFF = 12
+    }
+    var HARD_CAP_LEVEL_MEAN_DIFF = 4
+    if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE_MX) {
+        HARD_CAP_LEVEL_MEAN_DIFF = 6
+    }
+
     const firstTeamLevels = firstTeam.map(player => player.niveau.level)
     const secondTeamLevels = secondTeam.map(player => player.niveau.level)
 
@@ -1851,11 +1859,11 @@ function generateTurn(index, playedMatches) {
 
         const matchesCount = computePlayersMatchesCount(turnMatches, availablePlayers)
 
-        var currentMatch = null; 
-        
-        try{
+        var currentMatch = null;
+
+        try {
             currentMatch = findMatch(turnMatches, matchesCount, availablePlayers)
-        }catch(error){
+        } catch (error) {
             alert("Génération de matchs incompatibles sur le tour " + (index + 1) + ". Veuillez réessayer.")
             throw Error("No match can be generated")
         }
