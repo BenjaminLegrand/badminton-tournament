@@ -1851,7 +1851,14 @@ function generateTurn(index, playedMatches) {
 
         const matchesCount = computePlayersMatchesCount(turnMatches, availablePlayers)
 
-        var currentMatch = findMatch(turnMatches, matchesCount, availablePlayers)
+        var currentMatch = null; 
+        
+        try{
+            currentMatch = findMatch(turnMatches, matchesCount, availablePlayers)
+        }catch(error){
+            alert("Génération de matchs incompatibles sur le tour " + (index + 1) + ". Veuillez réessayer.")
+            throw Error("No match can be generated")
+        }
 
         selectedMatches.push(currentMatch);
 
