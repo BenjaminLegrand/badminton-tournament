@@ -1916,7 +1916,7 @@ function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
     leastPlayerMatches.sort((m1, m2) => {
         return Math.min(m1.firstTeamStartScore - m2.secondTeamStartScort, m1.secondTeamStartScore - m2.firstTeamStartScore);
     });
-    var selectedMatch = leastPlayerMatches[index];
+    var selectedMatch = leastPlayerMatches[currentIndex];
     if (selectedMatch == null) {
         console.log("NO MATCH FOUND WITH PLAYER : " + leastMatchesPlayerName)
         selectedMatch = turnMatches[0];
@@ -1938,7 +1938,7 @@ function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
     console.log("Next player set : " + nextTurnPlayerMatchesCount.size)
     if (availablePlayers.length % 4 == 0 && playerMatchesCount.size - nextTurnPlayerMatchesCount.size > 4) {
         console.log("PLAYER EXCLUDED FROM NEXT MATCHES IN TURN - FINDING MATCH AGAIN...")
-        return findMatch(turnMatches, matchesCount, availablePlayers, index + 1)
+        return findMatch(turnMatches, matchesCount, availablePlayers, currentIndex + 1)
     }
 
     return selectedMatch;
