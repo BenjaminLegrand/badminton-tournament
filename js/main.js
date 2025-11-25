@@ -1913,9 +1913,10 @@ function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
         const secondTeamNames = m.firstTeam.map(p => p.name)
         return firstTeamNames.includes(leastMatchesPlayerName) || secondTeamNames.includes(leastMatchesPlayerName)
     })
-    var selectedMatch = leastPlayerMatches.sort((m1, m2) => {
+    leastPlayerMatches.sort((m1, m2) => {
         return Math.min(m1.firstTeamStartScore - m2.secondTeamStartScort, m1.secondTeamStartScore - m2.firstTeamStartScore);
-    })[index];
+    });
+    var selectedMatch = leastPlayerMatches[index];
     if (selectedMatch == null) {
         console.log("NO MATCH FOUND WITH PLAYER : " + leastMatchesPlayerName)
         selectedMatch = turnMatches[0];
