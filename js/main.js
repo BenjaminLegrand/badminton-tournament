@@ -1862,7 +1862,7 @@ function generateTurn(index, playedMatches) {
         var currentMatch = null;
 
         try {
-            currentMatch = findMatch(turnMatches, matchesCount, availablePlayers)
+            currentMatch = findMatch(turnMatches, matchesCount, availablePlayers, 0)
         } catch (error) {
             alert("Génération de matchs incompatibles sur le tour " + (index + 1) + ". Veuillez réessayer.")
             throw Error("No match can be generated")
@@ -1902,7 +1902,7 @@ function generateTurn(index, playedMatches) {
     return { done: false, matchs: shuffle(selectedMatches), joueurAttente: availablePlayers }
 }
 
-function findMatch(turnMatches, matchesCount, availablePlayers) {
+function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
     const playerMatchesCount = matchesCount.playerMatchesCount
     const leastMatchesPlayerName = matchesCount.leastMatchesPlayerName
     console.log("LEAST MATCHES PLAYER : " + leastMatchesPlayerName)
@@ -1913,7 +1913,9 @@ function findMatch(turnMatches, matchesCount, availablePlayers) {
         const secondTeamNames = m.firstTeam.map(p => p.name)
         return firstTeamNames.includes(leastMatchesPlayerName) || secondTeamNames.includes(leastMatchesPlayerName)
     })
-    var selectedMatch = shuffle(leastPlayerMatches)[0]
+    var selectedMatch = leastPlayerMatches.sort((m1, m2) => {
+        return Math.min(m1.firstTeamStartScore - m2.secondTeamStartScort, m1.secondTeamStartScore - m2.firstTeamStartScore);
+    })[index];
     if (selectedMatch == null) {
         console.log("NO MATCH FOUND WITH PLAYER : " + leastMatchesPlayerName)
         selectedMatch = turnMatches[0];
@@ -1935,7 +1937,7 @@ function findMatch(turnMatches, matchesCount, availablePlayers) {
     console.log("Next player set : " + nextTurnPlayerMatchesCount.size)
     if (availablePlayers.length % 4 == 0 && playerMatchesCount.size - nextTurnPlayerMatchesCount.size > 4) {
         console.log("PLAYER EXCLUDED FROM NEXT MATCHES IN TURN - FINDING MATCH AGAIN...")
-        return findMatch(turnMatches, matchesCount, availablePlayers)
+        return findMatch(turnMatches, matchesCount, availablePlayers, index + 1)
     }
 
     return selectedMatch;
