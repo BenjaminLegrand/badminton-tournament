@@ -1930,10 +1930,10 @@ function findMatch(turnMatches, matchesCount, availablePlayers) {
 
     const nextTurnPlayerMatchesCount = computePlayersMatchesCount(nextMatches, availablePlayers).playerMatchesCount
 
-    // If diff is above 4, this means a player has been excluded of next matches because of chosen match
+    // If diff is above 4, this means a player has been excluded of next matches because of chosen match - only applies if available players is a multiple 4 so that nobody waits in a given turn
     console.log("Current player set : " + playerMatchesCount.size)
     console.log("Next player set : " + nextTurnPlayerMatchesCount.size)
-    if (playerMatchesCount.size - nextTurnPlayerMatchesCount.size > 4) {
+    if (availablePlayers.length % 4 == 0 && playerMatchesCount.size - nextTurnPlayerMatchesCount.size > 4) {
         console.log("PLAYER EXCLUDED FROM NEXT MATCHES IN TURN - FINDING MATCH AGAIN...")
         return findMatch(turnMatches, matchesCount, availablePlayers)
     }
