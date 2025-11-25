@@ -1913,9 +1913,28 @@ function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
         const secondTeamNames = m.firstTeam.map(p => p.name)
         return firstTeamNames.includes(leastMatchesPlayerName) || secondTeamNames.includes(leastMatchesPlayerName)
     })
+
+    if(currentIndex >= leastPlayerMatches.length){
+        console.log("No match can be played for least player")
+        throw Error();
+    }
+
     leastPlayerMatches.sort((m1, m2) => {
-        return Math.min(m1.firstTeamStartScore - m2.secondTeamStartScort, m1.secondTeamStartScore - m2.firstTeamStartScore);
+        const match1Diff = Math.abs(m1.firstTeamStartScore - m1.secondTeamStartScore);
+        const match2Diff = Math.abs(m2.firstTeamStartScore - m2.secondTeamStartScore);
+        if(match1Diff < match2Diff){
+            return -1;
+        }else if(match2Diff < match1Diff){
+            return 1;
+        }else{
+            return 0
+        }
     });
+
+    console.log("Remaining match count : " + leastPlayerMatches.length)
+    console.log("Min score diff : " + Math.abs(leastPlayerMatches[0].firstTeamStartScore - leastPlayerMatches[0].secondTeamStartScore))
+    console.log("Max score diff : " + Math.abs(leastPlayerMatches[leastPlayerMatches.length-1].firstTeamStartScore - leastPlayerMatches[leastPlayerMatches.length-1].secondTeamStartScore))
+
     var selectedMatch = leastPlayerMatches[currentIndex];
     if (selectedMatch == null) {
         console.log("NO MATCH FOUND WITH PLAYER : " + leastMatchesPlayerName)
