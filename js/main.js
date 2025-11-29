@@ -1721,11 +1721,11 @@ function maxLevelDiffReached(firstTeam, secondTeam) {
 
     var HARD_CAP_LEVEL_DIFF = 5
     if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE_MX) {
-        HARD_CAP_LEVEL_DIFF = 12
+        HARD_CAP_LEVEL_DIFF = 10
     }
     var HARD_CAP_LEVEL_MEAN_DIFF = 4
     if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE_MX) {
-        HARD_CAP_LEVEL_MEAN_DIFF = 6
+        HARD_CAP_LEVEL_MEAN_DIFF = 8
     }
 
     const firstTeamLevels = firstTeam.map(player => player.niveau.level)
@@ -1862,8 +1862,9 @@ function generateTurn(index, playedMatches) {
         var currentMatch = null;
 
         try {
-            currentMatch = findMatch(turnMatches, matchesCount, availablePlayers, 0)
+            currentMatch = findMatch(playedMatches, turnMatches, matchesCount, availablePlayers, 0)
         } catch (error) {
+            console.log(error)
             alert("Génération de matchs incompatibles sur le tour " + (index + 1) + ". Veuillez réessayer.")
             throw Error("No match can be generated")
         }
@@ -1902,45 +1903,71 @@ function generateTurn(index, playedMatches) {
     return { done: false, matchs: shuffle(selectedMatches), joueurAttente: availablePlayers }
 }
 
-function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
+function findMatch(playedMatches, turnMatches, matchesCount, availablePlayers, currentIndex) {
     const playerMatchesCount = matchesCount.playerMatchesCount
     const leastMatchesPlayerName = matchesCount.leastMatchesPlayerName
     console.log("LEAST MATCHES PLAYER : " + leastMatchesPlayerName)
 
     var leastPlayerMatches = turnMatches.filter(m => {
         if (leastMatchesPlayerName == null) return true;
-        const firstTeamNames = m.firstTeam.map(p => p.name)
-        const secondTeamNames = m.firstTeam.map(p => p.name)
-        return firstTeamNames.includes(leastMatchesPlayerName) || secondTeamNames.includes(leastMatchesPlayerName)
+        return containsPlayer(m, leastMatchesPlayerName)
     })
 
-    if(currentIndex >= leastPlayerMatches.length){
+    var leastPlayerPlayedMatches = playedMatches.filter(m => {
+        if (leastMatchesPlayerName == null) return true;
+        return containsPlayer(m, leastMatchesPlayerName)
+    })
+
+    if (currentIndex >= leastPlayerMatches.length) {
         console.log("No match can be played for least player")
-        throw Error();
+        throw Error("No match can be played for least player");
     }
 
     leastPlayerMatches.sort((m1, m2) => {
         const match1Diff = Math.abs(m1.firstTeamStartScore - m1.secondTeamStartScore);
         const match2Diff = Math.abs(m2.firstTeamStartScore - m2.secondTeamStartScore);
-        if(match1Diff < match2Diff){
-            return -1;
-        }else if(match2Diff < match1Diff){
-            return 1;
-        }else{
-            return 0
+        var match1CommonPlayersCount = 0;
+        var match2CommonPlayersCount = 0;
+        leastPlayerPlayedMatches.forEach(match => {
+            m1.firstTeam.forEach(player => {
+                if (containsPlayer(match, player.name) && player.name != leastMatchesPlayerName) {
+                    match1CommonPlayersCount++;
+                }
+            })
+            m1.secondTeam.forEach(player => {
+                if (containsPlayer(match, player.name) && player.name != leastMatchesPlayerName) {
+                    match1CommonPlayersCount++;
+                }
+            })
+            m2.firstTeam.forEach(player => {
+                if (containsPlayer(match, player.name) && player.name != leastMatchesPlayerName) {
+                    match2CommonPlayersCount++;
+                }
+            })
+            m2.secondTeam.forEach(player => {
+                if (containsPlayer(match, player.name) && player.name != leastMatchesPlayerName) {
+                    match2CommonPlayersCount++;
+                }
+            })
+        });
+        m1.commonPlayers = match1CommonPlayersCount
+        m2.commonPlayers = match2CommonPlayersCount
+        if (Math.abs(match1Diff - match2Diff) < 5) {
+            return match1CommonPlayersCount > match2CommonPlayersCount ? 1 : -1;
         }
+        return match1Diff > match2Diff ? 1 : -1;
     });
 
-    console.log("Remaining match count : " + leastPlayerMatches.length)
+    logMatches("Possibles matches", leastPlayerMatches)
     console.log("Min score diff : " + Math.abs(leastPlayerMatches[0].firstTeamStartScore - leastPlayerMatches[0].secondTeamStartScore))
-    console.log("Max score diff : " + Math.abs(leastPlayerMatches[leastPlayerMatches.length-1].firstTeamStartScore - leastPlayerMatches[leastPlayerMatches.length-1].secondTeamStartScore))
+    console.log("Max score diff : " + Math.abs(leastPlayerMatches[leastPlayerMatches.length - 1].firstTeamStartScore - leastPlayerMatches[leastPlayerMatches.length - 1].secondTeamStartScore))
 
     var selectedMatch = leastPlayerMatches[currentIndex];
     if (selectedMatch == null) {
         console.log("NO MATCH FOUND WITH PLAYER : " + leastMatchesPlayerName)
         selectedMatch = turnMatches[0];
     }
-    console.log("SELECTED MATCH : " + JSON.stringify(selectedMatch.firstTeam.map(p => p.name)) + " VS " + JSON.stringify(selectedMatch.secondTeam.map(p => p.name)))
+    logPlayers("Selected match", selectedMatch);
 
     // Compute next matches to check if any player has been excluded from playing future matches in turn
     const nextMatches = turnMatches.filter(match =>
@@ -1957,10 +1984,27 @@ function findMatch(turnMatches, matchesCount, availablePlayers, currentIndex) {
     console.log("Next player set : " + nextTurnPlayerMatchesCount.size)
     if (availablePlayers.length % 4 == 0 && playerMatchesCount.size - nextTurnPlayerMatchesCount.size > 4) {
         console.log("PLAYER EXCLUDED FROM NEXT MATCHES IN TURN - FINDING MATCH AGAIN...")
-        return findMatch(turnMatches, matchesCount, availablePlayers, currentIndex + 1)
+        return findMatch(playedMatches, turnMatches, matchesCount, availablePlayers, currentIndex + 1)
     }
 
     return selectedMatch;
+}
+
+function logPlayers(prefix, match) {
+    console.log(prefix + "\n----------------------------\n" + JSON.stringify(match.firstTeam.map(p => p.name)) + " VS " + JSON.stringify(match.secondTeam.map(p => p.name)) + " - Handicap : " + Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) + " - Joueurs communs : " + match.commonPlayers)
+}
+
+
+function logMatches(prefix, matches) {
+    console.log(prefix + "\n------------------------------\n" + matches.map(match => {
+        return JSON.stringify(match.firstTeam.map(p => p.name)) + " VS " + JSON.stringify(match.secondTeam.map(p => p.name)) + " - Handicap : " + Math.abs(match.firstTeamStartScore - match.secondTeamStartScore) + " - Joueurs communs : " + match.commonPlayers
+    }).join("\n"))
+}
+
+function containsPlayer(match, playerName) {
+    const firstTeamNames = match.firstTeam.map(p => p.name)
+    const secondTeamNames = match.firstTeam.map(p => p.name)
+    return firstTeamNames.includes(playerName) || secondTeamNames.includes(playerName)
 }
 
 function computePlayersMatchesCount(turnMatches, availablePlayers) {
