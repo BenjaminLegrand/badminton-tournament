@@ -1721,11 +1721,11 @@ function maxLevelDiffReached(firstTeam, secondTeam) {
 
     var HARD_CAP_LEVEL_DIFF = 5
     if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE_MX) {
-        HARD_CAP_LEVEL_DIFF = 10
+        HARD_CAP_LEVEL_DIFF = 11
     }
     var HARD_CAP_LEVEL_MEAN_DIFF = 4
     if (storage.tournoi.typeTournoi == typeTournoiListe.DOUBLE_MX) {
-        HARD_CAP_LEVEL_MEAN_DIFF = 8
+        HARD_CAP_LEVEL_MEAN_DIFF = 6
     }
 
     const firstTeamLevels = firstTeam.map(player => player.niveau.level)
