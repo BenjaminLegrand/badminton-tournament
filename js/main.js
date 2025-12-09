@@ -2041,43 +2041,41 @@ function computeLeaderboards() {
         player.totalWonSet = 0;
         player.totalLostSet = 0;
     })
-    storage.tournoi.tours.filter(turn => { return turn.done; }).forEach(turn => {
-        turn.matchs.forEach(match => {
-            const matchWinner = getMatchWinner(match)
-            if (matchWinner != null) {
-                match.firstTeam.forEach(player => {
-                    let tournamentPlayer = getTournamentPlayerByName(player.name)
-                    tournamentPlayer.playedMatches += 1;
-                    if (matchWinner == SET_SCORE_FIRST_TEAM_KEY) {
-                        tournamentPlayer.totalWonMatches += 1;
-                    }
-                    match.scores.forEach(score => {
-                        const firstTeamScore = score.SET_SCORE_FIRST_TEAM_KEY;
-                        const secondTeamScore = score.SET_SCORE_SECOND_TEAM_KEY;
-                        const setWinner = getSetWinner(match.setPoints, firstTeamScore, secondTeamScore);
-                        tournamentPlayer.totalPointAverage += (firstTeamScore - secondTeamScore);
-                        tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
-                        tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
-                    });
-                })
+    storage.tournoi.tours.flatMap(turn => turn.matchs).forEach(match => {
+        const matchWinner = getMatchWinner(match)
+        if (matchWinner != null) {
+            match.firstTeam.forEach(player => {
+                let tournamentPlayer = getTournamentPlayerByName(player.name)
+                tournamentPlayer.playedMatches += 1;
+                if (matchWinner == SET_SCORE_FIRST_TEAM_KEY) {
+                    tournamentPlayer.totalWonMatches += 1;
+                }
+                match.scores.forEach(score => {
+                    const firstTeamScore = score.SET_SCORE_FIRST_TEAM_KEY;
+                    const secondTeamScore = score.SET_SCORE_SECOND_TEAM_KEY;
+                    const setWinner = getSetWinner(match.setPoints, firstTeamScore, secondTeamScore);
+                    tournamentPlayer.totalPointAverage += (firstTeamScore - secondTeamScore);
+                    tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
+                    tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
+                });
+            })
 
-                match.secondTeam.forEach(player => {
-                    let tournamentPlayer = getTournamentPlayerByName(player.name)
-                    tournamentPlayer.playedMatches += 1;
-                    if (matchWinner == SET_SCORE_SECOND_TEAM_KEY) {
-                        tournamentPlayer.totalWonMatches += 1;
-                    }
-                    match.scores.forEach(score => {
-                        const firstTeamScore = score.SET_SCORE_FIRST_TEAM_KEY
-                        const secondTeamScore = score.SET_SCORE_SECOND_TEAM_KEY
-                        const setWinner = getSetWinner(match.setPoints, firstTeamScore, secondTeamScore);
-                        tournamentPlayer.totalPointAverage += (secondTeamScore - firstTeamScore);
-                        tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
-                        tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
-                    });
-                })
-            }
-        })
+            match.secondTeam.forEach(player => {
+                let tournamentPlayer = getTournamentPlayerByName(player.name)
+                tournamentPlayer.playedMatches += 1;
+                if (matchWinner == SET_SCORE_SECOND_TEAM_KEY) {
+                    tournamentPlayer.totalWonMatches += 1;
+                }
+                match.scores.forEach(score => {
+                    const firstTeamScore = score.SET_SCORE_FIRST_TEAM_KEY
+                    const secondTeamScore = score.SET_SCORE_SECOND_TEAM_KEY
+                    const setWinner = getSetWinner(match.setPoints, firstTeamScore, secondTeamScore);
+                    tournamentPlayer.totalPointAverage += (secondTeamScore - firstTeamScore);
+                    tournamentPlayer.totalWonSet += (setWinner == SET_SCORE_SECOND_TEAM_KEY) ? 1 : 0
+                    tournamentPlayer.totalLostSet += (setWinner == SET_SCORE_FIRST_TEAM_KEY) ? 1 : 0
+                });
+            })
+        }
     });
 
 

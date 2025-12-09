@@ -39,10 +39,13 @@ export class LocalStorage {
     }
 
     export() {
-        const year = this.tournoi.date.getFullYear();
-        const month = String(this.tournoi.date.getMonth() + 1).padStart(2, '0')
-        const day =  String(this.tournoi.date.getDate()).padStart(2, '0')
-        var name = `tournament_${this.tournoi.name}_${year}_${month}_${day}`;
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0')
+        const day =  String(now.getDate()).padStart(2, '0')
+        const hours =  String(now.getHours()).padStart(2, '0')
+        const minutes =  String(now.getMinutes()).padStart(2, '0')
+        var name = `tournament_${this.tournoi.name}_${year}_${month}_${day}_${hours}h${minutes}`;
         var type = "application/json";
         var anchor = document.createElement("a");
         anchor.href = window.URL.createObjectURL(new Blob([JSON.stringify(this.getDatas())], { type }));
