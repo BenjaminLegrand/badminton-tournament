@@ -2045,8 +2045,8 @@ function computeLeaderboards() {
         const matchWinner = getMatchWinner(match)
         if (matchWinner != null) {
             match.firstTeam.forEach(player => {
-                if (player.ranked === undefined || player.ranked) {
-                    let tournamentPlayer = getTournamentPlayerByName(player.name)
+                let tournamentPlayer = getTournamentPlayerByName(player.name)
+                if (tournamentPlayer) {
                     tournamentPlayer.playedMatches += 1;
                     if (matchWinner == SET_SCORE_FIRST_TEAM_KEY) {
                         tournamentPlayer.totalWonMatches += 1;
@@ -2063,8 +2063,8 @@ function computeLeaderboards() {
             })
 
             match.secondTeam.forEach(player => {
-                if (player.ranked === undefined || player.ranked) {
-                    let tournamentPlayer = getTournamentPlayerByName(player.name)
+                let tournamentPlayer = getTournamentPlayerByName(player.name)
+                if (tournamentPlayer) {
                     tournamentPlayer.playedMatches += 1;
                     if (matchWinner == SET_SCORE_SECOND_TEAM_KEY) {
                         tournamentPlayer.totalWonMatches += 1;
