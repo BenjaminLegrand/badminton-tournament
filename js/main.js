@@ -496,7 +496,7 @@ function buildTour(tour, i) {
     else if (storage.tournoi.currentTour < i) globalTour.classList.add("forPlayingTour");
     var listMatchs = MH.makeDiv(null, "matchs");
     for (var j = 0; j < tour.matchs.length; j++) {
-        listMatchs.appendChild(buildMatch(tour.matchs[j], j));
+        listMatchs.appendChild(buildMatch(tour.matchs[j], j, i));
     }
     globalTour.appendChild(listMatchs);
     if (tour.joueurAttente.length > 0) {
@@ -512,7 +512,7 @@ function buildTour(tour, i) {
     return globalTour;
 }
 
-function buildMatch(match, j) {
+function buildMatch(match, j, turnindex) {
     var divMatch = MH.makeDiv(null, "divMatch");
     var headerMatch = MH.makeDiv(null, "headerMatch");
     var num = MH.makeSpan("Match " + (currentIndexMatch + 1));
@@ -524,7 +524,7 @@ function buildMatch(match, j) {
         const playerUI = buildJoueur(player, "player-match")
         playerUI.addEventListener('click', function (e) {
             $('#playerMatchesModal').modal('show');
-            buildPlayerMatches(player);
+            buildPlayerMatches(player, turnindex, j);
         })
         listFirstTeam.appendChild(playerUI);
     })
@@ -597,7 +597,7 @@ function buildMatch(match, j) {
         const playerUI = buildJoueur(player, "player-match")
         playerUI.addEventListener('click', function (e) {
             $('#playerMatchesModal').modal('show');
-            buildPlayerMatches(player);
+            buildPlayerMatches(player, turnindex, j);
         })
         listSecondTeam.appendChild(playerUI);
     })
@@ -1519,7 +1519,7 @@ function generateAllTurnMatches(playedMatches, players) {
                 const firstTeam = [first];
                 const secondTeam = [second];
                 if (isMatchValid(playedMatches, firstTeam, secondTeam)) {
-                    matches.push(newMatch(firstTeam, secondTeam));
+                    matches.push(this.storage.newMatch(firstTeam, secondTeam));
                 }
             })
         })
@@ -1544,7 +1544,7 @@ function generateAllTurnMatches(playedMatches, players) {
         playerPairs.forEach(first => {
             playerPairs.forEach(second => {
                 if (isMatchValid(playedMatches, first, second)) {
-                    matches.push(newMatch(first, second));
+                    matches.push(this.storage.newMatch(first, second));
                 }
             })
         })
@@ -1557,66 +1557,6 @@ function getPlayerMatches(matches, player) {
     return matches.filter(match => {
         return match.firstTeam.some(p => p.name == player.name) || match.secondTeam.some(p => p.name == player.name);
     });
-}
-
-function newMatch(firstTeam, secondTeam) {
-    var firstTeamHandicap = 0;
-    firstTeam.forEach(player => {
-        firstTeamHandicap += getPlayerHandicap(player);
-    })
-
-    var secondTeamHandicap = 0;
-    secondTeam.forEach(player => {
-        secondTeamHandicap += getPlayerHandicap(player);
-    })
-
-    //équilibrage des points
-    var departNegatif = storage.tournoi.departMatchNegatif;
-    if (firstTeamHandicap > secondTeamHandicap) {
-        firstTeamHandicap -= secondTeamHandicap;
-        secondTeamHandicap = 0;
-        if ((departNegatif && firstTeamHandicap > 0) ||
-            (!departNegatif && firstTeamHandicap < 0)) {
-            secondTeamHandicap = firstTeamHandicap * (-1);
-            firstTeamHandicap = 0;
-        }
-    } else {
-        secondTeamHandicap -= firstTeamHandicap;
-        firstTeamHandicap = 0;
-        if ((departNegatif && secondTeamHandicap > 0) ||
-            (!departNegatif && secondTeamHandicap < 0)) {
-            firstTeamHandicap = secondTeamHandicap * (-1);
-            secondTeamHandicap = 0;
-        }
-    }
-
-    var max = Math.max(firstTeamHandicap, secondTeamHandicap);
-    if (max > 15) {
-        firstTeamHandicap -= (max - 15);
-        secondTeamHandicap -= (max - 15);
-    }
-
-    return new Match(
-        storage.tournoi.nbPoints,
-        firstTeam,
-        secondTeam,
-        firstTeamHandicap,
-        secondTeamHandicap,
-        [
-            {
-                SET_SCORE_FIRST_TEAM_KEY: firstTeamHandicap,
-                SET_SCORE_SECOND_TEAM_KEY: secondTeamHandicap,
-            },
-            {
-                SET_SCORE_FIRST_TEAM_KEY: firstTeamHandicap,
-                SET_SCORE_SECOND_TEAM_KEY: secondTeamHandicap,
-            },
-            {
-                SET_SCORE_FIRST_TEAM_KEY: 0,
-                SET_SCORE_SECOND_TEAM_KEY: 0,
-            }
-        ]
-    );
 }
 
 function checkExistingPairOrPairPlayed(pair, existingPairs, playedMatches) {
@@ -2197,10 +2137,6 @@ function isTournamentFinished() {
     return storage.tournoi.tours.length > 0 && storage.tournoi.tours.every(turn => turn.done);
 }
 
-function getPlayerHandicap(player) {
-    return player.genre.handicap + player.niveau.handicap;
-}
-
 function handleImport(evt) {
     var file = new FileReader();
     file.addEventListener("load", () => {
@@ -2219,10 +2155,37 @@ function closePlayerMatchesModal() {
     $('#player-matches-modal-title').empty();
 }
 
-function buildPlayerMatches(player) {
+
+function closePlayerReplaceModal() {
+    $('#playerReplaceModal').modal('toggle');
+    $('#player-replace-modal-content').empty();
+    $('#player-replace-modal-title').empty();
+}
+
+function buildPlayerMatches(player, turn, matchIndexInTurn) {
     var container = $('#player-matches-modal-content');
     var title = $('#player-matches-modal-title');
+    var footer = $('#player-matches-modal-footer');
     title.append(buildJoueur(player, "player-planning"))
+    var replacement = MH.makeInput("text");
+    var replacementOk = MH.makeSpan("Remplacer");
+    replacementOk.addEventListener("click", (e) => {
+        let newPlayer = storage.findPlayer(replacement.value)
+        if (newPlayer) {
+            storage.replacePlayer(player, newPlayer, turn, matchIndexInTurn)
+            storage.save()
+        } else {
+            const input = prompt("Classement du joueur :");
+
+            if (input) {
+                storage.replacePlayer(player, { name : replacement.value, niveau : niveauListe[input], ranked : false, genre : {handicap : 0}}, turn, matchIndexInTurn);
+                storage.save();
+            }
+        }
+    });
+
+    container.append(replacement)
+    container.append(replacementOk)
     storage.tournoi.tours.forEach((turn, index) => {
         const turnDiv = MH.makeDiv("player-matches-modal-turn-" + index, "player-matches-modal-turn-" + index % 2)
         const matchs = turn.matchs.filter(match => {

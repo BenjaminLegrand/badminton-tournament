@@ -1,4 +1,5 @@
 import { Tournoi } from './tournament.js'
+import { Match } from './match.js'
 import {
     typeTournoiListe,
 } from './values.js'
@@ -42,9 +43,9 @@ export class LocalStorage {
         const now = new Date();
         const year = now.getFullYear();
         const month = String(now.getMonth() + 1).padStart(2, '0')
-        const day =  String(now.getDate()).padStart(2, '0')
-        const hours =  String(now.getHours()).padStart(2, '0')
-        const minutes =  String(now.getMinutes()).padStart(2, '0')
+        const day = String(now.getDate()).padStart(2, '0')
+        const hours = String(now.getHours()).padStart(2, '0')
+        const minutes = String(now.getMinutes()).padStart(2, '0')
         var name = `tournament_${this.tournoi.name}_${year}_${month}_${day}_${hours}h${minutes}`;
         var type = "application/json";
         var anchor = document.createElement("a");
@@ -52,7 +53,7 @@ export class LocalStorage {
         anchor.download = name;
         anchor.click();
     }
-    
+
     save() {
         localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.getDatas()));
     }
@@ -69,6 +70,12 @@ export class LocalStorage {
         this.joueurs.push(joueur);
         this.save();
         return true;
+    }
+
+
+
+    findPlayer(name) {
+        return this.joueurs.find(j => j.name == name)
     }
 
     updateJoueur(index, attributes) {
@@ -93,13 +100,13 @@ export class LocalStorage {
         this.save();
     }
 
-    resetTournamentMatches(){
+    resetTournamentMatches() {
         this.tournoi.tours = [];
         this.tournoi.currentTour = -1;
         this.save();
     }
 
-    updateTournamentName(name){
+    updateTournamentName(name) {
         this.tournoi.name = name;
         this.save();
     }
@@ -126,8 +133,117 @@ export class LocalStorage {
         })
     }
 
+
+    replacePlayer(player, newPlayer, turnIndex, matchIndex) {
+        let matchs = this.tournoi.tours[turnIndex].matchs;
+
+        console.log(matchIndex);
+
+        if (matchIndex !== -1) {
+            let oldMatch = matchs[matchIndex];
+
+            console.log("Old match:", oldMatch);
+
+            // Clone teams so you don’t mutate original arrays unexpectedly
+            let firstTeam = [...oldMatch.firstTeam];
+            let secondTeam = [...oldMatch.secondTeam];
+
+            // Replace player in the correct team
+            let index = firstTeam.findIndex(p => p.name === player.name);
+            if (index !== -1) {
+                console.log("Player found in firstTeam");
+                firstTeam[index] = {...newPlayer, ranked:false};
+            } else {
+                index = secondTeam.findIndex(p => p.name === player.name);
+                if (index !== -1) {
+                    console.log("Player found in secondTeam");
+                    secondTeam[index] = {...newPlayer, ranked:false};
+                }
+            }
+
+            console.log("Updated firstTeam:", firstTeam);
+            console.log("Updated secondTeam:", secondTeam);
+
+            // Recreate the match with updated teams
+            let updatedMatch = this.newMatch(firstTeam, secondTeam);
+
+            console.log("New match:", updatedMatch);
+
+            // Replace the match in the array
+            matchs[matchIndex] = updatedMatch;
+        } else {
+            console.log("No match found for player:", player.name);
+        }
+        this.save()
+    }
+
     updateContraintes(contraintes) {
         if (contraintes != undefined) this.tournoi.contraintes = contraintes;
         this.save();
     }
+
+
+    newMatch(firstTeam, secondTeam) {
+        var firstTeamHandicap = 0;
+        firstTeam.forEach(player => {
+            firstTeamHandicap += this.getPlayerHandicap(player);
+        })
+
+        var secondTeamHandicap = 0;
+        secondTeam.forEach(player => {
+            secondTeamHandicap += this.getPlayerHandicap(player);
+        })
+
+        //équilibrage des points
+        var departNegatif = this.tournoi.departMatchNegatif;
+        if (firstTeamHandicap > secondTeamHandicap) {
+            firstTeamHandicap -= secondTeamHandicap;
+            secondTeamHandicap = 0;
+            if ((departNegatif && firstTeamHandicap > 0) ||
+                (!departNegatif && firstTeamHandicap < 0)) {
+                secondTeamHandicap = firstTeamHandicap * (-1);
+                firstTeamHandicap = 0;
+            }
+        } else {
+            secondTeamHandicap -= firstTeamHandicap;
+            firstTeamHandicap = 0;
+            if ((departNegatif && secondTeamHandicap > 0) ||
+                (!departNegatif && secondTeamHandicap < 0)) {
+                firstTeamHandicap = secondTeamHandicap * (-1);
+                secondTeamHandicap = 0;
+            }
+        }
+
+        var max = Math.max(firstTeamHandicap, secondTeamHandicap);
+        if (max > 15) {
+            firstTeamHandicap -= (max - 15);
+            secondTeamHandicap -= (max - 15);
+        }
+
+        return new Match(
+            this.tournoi.nbPoints,
+            firstTeam,
+            secondTeam,
+            firstTeamHandicap,
+            secondTeamHandicap,
+            [
+                {
+                    SET_SCORE_FIRST_TEAM_KEY: firstTeamHandicap,
+                    SET_SCORE_SECOND_TEAM_KEY: secondTeamHandicap,
+                },
+                {
+                    SET_SCORE_FIRST_TEAM_KEY: firstTeamHandicap,
+                    SET_SCORE_SECOND_TEAM_KEY: secondTeamHandicap,
+                },
+                {
+                    SET_SCORE_FIRST_TEAM_KEY: 0,
+                    SET_SCORE_SECOND_TEAM_KEY: 0,
+                }
+            ]
+        );
+    }
+
+getPlayerHandicap(player) {
+    return player.genre.handicap + player.niveau.handicap;
+}
 }
